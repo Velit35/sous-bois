@@ -64,7 +64,7 @@ button{cursor:pointer}
 /* Boutons latéraux */
 .side{position:fixed;z-index:500;right:calc(env(safe-area-inset-right,0px) + 12px);
   bottom:calc(env(safe-area-inset-bottom,0px) + 168px);display:flex;flex-direction:column;gap:10px}
-.round{width:48px;height:48px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
+.round{position:relative;width:48px;height:48px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
 .round svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .round .badge{position:absolute;transform:translate(14px,-14px);background:var(--chanterelle);color:#1b1205;font-size:11px;font-weight:600;border-radius:999px;padding:1px 6px}
 
@@ -297,15 +297,15 @@ window.addEventListener("unhandledrejection",function(e){var f=document.getEleme
 // rain : cumul sur les 15 jours avant (mm) ; temp : moyenne des 7 derniers jours (°C) en trapèze lo/opt1/opt2/hi ; frost : gel qui bloque la pousse
 const SPECIES = {
   cepe:{name:"Cèpe de Bordeaux",latin:"Boletus edulis",color:"#8A4B1F",hosts:"chêne, hêtre, châtaignier, pins, épicéa",soil:"acide à neutre (pH 4,5–6,5)",season:"août → novembre",
-    rain:{min:20,opt:55},temp:{lo:7,opt1:11,opt2:18,hi:23},frost:-1},
+    rain:{min:20,opt:55},temp:{lo:5,opt1:9,opt2:17,hi:23},frost:-1},
   girolle:{name:"Girolle",latin:"Cantharellus cibarius",color:"#E3A21A",hosts:"chêne, hêtre, châtaignier, pins",soil:"acide, souvent moussu",season:"juin → novembre",
-    rain:{min:15,opt:45},temp:{lo:8,opt1:13,opt2:21,hi:26},frost:-1},
+    rain:{min:15,opt:45},temp:{lo:6,opt1:10,opt2:20,hi:26},frost:-1},
   craterelle:{name:"Chanterelle en tube",latin:"Craterellus tubaeformis",color:"#9C7A2E",hosts:"conifères et feuillus, dans la mousse",soil:"acide, humide",season:"octobre → janvier",
-    rain:{min:25,opt:60},temp:{lo:2,opt1:6,opt2:13,hi:18},frost:-4},
+    rain:{min:25,opt:60},temp:{lo:1,opt1:5,opt2:13,hi:18},frost:-4},
   trompette:{name:"Trompette de la mort",latin:"Craterellus cornucopioides",color:"#3B3B46",hosts:"hêtre, chêne, charme",soil:"argileux, plutôt neutre",season:"septembre → décembre",
-    rain:{min:25,opt:60},temp:{lo:4,opt1:8,opt2:15,hi:20},frost:-3},
+    rain:{min:25,opt:60},temp:{lo:3,opt1:7,opt2:15,hi:20},frost:-3},
   pdm:{name:"Pied-de-mouton",latin:"Hydnum repandum",color:"#D9B98B",hosts:"feuillus et conifères",soil:"tous types, aime l'humus",season:"septembre → décembre",
-    rain:{min:20,opt:50},temp:{lo:3,opt1:7,opt2:15,hi:20},frost:-3},
+    rain:{min:20,opt:50},temp:{lo:2,opt1:6,opt2:15,hi:20},frost:-3},
 };
 // Espèces qu'on peut noter sans profil de carte
 const EXTRA = {
@@ -353,7 +353,7 @@ async function fetchJSON(url,ms=15000){const c=new AbortController();const t=set
   try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(t)}}
 
 /* ---------- Météo (Open-Meteo) ---------- */
-const PAST=21, FC=4; // 21 jours passés + aujourd'hui + 3 jours de prévision
+const PAST=30, FC=4; // 30 jours passés + aujourd'hui + 3 jours de prévision
 function parseWx(j,smKey){
   const d=j.daily,h=j.hourly||{};const smH=h[smKey]||[];
   return {elev:j.elevation,days:d.time.map((t,i)=>{
@@ -373,11 +373,12 @@ async function archiveWx(p,start,end){
   return parseWx(await fetchJSON(url,25000),"soil_moisture_0_to_7cm");
 }
 function metrics(days,t){
-  let r15=0,r7=0,fmin=Infinity;const tm=[];
-  for(let i=t-15;i<=t-1;i++){if(days[i]){r15+=days[i].p||0;if(i>=t-7)r7+=days[i].p||0}}
+  let r30=0,r15=0,r7=0,fmin=Infinity;const tm=[];
+  for(let i=t-30;i<=t-1;i++){if(days[i]){const p=days[i].p||0;r30+=p;if(i>=t-15)r15+=p;if(i>=t-7)r7+=p}}
   for(let i=t-6;i<=t;i++){if(days[i]&&days[i].tmean!=null)tm.push(days[i].tmean)}
   for(let i=t-5;i<=t;i++){if(days[i]&&days[i].tmin!=null)fmin=Math.min(fmin,days[i].tmin)}
-  return {r15,r7,t7:avg(tm),fmin:fmin===Infinity?null:fmin,sm:days[t]?days[t].sm:null};
+  // Pluie efficace : les 15 derniers jours comptent plein, les 15 d'avant à moitié
+  return {r30,r15,r7,er:r15+0.5*(r30-r15),t7:avg(tm),fmin:fmin===Infinity?null:fmin,sm:days[t]?days[t].sm:null};
 }
 
 /* ---------- Score ---------- */
@@ -386,7 +387,7 @@ function profileFor(key){
   const base=SPECIES[key];if(!base)return null;
   const mine=finds.filter(f=>f.species===key&&f.wx&&f.wx.m&&f.wx.m.t7!=null);
   if(mine.length<3)return {...base,calibrated:0};
-  const r=mine.map(f=>f.wx.m.r15),t=mine.map(f=>f.wx.m.t7);
+  const r=mine.map(f=>f.wx.m.er??f.wx.m.r15),t=mine.map(f=>f.wx.m.t7);
   // Mélange 50/50 entre le profil général et tes propres trouvailles
   const mix=(a,b)=>Math.round((a+b)/2*10)/10;
   return {...base,calibrated:mine.length,
@@ -395,16 +396,17 @@ function profileFor(key){
 }
 function score(m,P){
   if(!P||m.t7==null)return null;
-  const rain=clamp((m.r15-P.rain.min)/Math.max(1,P.rain.opt-P.rain.min));
+  const rain=clamp(((m.er??m.r15)-P.rain.min)/Math.max(1,P.rain.opt-P.rain.min));
   const T=P.temp,t=m.t7;
   const temp=t<=T.lo||t>=T.hi?0:t<T.opt1?(t-T.lo)/(T.opt1-T.lo):t>T.opt2?(T.hi-t)/(T.hi-T.opt2):1;
-  let s;
-  if(m.sm!=null){const soil=clamp((m.sm-0.18)/(0.33-0.18));s=0.5*rain+0.3*temp+0.2*soil}
-  else s=(0.5*rain+0.3*temp)/0.8;
-  if(temp<0.15)s*=0.4; if(rain<0.15)s*=0.4;
+  // Humidité : la pluie récente, ou un sol resté humide (fréquent en automne, quand l'eau s'évapore peu)
+  const soil=m.sm!=null?clamp((m.sm-0.18)/(0.33-0.18)):null;
+  const wet=soil==null?rain:Math.max(rain,0.7*soil+0.3*rain);
+  let s=0.65*wet+0.35*temp;
+  if(temp<0.15)s*=0.4; if(wet<0.15)s*=0.4;
   const frost=m.fmin!=null&&m.fmin<P.frost;
   if(frost)s*=0.35;
-  return {s:clamp(s),rain,temp,frost};
+  return {s:clamp(s),rain,soil,wet,temp,frost};
 }
 function label(s){return s==null?"–":s<0.25?"Faible":s<0.5?"Moyen":s<0.75?"Bon":"Très bon"}
 function ramp(s){const stops=[[0.25,[244,211,94]],[0.6,[238,150,75]],[1,[209,73,91]]];
@@ -467,9 +469,9 @@ function updateZoneStatus(){
 const WX_DLON=0.1, WX_DLAT=0.067;
 const wxCache=new Map(); // "i,j" -> {elev,days}
 let wxStamp=0;
-(function restoreWx(){const c=store.get("sb.wx",null);if(!c||c.day!==todayISO()||Date.now()-c.t>3*3600e3)return;
+(function restoreWx(){const c=store.get("sb.wx",null);if(!c||c.v!==2||c.day!==todayISO()||Date.now()-c.t>3*3600e3)return;
   for(const[k,v]of Object.entries(c.data))wxCache.set(k,v);wxStamp=c.t})();
-function persistWx(){const data={};for(const[k,v]of wxCache)data[k]=v;if(!store.set("sb.wx",{day:todayISO(),t:wxStamp,data}))store.set("sb.wx",null)}
+function persistWx(){const data={};for(const[k,v]of wxCache)data[k]=v;if(!store.set("sb.wx",{v:2,day:todayISO(),t:wxStamp,data}))store.set("sb.wx",null)}
 const nodeLat=j=>j*WX_DLAT, nodeLon=i=>i*WX_DLON;
 function nodesFor(b){const out=[];for(let i=Math.floor(b.w/WX_DLON);i<=Math.ceil(b.e/WX_DLON);i++)for(let j=Math.floor(b.s/WX_DLAT);j<=Math.ceil(b.n/WX_DLAT);j++)out.push({i,j,key:i+","+j,lat:nodeLat(j),lon:nodeLon(i)});return out}
 let busy=false;
@@ -570,7 +572,7 @@ function renderGrid(){
     rect.addTo(meteoLayer);}
 }
 function cellPopup(m,r,wx){
-  return `Météo : <b>${label(r.s)} (${Math.round(r.s*100)} %)</b><br>Pluie 15 j : ${fmt(m.r15)} mm (7 j : ${fmt(m.r7)} mm)<br>Temp. moy. 7 j : ${fmt(m.t7,1)} °C<br>`+
+  return `Météo : <b>${label(r.s)} (${Math.round(r.s*100)} %)</b><br>Pluie 7 j / 15 j / 30 j : ${fmt(m.r7)} / ${fmt(m.r15)} / ${fmt(m.r30)} mm<br>Temp. moy. 7 j : ${fmt(m.t7,1)} °C<br>`+
     (m.sm!=null?`Humidité du sol : ${fmt(m.sm*100)} %<br>`:"")+(r.frost?`<span style="color:var(--danger)">Gel récent (${fmt(m.fmin,1)} °C)</span><br>`:"")+`Altitude ≈ ${fmt(wx.elev)} m`;
 }
 function refreshAll(){scoreCache.clear();renderGrid();zonesLayer.redraw();updateTop()}
@@ -727,12 +729,12 @@ async function enrich(f){
   if(!f.wx){
     try{
       const age=dayDiff(f.date,todayISO());let wx,t;
-      if(age<=80){wx=(await forecastWx([{lat:f.lat,lon:f.lon}],Math.max(PAST,age+PAST),1))[0];t=wx.days.findIndex(d=>d.d===f.date)}
+      if(age<=60){wx=(await forecastWx([{lat:f.lat,lon:f.lon}],Math.max(PAST,age+PAST),1))[0];t=wx.days.findIndex(d=>d.d===f.date)}
       else{wx=await archiveWx(f,addDays(f.date,-PAST),f.date);t=wx.days.length-1}
       if(t<0)throw new Error("date");
       const days=wx.days.slice(Math.max(0,t-PAST),t+1).map(d=>({d:d.d,p:round1(d.p),tmin:round1(d.tmin),tmax:round1(d.tmax),tmean:round1(d.tmean),sm:d.sm!=null?Math.round(d.sm*1000)/1000:null}));
       const m=metrics(days,days.length-1);
-      f.wx={elev:wx.elev,days,m:{r15:round1(m.r15),r7:round1(m.r7),t7:round1(m.t7),fmin:round1(m.fmin),sm:m.sm}};
+      f.wx={elev:wx.elev,days,m:{r30:round1(m.r30),er:round1(m.er),r15:round1(m.r15),r7:round1(m.r7),t7:round1(m.t7),fmin:round1(m.fmin),sm:m.sm}};
     }catch(e){ok=false}
   }
   if(f.forest==null){const r=await forestAt(f.lat,f.lon);if(r!==undefined)f.forest=r;else ok=false}
