@@ -1,43 +1,32 @@
-"""Prépare les couches de terrain de Sous-Bois.
+"""Prépare les couches de terrain de Sous-Bois (calcul lancé sur GitHub).
 
-Télécharge les forêts de l'IGN (BD Forêt V2, service WFS de la Géoplateforme) et le pH
-du sol (ISRIC SoilGrids, service WCS), puis les rasterise sur une grille régulière en
-latitude/longitude. Les fichiers produits dans data/ sont lus directement par l'app.
+Toutes les couches partagent la même grille (≈ 55 m) sur l'Ille-et-Vilaine et ses abords.
 
-  data/terrain.bin.gz   un octet par pixel : classe de peuplement (0 = pas de forêt)
-  data/ph.bin.gz        un octet par pixel : pH × 10 (0 = inconnu), grille plus grossière
-  data/meta.json        emprise, tailles, classes, statistiques
-  data/build-log.txt    journal du dernier calcul
+  terrain.bin.gz  peuplement (0 = rien) — IGN BD Forêt V2 + BD TOPO (haies, petits bois),
+                  zones bâties et parcs retirés (OpenStreetMap)
+  relief.bin.gz   humidité due au relief, 1 (sec) → 255 (fond humide), 0 = inconnu
+  loss.bin.gz     année de la dernière coupe ou trouée (année − 2000), 0 = aucune (Hansen / UMD)
+  pub.bin.gz      1 = forêt publique (ONF), 0 = privé ou inconnu
+  ph.bin.gz       pH × 10 en surface (ISRIC SoilGrids), grille plus grossière
+  meta.json       description des fichiers
+  build-log.txt   journal
 """
-import gzip, io, json, math, re, sys, time, unicodedata, xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+import io, json, math, os, re, sys, tempfile, time, traceback, unicodedata
 from pathlib import Path
 
 import numpy as np
-import requests
 
-OUT = Path(__file__).resolve().parent.parent / "data"
-OUT.mkdir(exist_ok=True)
-LOG = []
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from common import OUT, REGION, DLAT, DLON, W, H, S, Log, get, now_iso, write_gz, read_gz, transform, cell
 
-def log(*a):
-    line = " ".join(str(x) for x in a)
-    print(line, flush=True)
-    LOG.append(line)
-
-def save_log():
-    (OUT / "build-log.txt").write_text("\n".join(LOG) + "\n", encoding="utf-8")
-
-# Ille-et-Vilaine et ses abords (Saint-Malo → Redon, Montfort → Vitré/Fougères)
-REGION = {"name": "Ille-et-Vilaine", "west": -2.40, "east": -0.95, "south": 47.55, "north": 48.80}
-DLAT = 0.0005      # ≈ 55 m
-DLON = 0.00075     # ≈ 55 m à 48° N
-PH_DLAT, PH_DLON = 0.0025, 0.00375   # ≈ 275 m, proche de la résolution de SoilGrids
+log = Log("build-log.txt")
+PH_DLAT, PH_DLON = 0.0025, 0.00375
+GEOPF_WFS = "https://data.geopf.fr/wfs/ows"
 
 CLASSES = [
     "Hors forêt", "Chênes", "Hêtre", "Châtaignier", "Autres feuillus", "Mélange de feuillus",
     "Pins", "Douglas", "Épicéa / sapin", "Autres conifères", "Mixte feuillus-conifères",
-    "Peupleraie", "Forêt ouverte", "Lande",
+    "Peupleraie", "Forêt ouverte", "Lande", "Haie / talus boisé", "Petit bois",
 ]
 
 def norm(s):
@@ -49,7 +38,7 @@ def classify(tfv, essence=""):
     if "peupleraie" in t: return 11
     if "lande" in t or "herbace" in t: return 13
     ouverte = "ouverte" in t
-    if "sans couvert" in t: return 12          # coupe rase, jeune plantation
+    if "sans couvert" in t: return 12
     if "autre que pin" in t: return 9
     if "mixte" in t or ("conifere" in t and "feuillu" in t): c = 10
     elif "chene" in t: c = 1
@@ -63,142 +52,423 @@ def classify(tfv, essence=""):
     elif "feuillu" in t or "robinier" in t or "frene" in t or "bouleau" in t or "charme" in t: c = 4
     elif ouverte: return 12
     else: return 4
-    # Une forêt ouverte garde son essence mais pèse moins : on la note à part
     return 12 if ouverte and c in (4, 5, 9, 10) else c
 
-S = requests.Session()
-S.headers["User-Agent"] = "sous-bois/1.0 (github.com/Velit35/sous-bois)"
 
-def get(url, params=None, timeout=120, tries=4):
-    for i in range(tries):
-        try:
-            r = S.get(url, params=params, timeout=timeout)
-            if r.status_code == 200:
-                return r
-            log(f"  HTTP {r.status_code} sur {r.url[:200]} : {r.text[:300]!r}")
-        except Exception as e:
-            log(f"  erreur réseau ({e.__class__.__name__}: {e})")
-        time.sleep(3 * (i + 1))
-    return None
+# ------------------------------------------------------------------ outils WFS
+_caps = {}
+def wfs_names():
+    if "wfs" not in _caps:
+        r = get(GEOPF_WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetCapabilities"}, timeout=240, log=log)
+        _caps["wfs"] = re.findall(r"<(?:wfs:)?Name>([^<]+)</(?:wfs:)?Name>", r.text) if r else []
+        log(f"WFS : {len(_caps['wfs'])} couches")
+    return _caps["wfs"]
 
-# ---------------------------------------------------------------- BD Forêt
-WFS = "https://data.geopf.fr/wfs/ows"
-
-def find_typename():
-    r = get(WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetCapabilities"}, timeout=180)
-    if r is None:
-        return None
-    names = re.findall(r"<(?:wfs:)?Name>([^<]+)</(?:wfs:)?Name>", r.text)
-    cands = [n for n in names if "FORESTINVENTORY" in n.upper() or "BDFORET" in n.upper().replace("_", "")]
-    log("Couches forêt trouvées :", cands[:20])
-    for pref in ("FORESTINVENTORY.V2:formation_vegetale", "FORESTINVENTORY.V2"):
-        for n in cands:
-            if pref.lower() in n.lower():
-                return n
-    return cands[0] if cands else None
-
-def fetch_forest(typename):
-    feats = {}
-    step = 0.25
+def wfs_tiles(typename, step=0.25, cql=None, count=5000):
+    """Parcourt la région par tuiles et renvoie les objets GeoJSON tuile par tuile."""
     lon = REGION["west"]
     while lon < REGION["east"] - 1e-9:
         lat = REGION["south"]
         while lat < REGION["north"] - 1e-9:
             w, s, e, n = lon, lat, min(lon + step, REGION["east"]), min(lat + step, REGION["north"])
-            start = 0
+            start, got_all = 0, []
             while True:
-                params = {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": typename,
-                          "OUTPUTFORMAT": "application/json", "SRSNAME": "EPSG:4326",
-                          "BBOX": f"{s},{w},{n},{e},urn:ogc:def:crs:EPSG::4326",
-                          "COUNT": 2000, "STARTINDEX": start}
-                r = get(WFS, params, timeout=240)
+                p = {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": typename,
+                     "OUTPUTFORMAT": "application/json", "SRSNAME": "EPSG:4326", "COUNT": count, "STARTINDEX": start}
+                if cql:
+                    p["CQL_FILTER"] = cql.format(w=w, s=s, e=e, n=n)
+                else:
+                    p["BBOX"] = f"{s},{w},{n},{e},urn:ogc:def:crs:EPSG::4326"
+                r = get(GEOPF_WFS, p, timeout=300, log=log)
                 if r is None:
-                    log(f"  cellule {w:.2f},{s:.2f} abandonnée")
+                    log(f"  tuile {w:.2f},{s:.2f} abandonnée")
                     break
                 try:
                     fc = r.json()
                 except Exception:
-                    log("  réponse non JSON :", r.text[:300])
-                    break
+                    log("  réponse non JSON :", r.text[:300]); break
                 got = fc.get("features", [])
-                for f in got:
-                    fid = f.get("id") or json.dumps(f.get("properties"), sort_keys=True)[:200] + str(len(feats))
-                    feats[fid] = f
-                if len(got) < 2000:
+                got_all += got
+                matched = fc.get("numberMatched") or fc.get("totalFeatures")
+                start += len(got)
+                if not got or (isinstance(matched, int) and start >= matched) or (not isinstance(matched, int) and len(got) < count):
                     break
-                start += 2000
+            yield (w, s, e, n), got_all
             lat += step
-        log(f"  bande lon {lon:.2f} : {len(feats)} polygones cumulés")
         lon += step
-    return list(feats.values())
 
 def pick(props, *pats, avoid=("code", "g11")):
-    keys = list(props.keys())
     for p in pats:
-        for k in keys:
+        for k in props:
             kl = k.lower()
             if re.fullmatch(p, kl) and not any(a in kl for a in avoid):
                 return props[k]
     return None
 
-def rasterize_forest(features):
-    from rasterio import features as rfeatures
-    from rasterio.transform import from_origin
-    from shapely.geometry import shape, mapping
-    from shapely.affinity import affine_transform
-
-    W = int(round((REGION["east"] - REGION["west"]) / DLON))
-    H = int(round((REGION["north"] - REGION["south"]) / DLAT))
-    tr = from_origin(REGION["west"], REGION["north"], DLON, DLAT)
-
-    if features:
-        log("Exemple de propriétés :", json.dumps(features[0].get("properties", {}), ensure_ascii=False)[:600])
-    # Ordre des axes : on vérifie sur le premier polygone que l'on est bien en lon/lat
-    swap = False
-    for f in features[:50]:
+def swapped_xy(features):
+    from shapely.geometry import shape
+    for f in features[:30]:
         try:
             c = shape(f["geometry"]).centroid
         except Exception:
             continue
         inside = REGION["west"] - 1 < c.x < REGION["east"] + 1 and REGION["south"] - 1 < c.y < REGION["north"] + 1
-        swapped = REGION["west"] - 1 < c.y < REGION["east"] + 1 and REGION["south"] - 1 < c.x < REGION["north"] + 1
-        if not inside and swapped:
-            swap = True
-        break
-    log("Inversion lat/lon :", swap)
+        return not inside
+    return False
 
-    shapes, tally, labels = [], {}, {}
-    for f in features:
-        p = f.get("properties") or {}
-        tfv = pick(p, r"tfv", r"lib_tfv", r"libelle.*", r".*tfv.*") or ""
-        ess = pick(p, r"essence", r".*essence.*") or ""
-        c = classify(tfv, ess)
-        tally[c] = tally.get(c, 0) + 1
-        key = f"{tfv} | {ess}"
-        if key not in labels:
-            labels[key] = c
+def burn(shapes, out, all_touched=False):
+    from rasterio import features as rf
+    if shapes:
+        rf.rasterize(shapes, out=out, transform=transform(), all_touched=all_touched)
+
+
+# ------------------------------------------------------------------ 0. sondage des services
+def probe():
+    """Liste les couches utiles et enregistre des tuiles témoins (pour choisir les fonds de carte)."""
+    pdir = OUT / "probe"; pdir.mkdir(exist_ok=True)
+    r = get("https://data.geopf.fr/wmts", {"SERVICE": "WMTS", "REQUEST": "GetCapabilities"}, timeout=240, log=log)
+    wmts = re.findall(r"<ows:Identifier>([^<]+)</ows:Identifier>", r.text) if r else []
+    keys = ("ROAD", "ROUTE", "TRANSPORT", "CHEMIN", "SENTIER", "FORET", "PUBLI", "CADAST", "PARCEL", "ORTHO", "HAIE", "TOPO")
+    found = sorted({n for n in wmts if any(k in n.upper() for k in keys)})
+    log("WMTS utiles :", found[:120])
+    log("WFS utiles :", sorted({n for n in wfs_names() if any(k in n.upper() for k in ("FORET", "PUBLI", "HAIE", "VEGET", "PARCEL", "TRONCON"))})[:80])
+    # Tuiles témoins sur la forêt de Rennes (z16)
+    z, lat, lon = 16, 48.183, -1.575
+    x = int((lon + 180) / 360 * 2 ** z); y = int((1 - math.asinh(math.tan(math.radians(lat))) / math.pi) / 2 * 2 ** z)
+    for layer, fmt, style in [("TRANSPORTNETWORKS.ROADS", "image/png", "normal"), ("FORETS.PUBLIQUES", "image/png", "FORETS PUBLIQUES"),
+                              ("FORETS.PUBLIQUES", "image/png", "normal"), ("CADASTRALPARCELS.PARCELLAIRE_EXPRESS", "image/png", "normal"),
+                              ("ORTHOIMAGERY.ORTHOPHOTOS", "image/jpeg", "normal")]:
+        if layer not in wmts:
+            continue
+        rr = get("https://data.geopf.fr/wmts", {"SERVICE": "WMTS", "REQUEST": "GetTile", "VERSION": "1.0.0", "LAYER": layer, "STYLE": style,
+                                                "TILEMATRIXSET": "PM", "TILEMATRIX": z, "TILEROW": y, "TILECOL": x, "FORMAT": fmt}, log=log, tries=2)
+        if rr is not None and rr.headers.get("content-type", "").startswith("image"):
+            (pdir / f"{layer}--{style.replace(' ', '_')}.{fmt.split('/')[1]}").write_bytes(rr.content)
+            log(f"  tuile témoin {layer} ({style}) : {len(rr.content)} octets")
+    # Styles disponibles pour les couches clés
+    if r:
+        for layer in ("TRANSPORTNETWORKS.ROADS", "FORETS.PUBLIQUES"):
+            m = re.search(r"<ows:Identifier>" + re.escape(layer) + r"</ows:Identifier>(.*?)</Layer>", r.text, re.S)
+            if m:
+                log(f"  {layer} styles :", re.findall(r"<Style[^>]*>\s*<ows:Title>[^<]*</ows:Title>\s*<ows:Abstract>[^<]*</ows:Abstract>\s*<ows:Identifier>([^<]+)", m.group(1))
+                    or re.findall(r"<ows:Identifier>([^<]+)</ows:Identifier>", m.group(1))[:6],
+                    "zoom", re.findall(r"<TileMatrix>(\d+)</TileMatrix>", m.group(1))[:1], "→", re.findall(r"<TileMatrix>(\d+)</TileMatrix>", m.group(1))[-1:])
+
+
+# ------------------------------------------------------------------ 1. BD Forêt
+def forests():
+    names = wfs_names()
+    tn = next((n for n in names if "forestinventory.v2:formation_vegetale" in n.lower()), None) or \
+         next((n for n in names if "FORESTINVENTORY.V2" in n.upper()), None)
+    log("BD Forêt :", tn)
+    if not tn:
+        return None
+    arr = np.zeros((H, W), np.uint8)
+    order = {11: 0, 13: 0, 12: 1, 4: 2, 9: 2, 5: 3, 7: 3, 8: 3, 6: 4, 10: 4, 3: 5, 2: 5, 1: 5}
+    tally, labels, n = {}, {}, 0
+    from shapely.geometry import shape, mapping
+    from shapely.affinity import affine_transform
+    swap = None
+    for _, feats in wfs_tiles(tn, step=0.25, count=2000):
+        if swap is None and feats:
+            swap = swapped_xy(feats); log("  inversion lat/lon :", swap)
+        shapes = []
+        for f in feats:
+            p = f.get("properties") or {}
+            tfv = pick(p, r"tfv", r"lib_tfv", r"libelle.*", r".*tfv.*") or ""
+            ess = pick(p, r"essence", r".*essence.*") or ""
+            c = classify(tfv, ess)
+            tally[c] = tally.get(c, 0) + 1
+            labels.setdefault(f"{tfv} | {ess}", c)
+            try:
+                g = shape(f["geometry"])
+                if swap: g = affine_transform(g, [0, 1, 1, 0, 0, 0])
+                shapes.append((mapping(g), c))
+            except Exception:
+                pass
+        shapes.sort(key=lambda s: order.get(s[1], 0))
+        burn(shapes, arr)
+        n += len(feats)
+    log("  polygones :", n, "→", {CLASSES[k]: v for k, v in sorted(tally.items())})
+    for k, v in sorted(labels.items(), key=lambda kv: kv[1]):
+        log(f"     {CLASSES[v]:<26} ← {k}")
+    return arr if n else None
+
+
+# ------------------------------------------------------------------ 2. BD TOPO : haies et petits bois
+def hedges(arr):
+    names = wfs_names()
+    tn = next((n for n in names if n.lower().endswith(":zone_de_vegetation") and "bdtopo" in n.lower()), None)
+    log("BD TOPO végétation :", tn)
+    if not tn:
+        return
+    from shapely.geometry import shape, mapping
+    from shapely.affinity import affine_transform
+    hedge = np.zeros((H, W), np.uint8); wood = np.zeros((H, W), np.uint8)
+    natures, n, swap = {}, 0, None
+    # Filtre côté serveur ; si refusé, téléchargement complet de la tuile et tri ici
+    cql = "nature IN ('Haie','Bois','Forêt fermée de feuillus','Forêt fermée mixte','Forêt fermée de conifères') AND BBOX(geometrie,{w},{s},{e},{n},'EPSG:4326')"
+    test = get(GEOPF_WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": tn, "OUTPUTFORMAT": "application/json",
+                           "SRSNAME": "EPSG:4326", "COUNT": 5, "CQL_FILTER": cql.format(w=-1.62, s=48.15, e=-1.55, n=48.20)}, log=log, tries=2)
+    use_cql = False
+    try:
+        use_cql = test is not None and len(test.json().get("features", [])) > 0
+    except Exception:
+        pass
+    log("  filtre serveur :", use_cql)
+    for _, feats in wfs_tiles(tn, step=0.1, cql=cql if use_cql else None):
+        if swap is None and feats:
+            swap = swapped_xy(feats); log("  inversion lat/lon :", swap)
+        hs, ws = [], []
+        for f in feats:
+            nat = str((f.get("properties") or {}).get("nature") or "")
+            natures[nat] = natures.get(nat, 0) + 1
+            target = hs if nat == "Haie" else ws if nat in ("Bois", "Forêt fermée de feuillus", "Forêt fermée mixte", "Forêt fermée de conifères") else None
+            if target is None:
+                continue
+            try:
+                g = shape(f["geometry"])
+                if swap: g = affine_transform(g, [0, 1, 1, 0, 0, 0])
+                target.append((mapping(g), 1))
+            except Exception:
+                pass
+        burn(hs, hedge, all_touched=True); burn(ws, wood)
+        n += len(feats)
+    log("  objets :", n, "natures :", dict(sorted(natures.items(), key=lambda kv: -kv[1])[:15]))
+    free = arr == 0
+    arr[free & (wood > 0)] = 15
+    arr[(arr == 0) & (hedge > 0)] = 14
+    log(f"  ajoutés : petits bois {int((free & (wood > 0)).sum())} px, haies {int(((arr == 14)).sum())} px")
+
+
+# ------------------------------------------------------------------ 3. zones bâties et parcs (OpenStreetMap)
+def urban_mask():
+    from shapely.geometry import Polygon, LineString, mapping
+    from shapely.ops import polygonize, linemerge, unary_union
+    s, w, n, e = REGION["south"], REGION["west"], REGION["north"], REGION["east"]
+    lu = "residential|commercial|industrial|retail|construction|garages|railway|cemetery|education|religious|brownfield"
+    le = "park|garden|golf_course|pitch|sports_centre|stadium|playground|dog_park"
+    am = "school|university|college|hospital|parking"
+    q = f"""[out:json][timeout:900][maxsize:2000000000];
+(way["landuse"~"^({lu})$"]({s},{w},{n},{e});relation["landuse"~"^({lu})$"]({s},{w},{n},{e});
+ way["leisure"~"^({le})$"]({s},{w},{n},{e});relation["leisure"~"^({le})$"]({s},{w},{n},{e});
+ way["amenity"~"^({am})$"]({s},{w},{n},{e}););
+out geom;"""
+    data = None
+    for url in ("https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
+                "https://maps.mail.ru/osm/tools/overpass/api/interpreter"):
+        for i in range(2):
+            try:
+                r = S.post(url, data={"data": q}, timeout=1200)
+                if r.status_code == 200:
+                    data = r.json(); break
+                log(f"  Overpass {url} : HTTP {r.status_code} {r.text[:200]!r}")
+            except Exception as ex:
+                log(f"  Overpass {url} : {ex.__class__.__name__} {str(ex)[:150]}")
+            time.sleep(30)
+        if data:
+            break
+    if not data:
+        return None
+    shapes, kinds = [], {}
+    for el in data.get("elements", []):
+        tags = el.get("tags", {})
+        kind = tags.get("landuse") or tags.get("leisure") or tags.get("amenity")
         try:
-            g = shape(f["geometry"])
-            if swap:
-                g = affine_transform(g, [0, 1, 1, 0, 0, 0])
-            shapes.append((mapping(g), c))
+            if el["type"] == "way" and len(el.get("geometry", [])) >= 4:
+                pts = [(p["lon"], p["lat"]) for p in el["geometry"]]
+                if pts[0] == pts[-1]:
+                    shapes.append((mapping(Polygon(pts)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
+            elif el["type"] == "relation":
+                outers = [LineString([(p["lon"], p["lat"]) for p in m["geometry"]]) for m in el.get("members", [])
+                          if m.get("role") == "outer" and len(m.get("geometry", [])) >= 2]
+                polys = list(polygonize(linemerge(outers))) if outers else []
+                if polys:
+                    shapes.append((mapping(unary_union(polys)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
         except Exception:
             pass
-    # Les peuplements les plus favorables gagnent quand deux polygones se touchent
-    order = {11: 0, 13: 0, 12: 1, 4: 2, 9: 2, 5: 3, 7: 3, 8: 3, 6: 4, 10: 4, 3: 5, 2: 5, 1: 5}
-    shapes.sort(key=lambda s: order.get(s[1], 0))
-    arr = rfeatures.rasterize(shapes, out_shape=(H, W), transform=tr, fill=0, dtype="uint8", all_touched=False) if shapes else np.zeros((H, W), np.uint8)
-    log("Classes (polygones) :", {CLASSES[k]: v for k, v in sorted(tally.items())})
-    log("Types rencontrés → classe :")
-    for k, v in sorted(labels.items(), key=lambda kv: kv[1]):
-        log(f"   {CLASSES[v]:<26} ← {k}")
-    return arr, W, H
+    log("  OSM : polygones", len(shapes), dict(sorted(kinds.items(), key=lambda kv: -kv[1])[:12]))
+    m = np.zeros((H, W), np.uint8)
+    burn(shapes, m)
+    return m
 
-# ---------------------------------------------------------------- pH (SoilGrids)
-def fetch_ph():
+def apply_urban(arr, m):
+    from scipy.ndimage import uniform_filter
+    frac = uniform_filter(m.astype("float32"), size=11)          # part bâtie dans ≈ 600 m
+    kill = (arr > 0) & ((m > 0) | (frac >= 0.45))
+    log(f"  forêt retirée en zone bâtie ou parc : {int(kill.sum())} px ({kill.sum() / max(1, (arr > 0).sum()) * 100:.1f} %)")
+    arr[kill] = 0
+
+
+# ------------------------------------------------------------------ 4. forêts publiques (ONF)
+def public_forests():
+    names = wfs_names()
+    cands = [n for n in names if "FORETS.PUBLIQUES" in n.upper() or "FORET_PUBLIQUE" in n.upper() or "FORETS_PUBLIQUES" in n.upper()]
+    log("Forêts publiques WFS :", cands)
+    pub = np.zeros((H, W), np.uint8)
+    if cands:
+        from shapely.geometry import shape, mapping
+        from shapely.affinity import affine_transform
+        swap, n = None, 0
+        for _, feats in wfs_tiles(cands[0], step=0.5):
+            if swap is None and feats:
+                swap = swapped_xy(feats)
+                log("  exemple :", json.dumps((feats[0].get("properties") or {}), ensure_ascii=False)[:400])
+            sh = []
+            for f in feats:
+                try:
+                    g = shape(f["geometry"])
+                    if swap: g = affine_transform(g, [0, 1, 1, 0, 0, 0])
+                    sh.append((mapping(g), 1))
+                except Exception:
+                    pass
+            burn(sh, pub); n += len(feats)
+        log("  forêts publiques :", n, "polygones,", int(pub.sum()), "px")
+        if n:
+            return pub
+    # Repli : image WMS de la couche, découpée sur notre grille
+    from PIL import Image
+    for url in ("https://data.geopf.fr/wms-v/ows", "https://data.geopf.fr/wms-r/wms"):
+        r = get(url, {"SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetCapabilities"}, timeout=240, log=log)
+        if not r:
+            continue
+        layers = [l for l in re.findall(r"<Name>([^<]+)</Name>", r.text) if "FORETS.PUBLIQUES" in l.upper()]
+        log(f"  WMS {url} :", layers)
+        if not layers:
+            continue
+        step_c, step_r = 1000, 1000
+        for r0 in range(0, H, step_r):
+            for c0 in range(0, W, step_c):
+                hh, ww = min(step_r, H - r0), min(step_c, W - c0)
+                n_ = REGION["north"] - r0 * DLAT; s_ = n_ - hh * DLAT
+                w_ = REGION["west"] + c0 * DLON; e_ = w_ + ww * DLON
+                rr = get(url, {"SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap", "LAYERS": layers[0], "STYLES": "",
+                               "CRS": "EPSG:4326", "BBOX": f"{s_},{w_},{n_},{e_}", "WIDTH": ww, "HEIGHT": hh,
+                               "FORMAT": "image/png", "TRANSPARENT": "TRUE"}, timeout=240, log=log)
+                if rr is None or not rr.headers.get("content-type", "").startswith("image"):
+                    continue
+                im = np.array(Image.open(io.BytesIO(rr.content)).convert("RGBA"))
+                pub[r0:r0 + hh, c0:c0 + ww] = (im[..., 3] > 40).astype(np.uint8)
+        log("  forêts publiques (image) :", int(pub.sum()), "px")
+        if pub.sum():
+            return pub
+    return None
+
+
+# ------------------------------------------------------------------ 5. relief
+def dem():
+    """Altitude sur notre grille : IGN RGE ALTI (WMS, format BIL) sinon Copernicus GLO-30."""
+    out = np.full((H, W), np.nan, np.float32)
+    step = 600
+    ok = 0
+    for r0 in range(0, H, step):
+        for c0 in range(0, W, step):
+            hh, ww = min(step, H - r0), min(step, W - c0)
+            n_ = REGION["north"] - r0 * DLAT; s_ = n_ - hh * DLAT
+            w_ = REGION["west"] + c0 * DLON; e_ = w_ + ww * DLON
+            r = get("https://data.geopf.fr/wms-r/wms", {"SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap",
+                    "LAYERS": "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES", "STYLES": "", "CRS": "EPSG:4326",
+                    "BBOX": f"{s_},{w_},{n_},{e_}", "WIDTH": ww, "HEIGHT": hh, "FORMAT": "image/x-bil;bits=32"}, timeout=240, log=log, tries=3)
+            if r is None or len(r.content) != ww * hh * 4:
+                if r is not None:
+                    log("  BIL inattendu :", r.headers.get("content-type"), len(r.content), r.content[:120])
+                continue
+            for dt in ("<f4", ">f4"):
+                a = np.frombuffer(r.content, dt).reshape(hh, ww).astype(np.float32)
+                v = a[(a > -100) & (a < 2000)]
+                if v.size > a.size * 0.5 and -20 < np.median(v) < 600:
+                    a[(a <= -100) | (a >= 2000)] = np.nan
+                    out[r0:r0 + hh, c0:c0 + ww] = a; ok += 1; break
+    log(f"  MNT IGN : {ok} tuiles, {np.isfinite(out).mean() * 100:.1f} % couvert")
+    if np.isfinite(out).mean() > 0.95:
+        return out, "IGN RGE ALTI"
+    # Repli Copernicus (modèle de surface 30 m, arbres compris)
+    import rasterio
+    from rasterio.warp import reproject, Resampling
+    filled = 0
+    for la in range(int(math.floor(REGION["south"])), int(math.floor(REGION["north"])) + 1):
+        for lo in range(int(math.floor(REGION["west"])), int(math.floor(REGION["east"])) + 1):
+            name = f"Copernicus_DSM_COG_10_N{la:02d}_00_{'W' if lo < 0 else 'E'}{abs(lo):03d}_00_DEM"
+            url = f"/vsicurl/https://copernicus-dem-30m.s3.amazonaws.com/{name}/{name}.tif"
+            try:
+                with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR"), rasterio.open(url) as src:
+                    tmp = np.full((H, W), np.nan, np.float32)
+                    reproject(rasterio.band(src, 1), tmp, dst_transform=transform(), dst_crs="EPSG:4326",
+                              dst_nodata=np.nan, resampling=Resampling.average)
+                    m = np.isnan(out) & np.isfinite(tmp)
+                    out[m] = tmp[m]; filled += int(m.sum())
+            except Exception as ex:
+                log(f"  Copernicus {name} : {str(ex)[:150]}")
+    log(f"  Copernicus : {filled} px complétés, couverture {np.isfinite(out).mean() * 100:.1f} %")
+    return (out, "Copernicus GLO-30") if np.isfinite(out).mean() > 0.9 else (None, None)
+
+def relief():
+    from scipy import ndimage as nd
+    z, src = dem()
+    if z is None:
+        return None, None
+    lat_c = (REGION["north"] + REGION["south"]) / 2
+    dx, dy = DLON * 111320 * math.cos(math.radians(lat_c)), DLAT * 110540
+    mean = np.nanmean(z)
+    zf = np.where(np.isfinite(z), z, mean).astype(np.float32)
+    zf = nd.gaussian_filter(zf, 0.7)
+    gy, gx = np.gradient(zf, dy, dx)          # gy : vers le sud (lignes descendantes)
+    slope = np.arctan(np.hypot(gx, gy))
+    northness = -gy / (np.hypot(gx, gy) + 1e-6) * np.clip(np.degrees(slope) / 8, 0, 1)   # versant nord = +1
+    tpi_s = zf - nd.uniform_filter(zf, 9)     # ≈ 500 m
+    tpi_l = zf - nd.uniform_filter(zf, 31)    # ≈ 1,7 km
+    z_ = lambda a: (a - np.mean(a)) / (np.std(a) + 1e-6)
+    wet = -0.45 * z_(tpi_s) - 0.35 * z_(tpi_l) - 0.25 * z_(np.tan(slope)) + 0.2 * northness
+    # Indice topographique d'humidité (accumulation des écoulements), si pysheds est disponible
+    try:
+        import rasterio
+        from pysheds.grid import Grid
+        with tempfile.TemporaryDirectory() as td:
+            p = os.path.join(td, "dem.tif")
+            with rasterio.open(p, "w", driver="GTiff", width=W, height=H, count=1, dtype="float32",
+                               crs="EPSG:4326", transform=transform(), nodata=-9999) as dst:
+                dst.write(zf, 1)
+            g = Grid.from_raster(p); d = g.read_raster(p)
+            d = g.resolve_flats(g.fill_depressions(g.fill_pits(d)))
+            acc = np.asarray(g.accumulation(g.flowdir(d)), dtype=np.float64)
+        a = (acc + 1) * dx
+        twi = np.log(a / (np.tan(slope) + 0.01))
+        wet = 0.55 * z_(twi) + 0.45 * wet
+        log("  indice d'humidité : TWI (pysheds) + position dans le relief")
+    except Exception as ex:
+        log("  pysheds indisponible, position dans le relief seule :", str(ex)[:200])
+    rank = wet.ravel().argsort().argsort().reshape(wet.shape)
+    out = (1 + rank.astype(np.float64) / rank.size * 254).astype(np.uint8)
+    out[~np.isfinite(z)] = 0
+    log(f"  relief : altitude {np.nanmin(z):.0f}–{np.nanmax(z):.0f} m ({src})")
+    return out, src
+
+
+# ------------------------------------------------------------------ 6. coupes récentes (Hansen / UMD, Landsat 30 m)
+def forest_loss():
+    import rasterio
+    from rasterio.windows import from_bounds
+    for yr, ver in (("2025", "1.13"), ("2024", "1.12"), ("2023", "1.11"), ("2022", "1.10")):
+        url = f"/vsicurl/https://storage.googleapis.com/earthenginepartners-hansen/GFC-{yr}-v{ver}/Hansen_GFC-{yr}-v{ver}_lossyear_50N_010W.tif"
+        try:
+            with rasterio.Env(GDAL_DISABLE_READDIR_ON_OPEN="EMPTY_DIR", GDAL_HTTP_MAX_RETRY="4"), rasterio.open(url) as src:
+                win = from_bounds(REGION["west"], REGION["north"] - H * DLAT, REGION["west"] + W * DLON, REGION["north"], src.transform)
+                a = src.read(1, window=win.round_offsets().round_lengths(), out_shape=(H * 2, W * 3))
+            a = a[:H * 2, :W * 3].reshape(H, 2, W, 3)
+            cnt = (a > 0).sum(axis=(1, 3))
+            last = a.max(axis=(1, 3))
+            out = np.where(cnt >= 2, last, 0).astype(np.uint8)
+            log(f"  Hansen GFC {yr} : {int((out > 0).sum())} px touchés, dernière année 20{int(out.max()):02d}")
+            return out, int(yr)
+        except Exception as ex:
+            log(f"  Hansen {yr} : {str(ex)[:160]}")
+    return None, None
+
+
+# ------------------------------------------------------------------ 7. pH (SoilGrids)
+def soil_ph():
     import rasterio
     pad = 0.05
-    url = "https://maps.isric.org/mapserv"
     params = [("map", "/map/phh2o.map"), ("SERVICE", "WCS"), ("VERSION", "2.0.1"), ("REQUEST", "GetCoverage"),
               ("COVERAGEID", "phh2o_0-5cm_mean"), ("FORMAT", "image/tiff"),
               ("SUBSET", f"long({REGION['west'] - pad},{REGION['east'] + pad})"),
@@ -208,87 +478,99 @@ def fetch_ph():
     r = None
     for i in range(4):
         try:
-            r = S.get(url, params=params, timeout=300)
+            r = S.get("https://maps.isric.org/mapserv", params=params, timeout=300)
             if r.status_code == 200 and r.content[:2] in (b"II", b"MM"):
                 break
-            log(f"  SoilGrids HTTP {r.status_code} : {r.text[:300]!r}")
+            log(f"  SoilGrids HTTP {r.status_code} : {r.text[:200]!r}")
         except Exception as e:
-            log(f"  SoilGrids erreur : {e}")
-        r = None
-        time.sleep(10 * (i + 1))
+            log(f"  SoilGrids : {e}")
+        r = None; time.sleep(10 * (i + 1))
     if r is None:
         return None
     with rasterio.open(io.BytesIO(r.content)) as src:
-        band = src.read(1).astype("float32")
-        nod = src.nodata
-        tr = src.transform
-        log("SoilGrids :", src.width, "×", src.height, "crs", src.crs, "nodata", nod)
-    W = int(round((REGION["east"] - REGION["west"]) / PH_DLON))
-    H = int(round((REGION["north"] - REGION["south"]) / PH_DLAT))
-    lons = REGION["west"] + (np.arange(W) + 0.5) * PH_DLON
-    lats = REGION["north"] - (np.arange(H) + 0.5) * PH_DLAT
+        band = src.read(1).astype("float32"); nod = src.nodata; tr = src.transform
+    Wp = int(round((REGION["east"] - REGION["west"]) / PH_DLON)); Hp = int(round((REGION["north"] - REGION["south"]) / PH_DLAT))
+    lons = REGION["west"] + (np.arange(Wp) + 0.5) * PH_DLON; lats = REGION["north"] - (np.arange(Hp) + 0.5) * PH_DLAT
     inv = ~tr
-    cols = np.floor(np.array([inv * (x, lats[0]) for x in lons])[:, 0]).astype(int)
-    rows = np.floor(np.array([inv * (lons[0], y) for y in lats])[:, 1]).astype(int)
-    cols = np.clip(cols, 0, band.shape[1] - 1)
-    rows = np.clip(rows, 0, band.shape[0] - 1)
+    cols = np.clip(np.floor(np.array([inv * (x, lats[0]) for x in lons])[:, 0]).astype(int), 0, band.shape[1] - 1)
+    rows = np.clip(np.floor(np.array([inv * (lons[0], y) for y in lats])[:, 1]).astype(int), 0, band.shape[0] - 1)
     v = band[np.ix_(rows, cols)]
-    bad = ~np.isfinite(v) | (v <= 0)
-    if nod is not None:
-        bad |= v == nod
-    out = np.where(bad, 0, np.clip(np.round(v), 1, 140)).astype("uint8")   # SoilGrids donne pH × 10
-    ok = out[out > 0]
-    if ok.size:
-        log(f"pH : min {ok.min() / 10:.1f}, médiane {np.median(ok) / 10:.1f}, max {ok.max() / 10:.1f}")
-    return out, W, H
+    bad = ~np.isfinite(v) | (v <= 0) | ((v == nod) if nod is not None else False)
+    out = np.where(bad, 0, np.clip(np.round(v), 1, 140)).astype("uint8")
+    return out, Wp, Hp
 
-# ---------------------------------------------------------------- main
-def write_gz(name, arr):
-    with gzip.open(OUT / name, "wb", compresslevel=9) as f:
-        f.write(np.ascontiguousarray(arr, dtype="uint8").tobytes())
-    log(f"{name} : {(OUT / name).stat().st_size / 1e6:.2f} Mo")
+
+# ------------------------------------------------------------------ principal
+def stage(name, fn):
+    log(f"\n== {name}")
+    t = time.time()
+    try:
+        res = fn()
+    except Exception:
+        log("  ÉCHEC :", traceback.format_exc()[-1500:]); res = None
+    log(f"  ({time.time() - t:.0f} s)")
+    return res
 
 def main():
-    log("Calcul du", datetime.now(timezone.utc).isoformat(timespec="seconds"), "zone", REGION)
-    meta = {"version": 1, "generated": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-            "region": REGION, "classes": CLASSES}
-    ok = True
-    tn = find_typename()
-    log("Couche utilisée :", tn)
-    if tn:
-        feats = fetch_forest(tn)
-        log("Polygones téléchargés :", len(feats))
-        if feats:
-            arr, W, H = rasterize_forest(feats)
-            write_gz("terrain.bin.gz", arr)
-            share = (arr > 0).mean()
-            log(f"Part de forêt dans la zone : {share * 100:.1f} %")
-            meta["terrain"] = {"file": "terrain.bin.gz", "w": W, "h": H, "dlat": DLAT, "dlon": DLON,
-                               "west": REGION["west"], "north": REGION["north"], "forest_share": round(float(share), 4)}
-        else:
-            ok = False
+    log("Calcul du", now_iso(), "zone", REGION, f"grille {W}×{H}")
+    old = json.loads((OUT / "meta.json").read_text()) if (OUT / "meta.json").exists() else {}
+    meta = {"version": 2, "generated": now_iso(), "region": REGION, "classes": CLASSES,
+            "grid": {"w": W, "h": H, "dlat": DLAT, "dlon": DLON, "west": REGION["west"], "north": REGION["north"]}, "files": {}}
+    stage("Sondage des services", probe)
+
+    arr = stage("Forêts (IGN BD Forêt V2)", forests)
+    if arr is None:
+        arr = read_gz("terrain-base.bin.gz", (H, W))
+        log("  BD Forêt indisponible : reprise du calcul précédent" if arr is not None else "  BD Forêt indisponible")
     else:
-        ok = False
-    try:
-        ph = fetch_ph()
-    except Exception as e:
-        log("pH impossible :", repr(e)); ph = None
+        write_gz("terrain-base.bin.gz", arr, log)
+    if arr is None:
+        log("Rien à faire sans forêts."); log.save(); return 1
+    arr = arr.copy()
+    stage("Haies et petits bois (IGN BD TOPO)", lambda: hedges(arr))
+    m = stage("Zones bâties et parcs (OpenStreetMap)", urban_mask)
+    if m is not None:
+        write_gz("urban.bin.gz", m, log)
+    else:
+        m = read_gz("urban.bin.gz", (H, W)); log("  reprise du masque précédent" if m is not None else "  pas de masque urbain")
+    if m is not None:
+        apply_urban(arr, m)
+    write_gz("terrain.bin.gz", arr, log)
+    meta["files"]["terrain"] = "terrain.bin.gz"
+    meta["forest_share"] = round(float((arr > 0).mean()), 4)
+    meta["class_px"] = {CLASSES[k]: int((arr == k).sum()) for k in range(len(CLASSES))}
+    log("Pixels par classe :", meta["class_px"])
+
+    def keep(key, fname, res):
+        if res is not None:
+            write_gz(fname, res, log); meta["files"][key] = fname
+        elif old.get("files", {}).get(key) and (OUT / fname).exists():
+            meta["files"][key] = fname; log(f"  {key} : version précédente conservée")
+
+    keep("pub", "pub.bin.gz", stage("Forêts publiques (ONF)", public_forests))
+    rel = stage("Relief", relief)
+    keep("relief", "relief.bin.gz", rel[0] if rel else None)
+    if rel and rel[1]: meta["relief_source"] = rel[1]
+    elif old.get("relief_source"): meta["relief_source"] = old["relief_source"]
+    loss = stage("Coupes récentes (Hansen / UMD)", forest_loss)
+    keep("loss", "loss.bin.gz", loss[0] if loss else None)
+    if loss and loss[1]: meta["loss_until"] = loss[1]
+    elif old.get("loss_until"): meta["loss_until"] = old["loss_until"]
+    ph = stage("pH du sol (SoilGrids)", soil_ph)
     if ph:
-        arr, W, H = ph
-        write_gz("ph.bin.gz", arr)
-        meta["ph"] = {"file": "ph.bin.gz", "w": W, "h": H, "dlat": PH_DLAT, "dlon": PH_DLON,
-                      "west": REGION["west"], "north": REGION["north"]}
-    if "terrain" in meta:
-        (OUT / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
-    log("Terminé :", "OK" if ok else "INCOMPLET")
-    save_log()
-    return 0 if ok else 1
+        write_gz("ph.bin.gz", ph[0], log)
+        meta["ph"] = {"file": "ph.bin.gz", "w": ph[1], "h": ph[2], "dlat": PH_DLAT, "dlon": PH_DLON, "west": REGION["west"], "north": REGION["north"]}
+    elif old.get("ph"):
+        meta["ph"] = old["ph"]
+    # Compatibilité avec l'ancienne version de l'app
+    meta["terrain"] = {"file": "terrain.bin.gz", **meta["grid"]}
+    (OUT / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
+    log("\nTerminé :", now_iso(), "fichiers", meta["files"])
+    log.save()
+    return 0
 
 if __name__ == "__main__":
     try:
         sys.exit(main())
-    except Exception as e:
-        import traceback
-        log("ÉCHEC :", traceback.format_exc())
-        save_log()
-        sys.exit(1)
+    except Exception:
+        log("ÉCHEC :", traceback.format_exc()); log.save(); sys.exit(1)

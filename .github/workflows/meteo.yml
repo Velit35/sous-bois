@@ -1,0 +1,36 @@
+name: Météo de la nuit
+
+on:
+  schedule:
+    - cron: "41 3 * * *"
+    - cron: "41 14 * * *"
+  push:
+    paths:
+      - "scripts/build_meteo.py"
+      - ".github/workflows/meteo.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: meteo
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy requests
+      - name: Calcul de la météo
+        id: build
+        continue-on-error: true
+        run: python scripts/build_meteo.py
+      - name: Enregistrer
+        if: always()
+        run: scripts/commit.sh "Météo : $(date -u +'%F %H:%M') (${{ steps.build.outcome }})"

@@ -1,0 +1,36 @@
+name: Apprendre des observations
+
+on:
+  workflow_run:
+    workflows: ["Préparer le terrain"]
+    types: [completed]
+  schedule:
+    - cron: "23 2 3 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: train
+  cancel-in-progress: true
+
+jobs:
+  train:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install numpy requests scikit-learn
+      - name: Entraînement
+        id: build
+        continue-on-error: true
+        run: python scripts/train_model.py
+      - name: Enregistrer
+        if: always()
+        run: scripts/commit.sh "Modèle appris : $(date -u +%F) (${{ steps.build.outcome }})"
