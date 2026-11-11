@@ -33,4 +33,5 @@ jobs:
         run: python scripts/build_meteo.py
       - name: Enregistrer
         if: always()
-        run: scripts/commit.sh "Météo : $(date -u +'%F %H:%M') (${{ steps.build.outcome }})"
+        run: |
+          scripts/commit.sh "Météo : $(date -u +'%F %H:%M') (${{ steps.build.outcome }})"

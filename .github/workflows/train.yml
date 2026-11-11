@@ -33,4 +33,5 @@ jobs:
         run: python scripts/train_model.py
       - name: Enregistrer
         if: always()
-        run: scripts/commit.sh "Modèle appris : $(date -u +%F) (${{ steps.build.outcome }})"
+        run: |
+          scripts/commit.sh "Modèle appris : $(date -u +%F) (${{ steps.build.outcome }})"

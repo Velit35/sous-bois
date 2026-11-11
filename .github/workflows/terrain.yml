@@ -34,4 +34,5 @@ jobs:
         run: python scripts/build_terrain.py
       - name: Enregistrer les données
         if: always()
-        run: scripts/commit.sh "Couches de terrain : $(date -u +%F) (${{ steps.build.outcome }})"
+        run: |
+          scripts/commit.sh "Couches de terrain : $(date -u +%F) (${{ steps.build.outcome }})"

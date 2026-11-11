@@ -63,7 +63,8 @@ button{cursor:pointer}
 
 /* Boutons latéraux */
 .side{position:fixed;z-index:500;right:calc(env(safe-area-inset-right,0px) + 12px);
-  bottom:calc(env(safe-area-inset-bottom,0px) + 168px);display:flex;flex-direction:column;gap:10px}
+  bottom:calc(env(safe-area-inset-bottom,0px) + 168px);display:flex;flex-direction:column;gap:10px;transition:bottom .2s}
+body.outing .side{bottom:calc(env(safe-area-inset-bottom,0px) + 214px)}
 .round{position:relative;width:48px;height:48px;border-radius:50%;border:0;background:var(--surface);box-shadow:var(--shadow);display:grid;place-items:center}
 .round svg{width:22px;height:22px;stroke:var(--ink);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .round .badge{position:absolute;transform:translate(14px,-14px);background:var(--chanterelle);color:#1b1205;font-size:11px;font-weight:600;border-radius:999px;padding:1px 6px}
@@ -162,6 +163,34 @@ textarea{min-height:70px;resize:vertical}
 .levels i{width:12px;height:12px;border-radius:3px;display:inline-block}
 .lv1{background:#F4D35E}.lv2{background:#EE964B}.lv3{background:#D1495B}
 .zones-tile{image-rendering:pixelated;image-rendering:crisp-edges}
+.outing-pill{display:flex;align-items:center;gap:10px;background:var(--surface);box-shadow:var(--shadow);border-radius:999px;padding:6px 6px 6px 14px;max-width:560px;width:100%;font-size:13.5px;font-variant-numeric:tabular-nums}
+.outing-pill span#outingText{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outing-pill .rec{flex:none;width:10px;height:10px;border-radius:50%;background:#2F7DE1;animation:pulse 1.6s infinite}
+.outing-pill button{border:0;border-radius:999px;background:var(--moss);color:var(--moss-ink);padding:8px 14px;font-weight:600;font-size:13px}
+.tabs{display:flex;background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
+.tabs button{flex:1;border:0;background:none;border-radius:10px;padding:8px;font-weight:600;font-size:14px;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.rating-list{display:flex;flex-direction:column;gap:12px}
+.rating-row{background:var(--surface);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.rating-row b{display:flex;align-items:center;gap:8px;font-family:var(--f-display)}
+.choices.rating{gap:6px}
+.choices.rating button{padding:7px 10px;font-size:13px}
+.choices.rating button[aria-pressed="true"].r0{background:#7E8A80;border-color:#7E8A80;color:#fff}
+.choices.rating button[aria-pressed="true"].r1{background:#E9C46A;border-color:#E9C46A;color:#2a2005}
+.choices.rating button[aria-pressed="true"].r2{background:#F4A261;border-color:#F4A261;color:#2a1405}
+.choices.rating button[aria-pressed="true"].r3{background:#E76F51;border-color:#E76F51;color:#fff}
+.choices.rating button[aria-pressed="true"].r4{background:#B5179E;border-color:#B5179E;color:#fff}
+.chip.rate.r0{background:color-mix(in srgb,#7E8A80 22%,var(--surface))}.chip.rate.r1{background:color-mix(in srgb,#E9C46A 30%,var(--surface))}
+.chip.rate.r2{background:color-mix(in srgb,#F4A261 30%,var(--surface))}.chip.rate.r3{background:color-mix(in srgb,#E76F51 30%,var(--surface))}.chip.rate.r4{background:color-mix(in srgb,#B5179E 28%,var(--surface))}
+.rainlegend{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:-4px}
+.info{display:flex;flex-direction:column;gap:12px;font-size:14px}
+.info p{margin:0}
+.info-list{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.info-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums;background:var(--surface);border-radius:12px;overflow:hidden}
+.info-table th,.info-table td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--line)}
+.info-table th{font-size:11.5px;color:var(--muted);font-weight:600}
+.info-table tr:last-child td{border-bottom:0}
+.facts{display:flex;flex-wrap:wrap;gap:6px}
 .toast{position:fixed;z-index:1000;left:50%;top:calc(env(safe-area-inset-top,0px) + 14px);transform:translateX(-50%);
   background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px);text-align:center}
 .me{width:16px;height:16px;border-radius:50%;background:#2F7DE1;border:3px solid #fff;box-shadow:0 0 0 6px rgba(47,125,225,.25)}
@@ -194,12 +223,16 @@ textarea{min-height:70px;resize:vertical}
     <svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 16 0Z"/><path d="M9.5 11v6.5a2.5 2.5 0 0 0 5 0V11"/></svg>
     <span class="badge" id="findCount" hidden>0</span>
   </button>
+  <button class="round" id="btnOuting" aria-label="Sortie : suivre mon parcours">
+    <svg viewBox="0 0 24 24"><path d="M7.5 3.5c1.6 0 2.6 1.6 2.6 3.6S9.3 11 8 11.4c-1.4.4-2.6-.4-2.9-2-.4-2.2.7-5.9 2.4-5.9Z"/><path d="M5.6 13.6l3.6-.6.5 2.6c.2 1.1-.4 2-1.4 2.2-1 .2-1.9-.5-2.1-1.6Z"/><path d="M16.5 7.5c1.6 0 2.4 3.6 2 5.8-.3 1.6-1.5 2.4-2.9 2-1.3-.4-2.1-2.3-2.1-4.3s1.4-3.5 3-3.5Z"/><path d="M14.4 17.4l3.6.6-.6 2.6c-.2 1.1-1.1 1.8-2.1 1.6-1-.2-1.6-1.1-1.4-2.2Z"/></svg>
+  </button>
   <button class="round" id="btnLocate" aria-label="Me localiser">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
   </button>
 </div>
 
 <div class="bottom" id="bottom">
+  <div class="outing-pill" id="outingPill" hidden><span class="rec"></span><span id="outingText">Sortie en cours</span><button id="outingEnd">Terminer</button></div>
   <div class="bar" style="justify-content:center;gap:8px">
     <div class="days" id="days" role="group" aria-label="Jour"></div>
     <button class="refresh" id="btnRefresh" aria-label="Actualiser la météo"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 5v6h-6"/></svg><span>Météo</span></button>
@@ -237,6 +270,7 @@ textarea{min-height:70px;resize:vertical}
     <div class="field"><span class="label">Quantité</span><div class="choices" id="addQty"></div></div>
     <div class="field"><span class="label">Arbres autour</span><div class="choices" id="addTrees"></div></div>
     <div class="field"><span class="label">Note</span><textarea id="addNote" placeholder="Talus, mousse, lisière, état des champignons…"></textarea></div>
+    <p class="hint" id="addOuting" hidden>Cette trouvaille sera rattachée à ta sortie en cours.</p>
     <button class="btn primary" id="addSave">Enregistrer</button>
   </div>
 </section>
@@ -245,15 +279,17 @@ textarea{min-height:70px;resize:vertical}
 <section class="sheet" id="sheetFinds" hidden aria-label="Mes trouvailles">
   <div class="sheet-inner">
     <div class="grab"></div>
-    <header><h2>Mes trouvailles</h2><button class="x" data-close aria-label="Fermer">×</button></header>
+    <header><h2>Mon carnet</h2><button class="x" data-close aria-label="Fermer">×</button></header>
+    <div class="tabs" role="group" aria-label="Affichage"><button id="tabFinds" aria-pressed="true">Trouvailles</button><button id="tabOutings" aria-pressed="false">Sorties</button></div>
     <div class="summary" id="findSummary"></div>
     <div id="findList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div class="box">
       <span class="label">Sauvegarde</span>
-      <p class="hint">Les trouvailles sont gardées sur ce téléphone. Exporte-les de temps en temps pour ne rien perdre.</p>
+      <p class="hint">Trouvailles et sorties sont gardées sur ce téléphone. Exporte-les de temps en temps pour ne rien perdre.</p>
       <div class="row">
-        <button class="btn small" id="exportJson">Exporter (JSON)</button>
-        <button class="btn small" id="exportCsv">Exporter (CSV)</button>
+        <button class="btn small" id="exportJson">Tout exporter (JSON)</button>
+        <button class="btn small" id="exportCsv">Trouvailles (CSV)</button>
+        <button class="btn small" id="exportOutCsv">Sorties (CSV)</button>
         <button class="btn small" id="importBtn">Importer</button>
       </div>
       <input type="file" id="importFile" accept="application/json,.json" hidden>
@@ -267,17 +303,51 @@ textarea{min-height:70px;resize:vertical}
     <div class="grab"></div>
     <header><h2>Carte</h2><button class="x" data-close aria-label="Fermer">×</button></header>
     <div class="field"><span class="label">Fond</span><div class="choices" id="baseChoices"></div></div>
+    <div class="field"><span class="label">Propriété</span><div class="choices" id="ownChoices"></div><p class="hint" id="ownHint"></p></div>
     <div class="field"><span class="label">Couches</span>
-      <label class="layer"><div><b>Zones favorables</b><small>Essences IGN × pH du sol × météo, à 55 m près, en 3 niveaux</small>
+      <label class="layer"><div><b>Zones favorables</b><small>Peuplement × sol × relief × coupes × météo, à 55 m près</small>
         <div class="levels" style="margin-top:6px"><span><i class="lv1"></i>Possible</span><span><i class="lv2"></i>Favorable</span><span><i class="lv3"></i>Très favorable</span></div></div><input type="checkbox" class="switch" id="lyZones"></label>
-      <label class="layer"><div><b>Météo seule</b><small>Grille d'environ 7 km, sans tenir compte des bois</small>
+      <label class="layer"><div><b>Mes trouvailles et sorties</b><small>Points de cueillette et parcours, colorés selon le bilan</small></div><input type="checkbox" class="switch" id="lyFinds"></label>
+      <label class="layer"><div><b>Limites des forêts publiques</b><small>Forêts domaniales et communales (ONF)</small></div><input type="checkbox" class="switch" id="lyPub"></label>
+      <label class="layer"><div><b>Cadastre</b><small>Limites de parcelles, visibles en zoomant</small></div><input type="checkbox" class="switch" id="lyCadastre"></label>
+      <label class="layer"><div><b>Météo seule</b><small>Sans tenir compte des bois</small>
         <div class="legend" style="margin-top:6px"><span>faible</span><i></i><span>fort</span></div></div><input type="checkbox" class="switch" id="lyMeteo"></label>
-      <label class="layer"><div><b>Forêts et essences</b><small>IGN BD Forêt V2 : chênaies, hêtraies, pinèdes…</small></div><input type="checkbox" class="switch" id="lyForest"></label>
-      <label class="layer"><div><b>Géologie</b><small>BRGM, carte au 1/50 000 : granite, schiste, calcaire…</small></div><input type="checkbox" class="switch" id="lyGeol"></label>
-      <label class="layer"><div><b>Acidité du sol</b><small>pH en surface, ISRIC SoilGrids (250 m)</small></div><input type="checkbox" class="switch" id="lyPh"></label>
-      <label class="layer"><div><b>Mes trouvailles</b><small>Un point par champignon noté</small></div><input type="checkbox" class="switch" id="lyFinds"></label>
+      <label class="layer"><div><b>Forêts et essences</b><small>IGN BD Forêt V2</small></div><input type="checkbox" class="switch" id="lyForest"></label>
+      <label class="layer"><div><b>Géologie</b><small>BRGM, carte au 1/50 000</small></div><input type="checkbox" class="switch" id="lyGeol"></label>
+      <label class="layer"><div><b>Acidité du sol</b><small>pH en surface, ISRIC SoilGrids</small></div><input type="checkbox" class="switch" id="lyPh"></label>
     </div>
-    <p class="hint" id="zoneHint">Zones détaillées : Ille-et-Vilaine et ses abords. Touche la carte pour lire le peuplement, le pH et la météo d'un endroit.</p>
+    <button class="btn" id="btnInfo">Comment la carte est calculée</button>
+    <p class="hint">Zones détaillées : Ille-et-Vilaine et ses abords. Touche la carte pour lire ce qui fait le score d'un endroit.</p>
+  </div>
+</section>
+
+<section class="sheet" id="sheetOutingStart" hidden aria-label="Nouvelle sortie">
+  <div class="sheet-inner">
+    <div class="grab"></div>
+    <header><h2>Nouvelle sortie</h2><button class="x" data-close aria-label="Fermer">×</button></header>
+    <div class="field"><span class="label">Espèces cherchées</span><div class="choices" id="osSpecies"></div></div>
+    <p class="hint">Ton parcours est enregistré tant que l'app reste ouverte (l'écran reste allumé). À la fin, tu donnes un bilan par espèce, même « rien » : c'est ce qui apprend à la carte où ça ne pousse pas.</p>
+    <button class="btn primary" id="osStart">Démarrer la sortie</button>
+  </div>
+</section>
+
+<section class="sheet" id="sheetOutingEnd" hidden aria-label="Bilan de la sortie">
+  <div class="sheet-inner">
+    <div class="grab"></div>
+    <header><h2>Bilan de la sortie</h2><button class="x" data-close aria-label="Fermer">×</button></header>
+    <div class="summary" id="oeSummary"></div>
+    <div class="field"><span class="label">Cueillette par espèce</span><div id="oeRatings" class="rating-list"></div></div>
+    <div class="field"><span class="label">Note</span><textarea id="oeNote" placeholder="Sol sec sous les pins, beaucoup de limaces, déjà ramassé…"></textarea></div>
+    <button class="btn primary" id="oeSave">Enregistrer la sortie</button>
+    <div class="row"><button class="btn" id="oeContinue">Continuer la sortie</button><button class="btn danger" id="oeDiscard">Annuler la sortie</button></div>
+  </div>
+</section>
+
+<section class="sheet" id="sheetInfo" hidden aria-label="Comment la carte est calculée">
+  <div class="sheet-inner">
+    <div class="grab"></div>
+    <header><h2>Comment la carte est calculée</h2><button class="x" data-close aria-label="Fermer">×</button></header>
+    <div id="infoBody" class="info"></div>
   </div>
 </section>
 
@@ -291,549 +361,6 @@ window.addEventListener("unhandledrejection",function(e){var f=document.getEleme
 </script>
 
 <script src="vendor/leaflet/leaflet.js"></script>
-<script>
-"use strict";
-/* ---------- Espèces ---------- */
-// rain : cumul sur les 15 jours avant (mm) ; temp : moyenne des 7 derniers jours (°C) en trapèze lo/opt1/opt2/hi ; frost : gel qui bloque la pousse
-const SPECIES = {
-  cepe:{name:"Cèpe de Bordeaux",latin:"Boletus edulis",color:"#8A4B1F",hosts:"chêne, hêtre, châtaignier, pins, épicéa",soil:"acide à neutre (pH 4,5–6,5)",season:"août → novembre",
-    rain:{min:20,opt:55},temp:{lo:5,opt1:9,opt2:17,hi:23},frost:-1},
-  girolle:{name:"Girolle",latin:"Cantharellus cibarius",color:"#E3A21A",hosts:"chêne, hêtre, châtaignier, pins",soil:"acide, souvent moussu",season:"juin → novembre",
-    rain:{min:15,opt:45},temp:{lo:6,opt1:10,opt2:20,hi:26},frost:-1},
-  craterelle:{name:"Chanterelle en tube",latin:"Craterellus tubaeformis",color:"#9C7A2E",hosts:"conifères et feuillus, dans la mousse",soil:"acide, humide",season:"octobre → janvier",
-    rain:{min:25,opt:60},temp:{lo:1,opt1:5,opt2:13,hi:18},frost:-4},
-  trompette:{name:"Trompette de la mort",latin:"Craterellus cornucopioides",color:"#3B3B46",hosts:"hêtre, chêne, charme",soil:"argileux, plutôt neutre",season:"septembre → décembre",
-    rain:{min:25,opt:60},temp:{lo:3,opt1:7,opt2:15,hi:20},frost:-3},
-  pdm:{name:"Pied-de-mouton",latin:"Hydnum repandum",color:"#D9B98B",hosts:"feuillus et conifères",soil:"tous types, aime l'humus",season:"septembre → décembre",
-    rain:{min:20,opt:50},temp:{lo:2,opt1:6,opt2:15,hi:20},frost:-3},
-};
-// Espèces qu'on peut noter sans profil de carte
-const EXTRA = {
-  cepe_pins:{name:"Cèpe des pins",color:"#6E2E1E"}, bolet_bai:{name:"Bolet bai",color:"#7A5A3A"},
-  coulemelle:{name:"Coulemelle",color:"#B9A27E"}, rose_pres:{name:"Rosé des prés",color:"#D98C8C"},
-  autre:{name:"Autre",color:"#6B7A6E"}
-};
-const ALL = {...SPECIES,...EXTRA};
-const TREES = ["Chêne","Hêtre","Châtaignier","Charme","Bouleau","Pin","Épicéa","Douglas","Mélèze","Mixte"];
-const QTY = [["1","1"],["2-5","2 à 5"],["6-15","6 à 15"],["16+","16 et plus"]];
-// Affinité de chaque espèce avec les peuplements IGN (0 à 1), dans l'ordre des classes :
-// 0 hors forêt, 1 chênes, 2 hêtre, 3 châtaignier, 4 autres feuillus, 5 mélange feuillus, 6 pins, 7 douglas,
-// 8 épicéa/sapin, 9 autres conifères, 10 mixte, 11 peupleraie, 12 forêt ouverte, 13 lande
-const AFF = {
-  cepe:      [0,1.0,0.9,0.9,0.55,0.7,0.7,0.4,0.6,0.4,0.8,0.05,0.4,0.1],
-  girolle:   [0,0.9,0.9,1.0,0.55,0.7,0.8,0.4,0.5,0.4,0.8,0.05,0.4,0.1],
-  craterelle:[0,0.5,0.6,0.5,0.3,0.5,0.8,0.7,1.0,0.7,0.8,0.05,0.3,0.1],
-  trompette: [0,0.8,1.0,0.6,0.55,0.8,0.2,0.2,0.2,0.2,0.5,0.1,0.3,0],
-  pdm:       [0,0.8,0.9,0.7,0.5,0.8,0.6,0.6,0.7,0.6,0.9,0.1,0.4,0.05],
-};
-const PHPREF = {cepe:[4.5,6.5],girolle:[4,6],craterelle:[4,6],trompette:[5.5,7.5],pdm:[4.5,7.5]};
-
-/* ---------- Stockage ---------- */
-const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
-  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}};
-let finds = store.get("sb.finds",[]);
-const prefs = Object.assign({species:"cepe",day:0,base:"plan",collapsed:false,
-  layers:{zones:true,meteo:false,forest:false,geol:false,ph:false,finds:true},view:{lat:48.15,lon:-1.62,z:11}}, store.get("sb.prefs",{}));
-if(prefs.v!==2){prefs.v=2;prefs.layers={zones:true,meteo:false,forest:false,geol:false,ph:false,finds:true}}
-const savePrefs=()=>store.set("sb.prefs",prefs);
-function saveFinds(){ if(!store.set("sb.finds",finds)) toast("Mémoire pleine : exporte tes trouvailles."); updateCount(); }
-try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
-
-/* ---------- Outils ---------- */
-const $=s=>document.querySelector(s);
-const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const fmt=(n,d=0)=>n==null||isNaN(n)?"–":n.toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d});
-const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
-const avg=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:null;
-const todayISO=()=>{const d=new Date();return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
-const addDays=(iso,n)=>{const d=new Date(iso+"T12:00:00");d.setDate(d.getDate()+n);return new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
-const dayDiff=(a,b)=>Math.round((new Date(b+"T12:00:00")-new Date(a+"T12:00:00"))/864e5);
-let toastTimer; function toast(msg,ms=2800){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.hidden=true,ms)}
-async function fetchJSON(url,ms=15000){const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);
-  try{const r=await fetch(url,{signal:c.signal});if(!r.ok)throw new Error("HTTP "+r.status);return await r.json()}finally{clearTimeout(t)}}
-
-/* ---------- Météo (Open-Meteo) ---------- */
-const PAST=30, FC=4; // 30 jours passés + aujourd'hui + 3 jours de prévision
-function parseWx(j,smKey){
-  const d=j.daily,h=j.hourly||{};const smH=h[smKey]||[];
-  return {elev:j.elevation,days:d.time.map((t,i)=>{
-    const sl=smH.slice(i*24,i*24+24).filter(v=>v!=null);
-    const tmin=d.temperature_2m_min[i],tmax=d.temperature_2m_max[i];
-    let tmean=d.temperature_2m_mean?d.temperature_2m_mean[i]:null; if(tmean==null&&tmin!=null&&tmax!=null)tmean=(tmin+tmax)/2;
-    return {d:t,p:d.precipitation_sum[i]??0,tmin,tmax,tmean,sm:sl.length?avg(sl):null};})};
-}
-async function forecastWx(points,past=PAST,fc=FC){
-  const lat=points.map(p=>p.lat.toFixed(4)).join(","),lon=points.map(p=>p.lon.toFixed(4)).join(",");
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=precipitation_sum,temperature_2m_min,temperature_2m_max,temperature_2m_mean&hourly=soil_moisture_3_to_9cm&past_days=${past}&forecast_days=${fc}&timezone=Europe%2FParis`;
-  let j=await fetchJSON(url,25000); if(!Array.isArray(j))j=[j];
-  return j.map(x=>parseWx(x,"soil_moisture_3_to_9cm"));
-}
-async function archiveWx(p,start,end){
-  const url=`https://archive-api.open-meteo.com/v1/archive?latitude=${p.lat.toFixed(4)}&longitude=${p.lon.toFixed(4)}&start_date=${start}&end_date=${end}&daily=precipitation_sum,temperature_2m_min,temperature_2m_max,temperature_2m_mean&hourly=soil_moisture_0_to_7cm&timezone=Europe%2FParis`;
-  return parseWx(await fetchJSON(url,25000),"soil_moisture_0_to_7cm");
-}
-function metrics(days,t){
-  let r30=0,r15=0,r7=0,fmin=Infinity;const tm=[];
-  for(let i=t-30;i<=t-1;i++){if(days[i]){const p=days[i].p||0;r30+=p;if(i>=t-15)r15+=p;if(i>=t-7)r7+=p}}
-  for(let i=t-6;i<=t;i++){if(days[i]&&days[i].tmean!=null)tm.push(days[i].tmean)}
-  for(let i=t-5;i<=t;i++){if(days[i]&&days[i].tmin!=null)fmin=Math.min(fmin,days[i].tmin)}
-  // Pluie efficace : les 15 derniers jours comptent plein, les 15 d'avant à moitié
-  return {r30,r15,r7,er:r15+0.5*(r30-r15),t7:avg(tm),fmin:fmin===Infinity?null:fmin,sm:days[t]?days[t].sm:null};
-}
-
-/* ---------- Score ---------- */
-const quant=(a,q)=>{const s=[...a].sort((x,y)=>x-y);const i=(s.length-1)*q;const lo=Math.floor(i),hi=Math.ceil(i);return s[lo]+(s[hi]-s[lo])*(i-lo)};
-function profileFor(key){
-  const base=SPECIES[key];if(!base)return null;
-  const mine=finds.filter(f=>f.species===key&&f.wx&&f.wx.m&&f.wx.m.t7!=null);
-  if(mine.length<3)return {...base,calibrated:0};
-  const r=mine.map(f=>f.wx.m.er??f.wx.m.r15),t=mine.map(f=>f.wx.m.t7);
-  // Mélange 50/50 entre le profil général et tes propres trouvailles
-  const mix=(a,b)=>Math.round((a+b)/2*10)/10;
-  return {...base,calibrated:mine.length,
-    rain:{min:mix(base.rain.min,Math.max(5,Math.min(...r)*0.7)),opt:mix(base.rain.opt,quant(r,0.5))},
-    temp:{lo:mix(base.temp.lo,Math.min(...t)-2),opt1:mix(base.temp.opt1,quant(t,0.25)),opt2:mix(base.temp.opt2,quant(t,0.75)),hi:mix(base.temp.hi,Math.max(...t)+2)}};
-}
-function score(m,P){
-  if(!P||m.t7==null)return null;
-  const rain=clamp(((m.er??m.r15)-P.rain.min)/Math.max(1,P.rain.opt-P.rain.min));
-  const T=P.temp,t=m.t7;
-  const temp=t<=T.lo||t>=T.hi?0:t<T.opt1?(t-T.lo)/(T.opt1-T.lo):t>T.opt2?(T.hi-t)/(T.hi-T.opt2):1;
-  // Humidité : la pluie récente, ou un sol resté humide (fréquent en automne, quand l'eau s'évapore peu)
-  const soil=m.sm!=null?clamp((m.sm-0.18)/(0.33-0.18)):null;
-  const wet=soil==null?rain:Math.max(rain,0.7*soil+0.3*rain);
-  let s=0.65*wet+0.35*temp;
-  if(temp<0.15)s*=0.4; if(wet<0.15)s*=0.4;
-  const frost=m.fmin!=null&&m.fmin<P.frost;
-  if(frost)s*=0.35;
-  return {s:clamp(s),rain,soil,wet,temp,frost};
-}
-function label(s){return s==null?"–":s<0.25?"Faible":s<0.5?"Moyen":s<0.75?"Bon":"Très bon"}
-function ramp(s){const stops=[[0.25,[244,211,94]],[0.6,[238,150,75]],[1,[209,73,91]]];
-  if(s<=stops[0][0])return `rgb(${stops[0][1]})`;
-  for(let i=1;i<stops.length;i++){if(s<=stops[i][0]){const[a,ca]=stops[i-1],[b,cb]=stops[i];const k=(s-a)/(b-a);return `rgb(${ca.map((v,j)=>Math.round(v+(cb[j]-v)*k))})`}}
-  return `rgb(${stops[2][1]})`;}
-
-/* ---------- Carte ---------- */
-const map=L.map("map",{zoomControl:false,preferCanvas:true,attributionControl:true}).setView([prefs.view.lat,prefs.view.lon],prefs.view.z);
-const geopf=l=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${l}&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}`;
-const BASES={
-  plan:{name:"Plan IGN",layer:L.tileLayer(geopf("GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2")+"&FORMAT=image/png",{maxZoom:19,attribution:"© IGN"})},
-  photo:{name:"Photos aériennes",layer:L.tileLayer(geopf("ORTHOIMAGERY.ORTHOPHOTOS")+"&FORMAT=image/jpeg",{maxZoom:19,attribution:"© IGN"})},
-  osm:{name:"OpenStreetMap",layer:L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"})}
-};
-const OVER={
-  forest:L.tileLayer.wms("https://data.geopf.fr/wms-r/wms",{layers:"LANDCOVER.FORESTINVENTORY.V2",format:"image/png",transparent:true,opacity:.55,attribution:"IGN BD Forêt",zIndex:3}),
-  geol:L.tileLayer.wms("https://geoservices.brgm.fr/geologie",{layers:"SCAN_H_GEOL50",format:"image/png",transparent:true,opacity:.5,attribution:"BRGM",zIndex:4}),
-  ph:L.tileLayer.wms("https://maps.isric.org/mapserv?map=/map/phh2o.map",{layers:"phh2o_0-5cm_mean",format:"image/png",transparent:true,opacity:.5,crs:L.CRS.EPSG4326,attribution:"ISRIC SoilGrids",zIndex:5}),
-};
-
-/* ---------- Terrain préparé (forêts IGN + pH) ---------- */
-const TERRAIN={ready:false,meta:null,cls:null,ph:null,error:null};
-async function loadBin(url){
-  const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error(url+" : "+r.status);
-  const buf=new Uint8Array(await r.arrayBuffer());
-  if(buf[0]===0x1f&&buf[1]===0x8b){
-    if(!("DecompressionStream" in window))throw new Error("Navigateur trop ancien pour lire les zones (mets iOS à jour).");
-    return new Uint8Array(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"))).arrayBuffer());
-  }
-  return buf;
-}
-async function loadTerrain(){
-  try{
-    const r=await fetch("data/meta.json",{cache:"no-cache"});
-    if(!r.ok){TERRAIN.error="pending";updateZoneStatus();return}
-    const meta=await r.json();
-    const cls=await loadBin("data/"+meta.terrain.file);
-    if(cls.length!==meta.terrain.w*meta.terrain.h)throw new Error("Fichier de zones incomplet");
-    let ph=null;if(meta.ph){try{ph=await loadBin("data/"+meta.ph.file)}catch(e){}}
-    Object.assign(TERRAIN,{ready:true,meta,cls,ph,error:null});
-    updateZoneStatus();zonesLayer.redraw();updateTop();ensureWeather();
-  }catch(e){TERRAIN.error=e.message||"erreur";updateZoneStatus()}
-}
-function inRaster(g,lat,lon){const c=Math.floor((lon-g.west)/g.dlon),r=Math.floor((g.north-lat)/g.dlat);return c<0||r<0||c>=g.w||r>=g.h?-1:r*g.w+c}
-function clsAt(lat,lon){if(!TERRAIN.ready)return -1;const i=inRaster(TERRAIN.meta.terrain,lat,lon);return i<0?-1:TERRAIN.cls[i]}
-function phLocal(lat,lon){if(!TERRAIN.ph)return null;const i=inRaster(TERRAIN.meta.ph,lat,lon);if(i<0)return null;const v=TERRAIN.ph[i];return v?v/10:null}
-function className(c){return TERRAIN.meta&&TERRAIN.meta.classes[c]||"?"}
-function phFactor(ph,key){const r=PHPREF[key];if(ph==null||!r)return 1;const d=ph<r[0]?r[0]-ph:ph>r[1]?ph-r[1]:0;return Math.max(0.5,1-0.5*d)}
-// 3 niveaux : 1 possible, 2 favorable, 3 très favorable
-const LEVELS=[null,{name:"Possible",min:0.22,rgba:[244,211,94,170]},{name:"Favorable",min:0.38,rgba:[238,150,75,195]},{name:"Très favorable",min:0.55,rgba:[209,73,91,215]}];
-function levelOf(s){return s>=LEVELS[3].min?3:s>=LEVELS[2].min?2:s>=LEVELS[1].min?1:0}
-function updateZoneStatus(){
-  const el=$("#zoneStatus");if(!el)return;
-  if(TERRAIN.ready){const c=map.getCenter();el.textContent=clsAt(c.lat,c.lng)<0?"· hors zone détaillée":"· à 55 m près"}
-  else el.textContent=TERRAIN.error==="pending"?"· zones en préparation":TERRAIN.error?"· zones indisponibles":"· chargement des zones…";
-}
-
-/* ---------- Météo sur un quadrillage fixe (~7 km) ---------- */
-const WX_DLON=0.1, WX_DLAT=0.067;
-const wxCache=new Map(); // "i,j" -> {elev,days}
-let wxStamp=0;
-(function restoreWx(){const c=store.get("sb.wx",null);if(!c||c.v!==2||c.day!==todayISO()||Date.now()-c.t>3*3600e3)return;
-  for(const[k,v]of Object.entries(c.data))wxCache.set(k,v);wxStamp=c.t})();
-function persistWx(){const data={};for(const[k,v]of wxCache)data[k]=v;if(!store.set("sb.wx",{v:2,day:todayISO(),t:wxStamp,data}))store.set("sb.wx",null)}
-const nodeLat=j=>j*WX_DLAT, nodeLon=i=>i*WX_DLON;
-function nodesFor(b){const out=[];for(let i=Math.floor(b.w/WX_DLON);i<=Math.ceil(b.e/WX_DLON);i++)for(let j=Math.floor(b.s/WX_DLAT);j<=Math.ceil(b.n/WX_DLAT);j++)out.push({i,j,key:i+","+j,lat:nodeLat(j),lon:nodeLon(i)});return out}
-let busy=false;
-async function ensureWeather(force){
-  if(busy)return;
-  const vb=map.getBounds();let b={w:vb.getWest(),e:vb.getEast(),s:vb.getSouth(),n:vb.getNorth()};
-  if(TERRAIN.ready){const R=TERRAIN.meta.region;const inter=!(b.e<R.west||b.w>R.east||b.n<R.south||b.s>R.north);if(inter)b={w:Math.min(b.w,R.west),e:Math.max(b.e,R.east),s:Math.min(b.s,R.south),n:Math.max(b.n,R.north)}}
-  if(force){wxCache.clear()}
-  const nodes=nodesFor(b);
-  if(nodes.length>700){updateTop();return} // trop dézoomé
-  const missing=nodes.filter(p=>!wxCache.has(p.key));
-  if(!missing.length)return;
-  busy=true;const btn=$("#btnRefresh");btn.classList.add("busy");
-  try{
-    for(let k=0;k<missing.length;k+=150){const chunk=missing.slice(k,k+150);const res=await forecastWx(chunk);chunk.forEach((p,j)=>wxCache.set(p.key,res[j]))}
-    wxStamp=Date.now();persistWx();scoreCache.clear();
-    renderGrid();zonesLayer.redraw();updateTop();
-  }catch(e){toast("Météo indisponible pour l'instant. Réessaie dans un moment.")}
-  finally{busy=false;btn.classList.remove("busy")}
-}
-// Scores météo par nœud, mémorisés pour l'espèce et le jour affichés
-const scoreCache=new Map();
-function nodeScores(){
-  const k=prefs.species+"|"+prefs.day+"|"+finds.length+"|"+wxStamp;
-  let m=scoreCache.get(k);if(m)return m;
-  m=new Map();const P=profileFor(prefs.species);
-  if(P)for(const[key,wx]of wxCache){const r=score(metrics(wx.days,PAST+prefs.day),P);if(r)m.set(key,r.s)}
-  scoreCache.clear();scoreCache.set(k,m);return m;
-}
-function wxScoreAt(lat,lon,S){
-  const x=lon/WX_DLON,y=lat/WX_DLAT,i=Math.floor(x),j=Math.floor(y),fx=x-i,fy=y-j;
-  let sum=0,wsum=0;
-  const add=(ii,jj,w)=>{const v=S.get(ii+","+jj);if(v!=null&&w>0){sum+=v*w;wsum+=w}};
-  add(i,j,(1-fx)*(1-fy));add(i+1,j,fx*(1-fy));add(i,j+1,(1-fx)*fy);add(i+1,j+1,fx*fy);
-  return wsum>0.2?sum/wsum:null;
-}
-function nearestWx(lat,lon){const k=Math.round(lon/WX_DLON)+","+Math.round(lat/WX_DLAT);return wxCache.get(k)||null}
-function scoreAt(wx,key,day){const t=PAST+day;const m=metrics(wx.days,t);return {m,r:score(m,profileFor(key))}}
-
-/* ---------- Couche des zones favorables (calculée pixel par pixel) ---------- */
-const tileLat=(y,z)=>{const n=Math.PI-2*Math.PI*y/(256*2**z);return 180/Math.PI*Math.atan(0.5*(Math.exp(n)-Math.exp(-n)))};
-function drawZones(cv,coords){
-  if(!TERRAIN.ready||!SPECIES[prefs.species])return;
-  const S=nodeScores();if(!S.size)return;
-  const g=TERRAIN.meta.terrain,cls=TERRAIN.cls,aff=AFF[prefs.species];
-  const N=cv.width,step=256/N,z=coords.z,world=256*2**z;
-  const R=TERRAIN.meta.region,lonL=coords.x*256/world*360-180,lonR=(coords.x+1)*256/world*360-180;
-  const latT=tileLat(coords.y*256,z),latB=tileLat((coords.y+1)*256,z);
-  if(lonR<R.west||lonL>R.east||latB>R.north||latT<R.south)return;
-  const ctx=cv.getContext("2d"),img=ctx.createImageData(N,N),d=img.data;
-  const lons=new Float64Array(N);for(let px=0;px<N;px++)lons[px]=(coords.x*256+(px+0.5)*step)/world*360-180;
-  let any=false;
-  for(let py=0;py<N;py++){
-    const lat=tileLat(coords.y*256+(py+0.5)*step,z);
-    const r=Math.floor((g.north-lat)/g.dlat);if(r<0||r>=g.h)continue;
-    let wRow=null,wLon=-999;
-    for(let px=0;px<N;px++){
-      const lon=lons[px];const c=Math.floor((lon-g.west)/g.dlon);if(c<0||c>=g.w)continue;
-      const k=cls[r*g.w+c];if(!k)continue;const a=aff[k];if(!a)continue;
-      if(lon-wLon>0.01||lon<wLon){wRow=wxScoreAt(lat,lon,S);wLon=lon}
-      if(wRow==null)continue;
-      const s=a*phFactor(phLocal(lat,lon),prefs.species)*wRow;
-      const lv=levelOf(s);if(!lv)continue;
-      const col=LEVELS[lv].rgba,o=(py*N+px)*4;d[o]=col[0];d[o+1]=col[1];d[o+2]=col[2];d[o+3]=col[3];any=true;
-    }
-  }
-  if(any)ctx.putImageData(img,0,0);
-}
-const ZonesLayer=L.GridLayer.extend({createTile(coords){
-  const cv=document.createElement("canvas");cv.className="zones-tile";
-  const N=coords.z>=13?256:128;cv.width=N;cv.height=N;
-  try{drawZones(cv,coords)}catch(e){console.error(e)}
-  return cv;}});
-const zonesLayer=new ZonesLayer({zIndex:6,opacity:1,updateWhenZooming:false,keepBuffer:1,attribution:"Zones : IGN BD Forêt, ISRIC, Open-Meteo"});
-
-const meteoLayer=L.layerGroup(), findsLayer=L.layerGroup();
-let currentBase=null;
-function setBase(k){if(!BASES[k])k="plan";if(currentBase)map.removeLayer(currentBase);currentBase=BASES[k].layer.addTo(map);currentBase.bringToBack();prefs.base=k;savePrefs();renderBaseChoices()}
-function applyLayers(){
-  for(const k of Object.keys(OVER)){prefs.layers[k]?OVER[k].addTo(map):map.removeLayer(OVER[k])}
-  prefs.layers.zones?zonesLayer.addTo(map):map.removeLayer(zonesLayer);
-  prefs.layers.meteo?meteoLayer.addTo(map):map.removeLayer(meteoLayer);
-  prefs.layers.finds?findsLayer.addTo(map):map.removeLayer(findsLayer);
-  savePrefs();
-}
-setBase(prefs.base); applyLayers();
-let moveTimer;
-map.on("moveend",()=>{const c=map.getCenter();prefs.view={lat:c.lat,lon:c.lng,z:map.getZoom()};savePrefs();updateTop();updateZoneStatus();
-  clearTimeout(moveTimer);moveTimer=setTimeout(()=>{ensureWeather();renderGrid()},700)});
-
-/* ---------- Grille météo seule ---------- */
-function renderGrid(){
-  meteoLayer.clearLayers(); if(!SPECIES[prefs.species]||!prefs.layers.meteo)return;
-  const vb=map.getBounds().pad(0.2);
-  for(const p of nodesFor({w:vb.getWest(),e:vb.getEast(),s:vb.getSouth(),n:vb.getNorth()})){
-    const wx=wxCache.get(p.key);if(!wx)continue;const {m,r}=scoreAt(wx,prefs.species,prefs.day);if(!r||r.s<0.12)continue;
-    const rect=L.rectangle([[p.lat-WX_DLAT/2,p.lon-WX_DLON/2],[p.lat+WX_DLAT/2,p.lon+WX_DLON/2]],{stroke:false,fillColor:ramp(r.s),fillOpacity:0.15+0.4*r.s,interactive:false});
-    rect.addTo(meteoLayer);}
-}
-function cellPopup(m,r,wx){
-  return `Météo : <b>${label(r.s)} (${Math.round(r.s*100)} %)</b><br>Pluie 7 j / 15 j / 30 j : ${fmt(m.r7)} / ${fmt(m.r15)} / ${fmt(m.r30)} mm<br>Temp. moy. 7 j : ${fmt(m.t7,1)} °C<br>`+
-    (m.sm!=null?`Humidité du sol : ${fmt(m.sm*100)} %<br>`:"")+(r.frost?`<span style="color:var(--danger)">Gel récent (${fmt(m.fmin,1)} °C)</span><br>`:"")+`Altitude ≈ ${fmt(wx.elev)} m`;
-}
-function refreshAll(){scoreCache.clear();renderGrid();zonesLayer.redraw();updateTop()}
-
-/* ---------- Bandeau du haut ---------- */
-function updateTop(){
-  const key=prefs.species,S=ALL[key],P=profileFor(key);
-  $("#topTitle").textContent=S.name;
-  const dayTxt=["aujourd'hui","demain","après-demain","dans 3 jours"][prefs.day];
-  const g=$("#gauge"),gv=$("#gaugeVal"),stats=$("#stats");
-  if(!P){g.style.setProperty("--g",0);gv.textContent="–";$("#topSub").textContent="Pas de profil météo pour cette espèce";stats.innerHTML="";$("#speciesInfo").innerHTML="";return}
-  const c=map.getCenter();const wx=nearestWx(c.lat,c.lng);
-  $("#topSub").textContent=`Météo ${dayTxt}, au centre de la carte`;
-  if(!wx){g.style.setProperty("--g",0);gv.textContent="–";stats.innerHTML=`<span class="chip">${map.getZoom()<8?"Zoome pour charger la météo":"Chargement de la météo…"}</span>`}
-  else{const {m,r}=scoreAt(wx,key,prefs.day);const pct=Math.round(r.s*100);
-    g.style.setProperty("--g",pct);g.style.setProperty("--g-col",ramp(Math.max(r.s,0.26)));gv.textContent=pct+"%";
-    stats.innerHTML=`<span class="chip">${label(r.s)}</span><span class="chip">Pluie 15 j ${fmt(m.r15)} mm</span><span class="chip">T moy 7 j ${fmt(m.t7,1)} °C</span>`+
-      (m.sm!=null?`<span class="chip">Sol ${fmt(m.sm*100)} %</span>`:"")+(r.frost?`<span class="chip warn">Gel récent</span>`:"")+
-      (P.calibrated?`<span class="chip cal">Ajusté sur tes ${P.calibrated} trouvailles</span>`:"");}
-  $("#speciesInfo").innerHTML=`<b>Arbres :</b> ${esc(P.hosts)} · <b>Sol :</b> ${esc(P.soil)} · <b>Saison :</b> ${esc(P.season)}`;
-}
-$("#collapseBtn").onclick=()=>{prefs.collapsed=!prefs.collapsed;savePrefs();applyCollapse()};
-function applyCollapse(){$("#topDetails").hidden=prefs.collapsed;$("#collapseBtn").textContent=prefs.collapsed?"Détails":"Réduire";$("#collapseBtn").setAttribute("aria-expanded",String(!prefs.collapsed))}
-
-/* ---------- Sélecteurs ---------- */
-const sel=$("#speciesSelect");
-sel.innerHTML=Object.entries(SPECIES).map(([k,s])=>`<option value="${k}">${esc(s.name)}</option>`).join("");
-if(!SPECIES[prefs.species])prefs.species="cepe";
-sel.value=prefs.species;
-sel.onchange=()=>{prefs.species=sel.value;savePrefs();refreshAll()};
-function renderDays(){
-  const names=["Auj.","Demain","J+2","J+3"];
-  $("#days").innerHTML=names.map((n,i)=>`<button aria-pressed="${prefs.day===i}" data-day="${i}">${n}</button>`).join("");
-}
-$("#days").onclick=e=>{const b=e.target.closest("[data-day]");if(!b)return;prefs.day=+b.dataset.day;savePrefs();renderDays();refreshAll()};
-$("#btnRefresh").onclick=()=>{toast("Mise à jour de la météo…",1500);ensureWeather(true)};
-
-/* ---------- Ma position ---------- */
-let meMarker=null;
-function showMe(lat,lon){const icon=L.divIcon({className:"",html:'<div class="me"></div>',iconSize:[16,16]});
-  if(meMarker)meMarker.setLatLng([lat,lon]);else meMarker=L.marker([lat,lon],{icon,interactive:false}).addTo(map)}
-$("#btnLocate").onclick=()=>{
-  if(!navigator.geolocation){toast("Localisation indisponible sur cet appareil.");return}
-  toast("Localisation…",1500);
-  navigator.geolocation.getCurrentPosition(p=>{showMe(p.coords.latitude,p.coords.longitude);map.setView([p.coords.latitude,p.coords.longitude],Math.max(map.getZoom(),14))},
-    ()=>toast("Position refusée ou introuvable. Vérifie l'autorisation de localisation."),{enableHighAccuracy:true,timeout:15000,maximumAge:30000});
-};
-
-/* ---------- Lecture forêt / sol en un point ---------- */
-async function forestAt(lat,lon){
-  const d=0.0004;
-  const url=`https://data.geopf.fr/wfs/ows?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=LANDCOVER.FORESTINVENTORY.V2:formation_vegetale&OUTPUTFORMAT=application/json&COUNT=3&SRSNAME=EPSG:4326&BBOX=${lat-d},${lon-d},${lat+d},${lon+d},urn:ogc:def:crs:EPSG::4326`;
-  try{const j=await fetchJSON(url,10000);const f=j.features&&j.features[0];if(!f)return {type:null,essence:null};
-    const p=f.properties||{};const pick=re=>{const k=Object.keys(p).find(k=>re.test(k)&&!/code/i.test(k));return k?p[k]:null};
-    return {type:pick(/^tfv$/i)||pick(/tfv/i)||pick(/lib/i),essence:pick(/essence/i)};}catch(e){return undefined}
-}
-async function phAt(lat,lon){
-  try{const j=await fetchJSON(`https://rest.isric.org/soilgrids/v2.0/properties/query?lon=${lon.toFixed(4)}&lat=${lat.toFixed(4)}&property=phh2o&depth=0-5cm&value=mean`,10000);
-    const v=j.properties.layers[0].depths[0].values.mean;return v==null?null:v/10;}catch(e){return undefined}
-}
-let addMode=false, placing=false;
-map.on("click",async e=>{
-  if(addMode||placing)return;
-  const {lat,lng}=e.latlng;
-  const pop=L.popup().setLatLng(e.latlng).setContent("Lecture du terrain…").openOn(map);
-  const local=clsAt(lat,lng);
-  // Dans la zone préparée, tout est lu sur le téléphone ; ailleurs on interroge l'IGN et SoilGrids
-  const [f,ph]=local>=0?[null,phLocal(lat,lng)]:await Promise.all([forestAt(lat,lng),phAt(lat,lng)]);
-  let h="";
-  const sp=prefs.species,wx=nearestWx(lat,lng);
-  if(local>=0){
-    if(local===0)h+="Pas de bois cartographié ici<br>";
-    else{h+=`Peuplement : <b>${esc(className(local))}</b><br>`;
-      if(SPECIES[sp]){const a=AFF[sp][local];h+=`Affinité ${esc(ALL[sp].name.toLowerCase())} : ${a>=0.8?"forte":a>=0.5?"moyenne":a>0.1?"faible":"nulle"}<br>`}}
-  }
-  else if(f===undefined)h+="Forêt : lecture impossible<br>";
-  else if(f&&f.type)h+=`<b>${esc(f.type)}</b><br>`+(f.essence?`Essence : ${esc(f.essence)}<br>`:"");
-  else if(f)h+="Pas de forêt cartographiée ici<br>";
-  if(ph!=null)h+=`pH du sol ≈ ${fmt(ph,1)} (${ph<5.5?"acide":ph<6.5?"légèrement acide":ph<7.5?"neutre":"calcaire"})<br>`;
-  if(local>0&&SPECIES[sp]){const S=nodeScores();const w=wxScoreAt(lat,lng,S);
-    if(w!=null){const s=AFF[sp][local]*phFactor(ph,sp)*w;const lv=levelOf(s);
-      h=`<b style="font-size:16px">${lv?LEVELS[lv].name:"Peu probable"}</b> · ${Math.round(s*100)} %<br>`+h}}
-  if(wx&&SPECIES[sp]){const {m,r}=scoreAt(wx,sp,prefs.day);h+=`<hr style="border:0;border-top:1px solid var(--line)">`+cellPopup(m,r,wx)}
-  pop.setContent(h||"Rien à lire ici.");
-});
-
-/* ---------- Feuilles ---------- */
-let openSheet=null;
-function show(id){closeSheet(true);openSheet=$(id);openSheet.hidden=false;$("#scrim").hidden=false;openSheet.scrollTop=0}
-function closeSheet(silent){if(openSheet){openSheet.hidden=true;if(openSheet.id==="sheetAdd"&&!placing)stopGps();openSheet=null}$("#scrim").hidden=true;if(!placing)addMode=false}
-$("#scrim").onclick=()=>closeSheet();
-document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeSheet());
-
-/* ---------- Ajout ---------- */
-const draft={species:"cepe",other:"",lat:null,lon:null,acc:null,alt:null,src:null,qty:"2-5",trees:[]};
-let watchId=null;
-function renderAdd(){
-  $("#addSpecies").innerHTML=Object.entries(ALL).map(([k,s])=>`<button data-sp="${k}" aria-pressed="${draft.species===k}"><span class="sw" style="background:${s.color};margin-right:6px"></span>${esc(s.name)}</button>`).join("");
-  $("#addOther").hidden=draft.species!=="autre";
-  $("#addQty").innerHTML=QTY.map(([v,t])=>`<button data-q="${v}" aria-pressed="${draft.qty===v}">${t}</button>`).join("");
-  $("#addTrees").innerHTML=TREES.map(t=>`<button data-tree="${t}" aria-pressed="${draft.trees.includes(t)}">${t}</button>`).join("");
-  renderGps();
-}
-function renderGps(){
-  const dot=$("#gpsDot"),txt=$("#gpsText");
-  if(draft.lat==null){dot.className="dot wait";txt.innerHTML="Recherche du GPS…<small>Reste à découvert quelques secondes si possible.</small>";return}
-  dot.className="dot "+(draft.src==="map"||draft.acc<=30?"ok":"wait");
-  txt.innerHTML=`${draft.lat.toFixed(5)}, ${draft.lon.toFixed(5)}<small>${draft.src==="map"?"Placé sur la carte":`GPS · précision ± ${Math.round(draft.acc)} m`}</small>`;
-}
-function startGps(){
-  stopGps(); if(!navigator.geolocation){$("#gpsText").textContent="GPS indisponible : place le point sur la carte.";return}
-  watchId=navigator.geolocation.watchPosition(p=>{
-    if(draft.src==="map")return;
-    if(draft.acc==null||p.coords.accuracy<=draft.acc||Date.now()-(draft.t||0)>8000){
-      Object.assign(draft,{lat:p.coords.latitude,lon:p.coords.longitude,acc:p.coords.accuracy,alt:p.coords.altitude,src:"gps",t:Date.now()});renderGps()}
-  },()=>{if(draft.lat==null){$("#gpsDot").className="dot";$("#gpsText").innerHTML="GPS refusé ou indisponible<small>Autorise la localisation, ou place le point sur la carte.</small>"}},
-  {enableHighAccuracy:true,timeout:30000,maximumAge:0});
-}
-function stopGps(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null}}
-$("#btnAdd").onclick=()=>{
-  Object.assign(draft,{species:SPECIES[prefs.species]?prefs.species:"cepe",other:"",lat:null,lon:null,acc:null,alt:null,src:null,qty:"2-5",trees:[],t:0});
-  $("#addDate").value=todayISO();const n=new Date();$("#addTime").value=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");
-  $("#addNote").value="";$("#addOther").value="";
-  addMode=true;renderAdd();show("#sheetAdd");addMode=true;startGps();
-};
-$("#addSpecies").onclick=e=>{const b=e.target.closest("[data-sp]");if(!b)return;draft.species=b.dataset.sp;renderAdd()};
-$("#addQty").onclick=e=>{const b=e.target.closest("[data-q]");if(!b)return;draft.qty=b.dataset.q;renderAdd()};
-$("#addTrees").onclick=e=>{const b=e.target.closest("[data-tree]");if(!b)return;const t=b.dataset.tree;draft.trees=draft.trees.includes(t)?draft.trees.filter(x=>x!==t):[...draft.trees,t];renderAdd()};
-$("#useGps").onclick=()=>{draft.src=null;draft.acc=null;draft.lat=null;renderGps();startGps()};
-$("#useMap").onclick=()=>{
-  placing=true;$("#sheetAdd").hidden=true;$("#scrim").hidden=true;$("#bottom").hidden=true;$("#crosshair").hidden=false;$("#placeBar").hidden=false;
-  if(draft.lat!=null)map.setView([draft.lat,draft.lon],Math.max(map.getZoom(),16));
-};
-$("#placeOk").onclick=()=>{
-  const c=map.getCenter();Object.assign(draft,{lat:c.lat,lon:c.lng,acc:null,alt:null,src:"map"});
-  placing=false;$("#crosshair").hidden=true;$("#placeBar").hidden=true;$("#bottom").hidden=false;$("#sheetAdd").hidden=false;$("#scrim").hidden=false;renderGps();
-};
-$("#addSave").onclick=()=>{
-  if(draft.lat==null){toast("Il manque la position : attends le GPS ou place le point sur la carte.");return}
-  const date=$("#addDate").value||todayISO();
-  if(date>todayISO()){toast("La date est dans le futur.");return}
-  const f={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),species:draft.species,
-    other:draft.species==="autre"?$("#addOther").value.trim():"",date,time:$("#addTime").value||"",
-    lat:+draft.lat.toFixed(6),lon:+draft.lon.toFixed(6),acc:draft.acc?Math.round(draft.acc):null,gpsAlt:draft.alt!=null?Math.round(draft.alt):null,src:draft.src,
-    qty:draft.qty,trees:[...draft.trees],note:$("#addNote").value.trim(),forest:null,ph:null,wx:null,created:new Date().toISOString()};
-  finds.unshift(f);saveFinds();renderFindMarkers();stopGps();closeSheet();
-  toast("Trouvaille enregistrée. Ajout de la météo des jours précédents…",3500);
-  enrich(f).then(ok=>{if(ok)toast("Météo, sol et forêt ajoutés à ta trouvaille.")});
-};
-
-/* ---------- Enrichissement d'une trouvaille ---------- */
-async function enrich(f){
-  let ok=true;
-  if(!f.wx){
-    try{
-      const age=dayDiff(f.date,todayISO());let wx,t;
-      if(age<=60){wx=(await forecastWx([{lat:f.lat,lon:f.lon}],Math.max(PAST,age+PAST),1))[0];t=wx.days.findIndex(d=>d.d===f.date)}
-      else{wx=await archiveWx(f,addDays(f.date,-PAST),f.date);t=wx.days.length-1}
-      if(t<0)throw new Error("date");
-      const days=wx.days.slice(Math.max(0,t-PAST),t+1).map(d=>({d:d.d,p:round1(d.p),tmin:round1(d.tmin),tmax:round1(d.tmax),tmean:round1(d.tmean),sm:d.sm!=null?Math.round(d.sm*1000)/1000:null}));
-      const m=metrics(days,days.length-1);
-      f.wx={elev:wx.elev,days,m:{r30:round1(m.r30),er:round1(m.er),r15:round1(m.r15),r7:round1(m.r7),t7:round1(m.t7),fmin:round1(m.fmin),sm:m.sm}};
-    }catch(e){ok=false}
-  }
-  if(f.forest==null){const r=await forestAt(f.lat,f.lon);if(r!==undefined)f.forest=r;else ok=false}
-  if(f.ph==null){const loc=phLocal(f.lat,f.lon);if(loc!=null)f.ph=loc;else{const r=await phAt(f.lat,f.lon);if(r!==undefined)f.ph=r}}
-  if(f.cls==null){const c=clsAt(f.lat,f.lon);if(c>=0)f.cls=c}
-  const i=finds.findIndex(x=>x.id===f.id);if(i>=0){finds[i]=f;saveFinds();renderFindMarkers();if(!$("#sheetFinds").hidden)renderFinds();refreshAll()}
-  if(!ok&&!f.wx)toast("Météo non récupérée (réseau ?). Nouvel essai à la prochaine ouverture.");
-  return ok;
-}
-const round1=v=>v==null?null:Math.round(v*10)/10;
-
-/* ---------- Trouvailles : carte et liste ---------- */
-function spName(f){return f.species==="autre"&&f.other?f.other:(ALL[f.species]||ALL.autre).name}
-function findPopup(f){const S=ALL[f.species]||ALL.autre;
-  return `<b>${esc(spName(f))}</b><br>${new Date(f.date+"T12:00").toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"})}`+
-    (f.wx?`<br>Pluie 15 j : ${fmt(f.wx.m.r15)} mm · T 7 j : ${fmt(f.wx.m.t7,1)} °C`:"")+(f.trees.length?`<br>${esc(f.trees.join(", "))}`:"")+(f.note?`<br><i>${esc(f.note)}</i>`:"")}
-function renderFindMarkers(){
-  findsLayer.clearLayers();
-  for(const f of finds){const S=ALL[f.species]||ALL.autre;
-    L.circleMarker([f.lat,f.lon],{radius:7,color:"#fff",weight:2,fillColor:S.color,fillOpacity:1}).bindPopup(()=>findPopup(f)).addTo(findsLayer)}
-}
-function updateCount(){const b=$("#findCount");b.hidden=!finds.length;b.textContent=finds.length}
-function rainBars(f){
-  const d=f.wx.days;const max=Math.max(10,...d.map(x=>x.p||0));const w=100/d.length;
-  return `<svg class="rainbars" viewBox="0 0 100 38" preserveAspectRatio="none" role="img" aria-label="Pluie des ${d.length} jours précédents">`+
-    d.map((x,i)=>{const h=(x.p||0)/max*28;return `<rect x="${i*w+0.4}" y="${30-h}" width="${w-0.8}" height="${Math.max(h,0.6)}" fill="${i>=d.length-16&&i<d.length-1?"#4F8FC0":"#9DB7CB"}"/>`}).join("")+
-    `<line x1="0" y1="30.5" x2="100" y2="30.5" stroke="var(--line)" stroke-width=".6"/></svg>
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:-4px"><span>J-${d.length-1}</span><span>pluie (bleu foncé : 15 j comptés)</span><span>jour J</span></div>`;
-}
-let pendingDelete=null;
-function renderFinds(){
-  const counts={};finds.forEach(f=>{const n=spName(f);counts[n]=(counts[n]||0)+1});
-  $("#findSummary").innerHTML=Object.entries(counts).map(([n,c])=>`<span class="chip">${esc(n)} · ${c}</span>`).join("");
-  if(!finds.length){$("#findList").innerHTML=`<div class="empty"><b>Aucune trouvaille pour l'instant</b>Touche le bouton + quand tu trouves un champignon : sa position et la météo des 3 semaines d'avant sont gardées ici.</div>`;return}
-  $("#findList").innerHTML=finds.map(f=>{const S=ALL[f.species]||ALL.autre;
-    const facts=[];
-    if(f.wx){facts.push(`Pluie 15 j ${fmt(f.wx.m.r15)} mm`,`T moy 7 j ${fmt(f.wx.m.t7,1)} °C`);if(f.wx.m.sm!=null)facts.push(`Sol ${fmt(f.wx.m.sm*100)} %`);facts.push(`${fmt(f.wx.elev)} m`)}
-    else facts.push("Météo en attente");
-    if(f.ph!=null)facts.push(`pH ${fmt(f.ph,1)}`);
-    if(f.qty)facts.push((QTY.find(q=>q[0]===f.qty)||[,f.qty])[1]+" pied(s)");
-    return `<article class="find" data-id="${f.id}">
-      <div class="find-head"><span class="sw" style="background:${S.color}"></span><b>${esc(spName(f))}</b><time>${new Date(f.date+"T12:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short",year:"numeric"})}${f.time?" · "+esc(f.time):""}</time></div>
-      <div class="facts">${facts.map(x=>`<span class="chip">${x}</span>`).join("")}</div>
-      ${f.forest&&f.forest.type?`<div class="hint">${esc(f.forest.type)}${f.forest.essence?" · "+esc(f.forest.essence):""}</div>`:""}
-      ${f.trees.length?`<div class="hint">Arbres notés : ${esc(f.trees.join(", "))}</div>`:""}
-      ${f.note?`<div>${esc(f.note)}</div>`:""}
-      ${f.wx?rainBars(f):""}
-      <div class="actions">
-        <button class="btn small" data-act="go">Voir sur la carte</button>
-        ${!f.wx?`<button class="btn small" data-act="retry">Récupérer la météo</button>`:""}
-        ${pendingDelete===f.id?`<button class="btn small danger" data-act="del2">Confirmer la suppression</button><button class="btn small" data-act="cancel">Annuler</button>`:`<button class="btn small danger" data-act="del">Supprimer</button>`}
-      </div></article>`}).join("");
-}
-$("#findList").onclick=e=>{
-  const b=e.target.closest("[data-act]");if(!b)return;const id=b.closest("[data-id]").dataset.id;const f=finds.find(x=>x.id===id);if(!f)return;
-  const a=b.dataset.act;
-  if(a==="go"){closeSheet();map.setView([f.lat,f.lon],16);if(!prefs.layers.finds){prefs.layers.finds=true;applyLayers();syncLayerSwitches()}}
-  if(a==="retry"){b.disabled=true;b.textContent="Récupération…";enrich(f)}
-  if(a==="del"){pendingDelete=id;renderFinds()}
-  if(a==="cancel"){pendingDelete=null;renderFinds()}
-  if(a==="del2"){finds=finds.filter(x=>x.id!==id);pendingDelete=null;saveFinds();renderFindMarkers();renderFinds();renderGrid();updateTop();toast("Trouvaille supprimée.")}
-};
-$("#btnFinds").onclick=()=>{pendingDelete=null;renderFinds();show("#sheetFinds")};
-
-/* ---------- Export / import ---------- */
-function download(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1000)}
-$("#exportJson").onclick=()=>download(`sous-bois-${todayISO()}.json`,JSON.stringify({app:"sous-bois",version:1,exported:new Date().toISOString(),finds},null,1),"application/json");
-$("#exportCsv").onclick=()=>{
-  const head=["date","heure","espece","lat","lon","precision_m","altitude_m","pluie_15j_mm","pluie_7j_mm","tmoy_7j_c","tmin_6j_c","humidite_sol","ph","foret","essence","arbres","quantite","note"];
-  const q=v=>{v=v==null?"":String(v);return /[;"\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
-  const rows=finds.map(f=>[f.date,f.time,spName(f),f.lat,f.lon,f.acc,f.wx?.elev,f.wx?.m.r15,f.wx?.m.r7,f.wx?.m.t7,f.wx?.m.fmin,f.wx?.m.sm,f.ph,f.forest?.type,f.forest?.essence,f.trees.join(", "),f.qty,f.note].map(q).join(";"));
-  download(`sous-bois-${todayISO()}.csv`,"﻿"+[head.join(";"),...rows].join("\n"),"text/csv");
-};
-$("#importBtn").onclick=()=>$("#importFile").click();
-$("#importFile").onchange=async e=>{
-  const file=e.target.files[0];if(!file)return;
-  try{const j=JSON.parse(await file.text());const list=Array.isArray(j)?j:j.finds;if(!Array.isArray(list))throw 0;
-    const ids=new Set(finds.map(f=>f.id));let n=0;
-    for(const f of list){if(f&&f.id&&typeof f.lat==="number"&&typeof f.lon==="number"&&!ids.has(f.id)){f.trees=f.trees||[];finds.push(f);n++}}
-    finds.sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time));saveFinds();renderFindMarkers();renderFinds();renderGrid();updateTop();
-    toast(n?`${n} trouvaille(s) importée(s).`:"Rien de nouveau dans ce fichier.");
-  }catch(err){toast("Fichier illisible : choisis un export JSON de Sous-Bois.")}
-  e.target.value="";
-};
-
-/* ---------- Couches ---------- */
-const SW={zones:"#lyZones",meteo:"#lyMeteo",forest:"#lyForest",geol:"#lyGeol",ph:"#lyPh",finds:"#lyFinds"};
-function syncLayerSwitches(){for(const[k,s]of Object.entries(SW))$(s).checked=!!prefs.layers[k]}
-for(const[k,s]of Object.entries(SW))$(s).onchange=e=>{prefs.layers[k]=e.target.checked;applyLayers();if(k==="meteo")renderGrid()};
-function renderBaseChoices(){$("#baseChoices").innerHTML=Object.entries(BASES).map(([k,b])=>`<button data-base="${k}" aria-pressed="${prefs.base===k}">${b.name}</button>`).join("")}
-$("#baseChoices").onclick=e=>{const b=e.target.closest("[data-base]");if(b)setBase(b.dataset.base)};
-$("#btnLayers").onclick=()=>{syncLayerSwitches();renderBaseChoices();show("#sheetLayers")};
-
-/* ---------- Démarrage ---------- */
-renderDays();applyCollapse();renderFindMarkers();updateCount();updateTop();updateZoneStatus();
-loadTerrain();ensureWeather();
-// Complète les trouvailles restées sans météo (hors ligne au moment de la cueillette)
-setTimeout(async()=>{for(const f of finds.filter(f=>!f.wx).slice(0,5)){await enrich(f)}},3000);
-window.addEventListener("online",()=>{for(const f of finds.filter(f=>!f.wx).slice(0,5))enrich(f)});
-</script>
+<script src="app.js?v=3"></script>
 </body>
 </html>
