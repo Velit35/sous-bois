@@ -26,7 +26,7 @@ jobs:
           python-version: "3.12"
       - name: Dépendances
         run: |
-          pip install numpy scipy requests rasterio shapely pillow
+          pip install "numpy<2" scipy requests rasterio shapely pillow
           pip install pysheds || echo "pysheds non installé"
       - name: Calcul des couches
         id: build

@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: train
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   train:
@@ -30,6 +30,8 @@ jobs:
       - name: Entraînement
         id: build
         continue-on-error: true
+        env:
+          FULL: ${{ github.event_name != 'workflow_run' && '1' || '0' }}
         run: python scripts/train_model.py
       - name: Enregistrer
         if: always()

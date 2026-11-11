@@ -79,14 +79,19 @@ def wfs_tiles(typename, step=0.25, cql=None, count=5000):
                     p["CQL_FILTER"] = cql.format(w=w, s=s, e=e, n=n)
                 else:
                     p["BBOX"] = f"{s},{w},{n},{e},urn:ogc:def:crs:EPSG::4326"
-                r = get(GEOPF_WFS, p, timeout=300, log=log)
-                if r is None:
+                fc = None
+                for attempt in range(5):
+                    r = get(GEOPF_WFS, p, timeout=300, log=log)
+                    if r is None:
+                        break
+                    try:
+                        fc = r.json(); break
+                    except Exception:
+                        log(f"  réponse illisible (essai {attempt + 1}) : {r.text[:80]!r}")
+                        time.sleep(5 * (attempt + 1))
+                if fc is None:
                     log(f"  tuile {w:.2f},{s:.2f} abandonnée")
                     break
-                try:
-                    fc = r.json()
-                except Exception:
-                    log("  réponse non JSON :", r.text[:300]); break
                 got = fc.get("features", [])
                 got_all += got
                 matched = fc.get("numberMatched") or fc.get("totalFeatures")
@@ -96,6 +101,16 @@ def wfs_tiles(typename, step=0.25, cql=None, count=5000):
             yield (w, s, e, n), got_all
             lat += step
         lon += step
+
+def cql_works(tn, cql):
+    for _ in range(3):
+        t = get(GEOPF_WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": tn, "OUTPUTFORMAT": "application/json",
+                            "SRSNAME": "EPSG:4326", "COUNT": 5, "CQL_FILTER": cql.format(w=-1.62, s=48.15, e=-1.55, n=48.20)}, log=log, tries=2)
+        try:
+            return t is not None and len(t.json().get("features", [])) > 0
+        except Exception:
+            time.sleep(5)
+    return False
 
 def pick(props, *pats, avoid=("code", "g11")):
     for p in pats:
@@ -198,7 +213,7 @@ def forests():
 # ------------------------------------------------------------------ 2. BD TOPO : haies et petits bois
 def hedges(arr):
     names = wfs_names()
-    tn = next((n for n in names if n.lower().endswith(":zone_de_vegetation") and "bdtopo" in n.lower()), None)
+    tn = "BDTOPO_V3:zone_de_vegetation" if "BDTOPO_V3:zone_de_vegetation" in names else None
     log("BD TOPO végétation :", tn)
     if not tn:
         return
@@ -208,13 +223,7 @@ def hedges(arr):
     natures, n, swap = {}, 0, None
     # Filtre côté serveur ; si refusé, téléchargement complet de la tuile et tri ici
     cql = "nature IN ('Haie','Bois','Forêt fermée de feuillus','Forêt fermée mixte','Forêt fermée de conifères') AND BBOX(geometrie,{w},{s},{e},{n},'EPSG:4326')"
-    test = get(GEOPF_WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": tn, "OUTPUTFORMAT": "application/json",
-                           "SRSNAME": "EPSG:4326", "COUNT": 5, "CQL_FILTER": cql.format(w=-1.62, s=48.15, e=-1.55, n=48.20)}, log=log, tries=2)
-    use_cql = False
-    try:
-        use_cql = test is not None and len(test.json().get("features", [])) > 0
-    except Exception:
-        pass
+    use_cql = cql_works(tn, cql)
     log("  filtre serveur :", use_cql)
     for _, feats in wfs_tiles(tn, step=0.1, cql=cql if use_cql else None):
         if swap is None and feats:
@@ -242,55 +251,100 @@ def hedges(arr):
 
 
 # ------------------------------------------------------------------ 3. zones bâties et parcs (OpenStreetMap)
-def urban_mask():
-    from shapely.geometry import Polygon, LineString, mapping
-    from shapely.ops import polygonize, linemerge, unary_union
-    s, w, n, e = REGION["south"], REGION["west"], REGION["north"], REGION["east"]
-    lu = "residential|commercial|industrial|retail|construction|garages|railway|cemetery|education|religious|brownfield"
-    le = "park|garden|golf_course|pitch|sports_centre|stadium|playground|dog_park"
-    am = "school|university|college|hospital|parking"
-    q = f"""[out:json][timeout:900][maxsize:2000000000];
-(way["landuse"~"^({lu})$"]({s},{w},{n},{e});relation["landuse"~"^({lu})$"]({s},{w},{n},{e});
- way["leisure"~"^({le})$"]({s},{w},{n},{e});relation["leisure"~"^({le})$"]({s},{w},{n},{e});
- way["amenity"~"^({am})$"]({s},{w},{n},{e}););
-out geom;"""
-    data = None
+def overpass_tile(q):
     for url in ("https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
                 "https://maps.mail.ru/osm/tools/overpass/api/interpreter"):
         for i in range(2):
             try:
-                r = S.post(url, data={"data": q}, timeout=1200)
+                r = S.post(url, data={"data": q}, timeout=300)
                 if r.status_code == 200:
-                    data = r.json(); break
-                log(f"  Overpass {url} : HTTP {r.status_code} {r.text[:200]!r}")
+                    return r.json()
+                log(f"    Overpass {url.split('/')[2]} : HTTP {r.status_code}")
             except Exception as ex:
-                log(f"  Overpass {url} : {ex.__class__.__name__} {str(ex)[:150]}")
-            time.sleep(30)
-        if data:
-            break
-    if not data:
-        return None
-    shapes, kinds = [], {}
-    for el in data.get("elements", []):
-        tags = el.get("tags", {})
-        kind = tags.get("landuse") or tags.get("leisure") or tags.get("amenity")
-        try:
-            if el["type"] == "way" and len(el.get("geometry", [])) >= 4:
-                pts = [(p["lon"], p["lat"]) for p in el["geometry"]]
-                if pts[0] == pts[-1]:
-                    shapes.append((mapping(Polygon(pts)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
-            elif el["type"] == "relation":
-                outers = [LineString([(p["lon"], p["lat"]) for p in m["geometry"]]) for m in el.get("members", [])
-                          if m.get("role") == "outer" and len(m.get("geometry", [])) >= 2]
-                polys = list(polygonize(linemerge(outers))) if outers else []
-                if polys:
-                    shapes.append((mapping(unary_union(polys)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
-        except Exception:
-            pass
-    log("  OSM : polygones", len(shapes), dict(sorted(kinds.items(), key=lambda kv: -kv[1])[:12]))
+                log(f"    Overpass {url.split('/')[2]} : {ex.__class__.__name__}")
+            time.sleep(20 * (i + 1))
+    return None
+
+def osm_urban(m):
+    from shapely.geometry import Polygon, LineString, mapping
+    from shapely.ops import polygonize, linemerge, unary_union
+    lu = "residential|commercial|industrial|retail|construction|garages|railway|cemetery|education|religious|brownfield|military"
+    le = "park|garden|golf_course|pitch|sports_centre|stadium|playground|dog_park"
+    am = "school|university|college|hospital|parking"
+    step, ok, tot, kinds = 0.25, 0, 0, {}
+    lon = REGION["west"]
+    while lon < REGION["east"] - 1e-9:
+        lat = REGION["south"]
+        while lat < REGION["north"] - 1e-9:
+            s, w, n, e = lat, lon, min(lat + step, REGION["north"]), min(lon + step, REGION["east"])
+            bb = f"({s},{w},{n},{e})"
+            q = f"""[out:json][timeout:240];(way["landuse"~"^({lu})$"]{bb};relation["landuse"~"^({lu})$"]{bb};
+way["leisure"~"^({le})$"]{bb};relation["leisure"~"^({le})$"]{bb};way["amenity"~"^({am})$"]{bb};);out geom;"""
+            tot += 1
+            data = overpass_tile(q)
+            if data:
+                ok += 1
+                shapes = []
+                for el in data.get("elements", []):
+                    tags = el.get("tags", {})
+                    kind = tags.get("landuse") or tags.get("leisure") or tags.get("amenity")
+                    try:
+                        if el["type"] == "way" and len(el.get("geometry", [])) >= 4:
+                            pts = [(p["lon"], p["lat"]) for p in el["geometry"]]
+                            if pts[0] == pts[-1]:
+                                shapes.append((mapping(Polygon(pts)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
+                        elif el["type"] == "relation":
+                            outers = [LineString([(p["lon"], p["lat"]) for p in mb["geometry"]]) for mb in el.get("members", [])
+                                      if mb.get("role") == "outer" and len(mb.get("geometry", [])) >= 2]
+                            polys = list(polygonize(linemerge(outers))) if outers else []
+                            if polys:
+                                shapes.append((mapping(unary_union(polys)), 1)); kinds[kind] = kinds.get(kind, 0) + 1
+                    except Exception:
+                        pass
+                burn(shapes, m)
+            time.sleep(3)
+            lat += step
+        lon += step
+    log(f"  OSM : {ok}/{tot} tuiles, polygones", dict(sorted(kinds.items(), key=lambda kv: -kv[1])[:12]))
+    return ok, tot
+
+def bdtopo_urban(m):
+    from shapely.geometry import shape, mapping
+    names = wfs_names(); n_tot, natures = 0, {}
+    keep_act = re.compile(r"parc|jardin|square|camping|golf|loisir|zoo|stade|sport|terrain|piscine|ecole|enseignement|college|lycee|universit|hopital|sante|"
+                          r"clinique|industri|commerc|activite|cimeti|caserne|militaire|aerodrome|gare|station|dechet|carriere|parking", re.I)
+    for tn, test in (("BDTOPO_V3:zone_d_habitation", lambda nat: not re.search(r"ruine", nat, re.I)),
+                     ("BDTOPO_V3:zone_d_activite_ou_d_interet", lambda nat: bool(keep_act.search(norm(nat))))):
+        if tn not in names:
+            log("  absente :", tn); continue
+        swap = None
+        for _, feats in wfs_tiles(tn, step=0.25):
+            if swap is None and feats:
+                swap = swapped_xy(feats)
+            sh = []
+            for f in feats:
+                p = f.get("properties") or {}
+                nat = f"{p.get('categorie') or ''} {p.get('nature') or ''}".strip()
+                natures[nat] = natures.get(nat, 0) + 1
+                if not test(nat):
+                    continue
+                try:
+                    g = shape(f["geometry"])
+                    if swap:
+                        from shapely.affinity import affine_transform
+                        g = affine_transform(g, [0, 1, 1, 0, 0, 0])
+                    sh.append((mapping(g), 1))
+                except Exception:
+                    pass
+            burn(sh, m); n_tot += len(sh)
+    log(f"  BD TOPO : {n_tot} zones retenues ; natures :", dict(sorted(natures.items(), key=lambda kv: -kv[1])[:25]))
+
+def urban_mask():
     m = np.zeros((H, W), np.uint8)
-    burn(shapes, m)
-    return m
+    bdtopo_urban(m)
+    ok, tot = osm_urban(m)
+    log(f"  masque : {int(m.sum())} px")
+    return m if m.sum() else None
 
 def apply_urban(arr, m):
     from scipy.ndimage import uniform_filter
@@ -355,6 +409,57 @@ def public_forests():
     return None
 
 
+# ------------------------------------------------------------------ 4 bis. chemins et sentiers (BD TOPO)
+PATH_CODES = {"Route empierrée": 1, "Chemin": 2, "Sentier": 3, "Piste cyclable": 4}
+def paths():
+    from shapely.geometry import shape
+    names = wfs_names()
+    tn = "BDTOPO_V3:troncon_de_route" if "BDTOPO_V3:troncon_de_route" in names else None
+    log("Tronçons :", tn)
+    if not tn:
+        return None
+    pdir = OUT / "paths"; pdir.mkdir(exist_ok=True)
+    for old in pdir.glob("*.json"):
+        old.unlink()
+    cql = "nature IN ('Route empierrée','Chemin','Sentier','Piste cyclable') AND BBOX(geometrie,{w},{s},{e},{n},'EPSG:4326')"
+    use_cql = cql_works(tn, cql)
+    log("  filtre serveur :", use_cql)
+    chunks, natures, swap, n = {}, {}, None, 0
+    for _, feats in wfs_tiles(tn, step=0.1, cql=cql if use_cql else None):
+        if swap is None and feats:
+            swap = swapped_xy(feats)
+        for f in feats:
+            nat = str((f.get("properties") or {}).get("nature") or "")
+            natures[nat] = natures.get(nat, 0) + 1
+            code = PATH_CODES.get(nat)
+            if not code:
+                continue
+            try:
+                g = shape(f["geometry"]).simplify(0.00003)
+            except Exception:
+                continue
+            lines = list(g.geoms) if g.geom_type.startswith("Multi") else [g]
+            for ln in lines:
+                cs = list(ln.coords)
+                if swap:
+                    cs = [(y, x) for x, y, *_ in cs]
+                if len(cs) < 2:
+                    continue
+                mx, my = cs[len(cs) // 2][:2]
+                key = f"{math.floor(mx / 0.1)}_{math.floor(my / 0.1)}"
+                q = [(round(c[0] * 1e5), round(c[1] * 1e5)) for c in cs]
+                enc = [code, q[0][0], q[0][1]]
+                for (x0, y0), (x1, y1) in zip(q, q[1:]):
+                    enc += [x1 - x0, y1 - y0]
+                chunks.setdefault(key, []).append(enc); n += 1
+    for key, lines in chunks.items():
+        (pdir / f"{key}.json").write_text(json.dumps({"v": 1, "l": lines}, separators=(",", ":")))
+    (pdir / "index.json").write_text(json.dumps({"step": 0.1, "codes": PATH_CODES, "tiles": sorted(chunks)}))
+    size = sum(p.stat().st_size for p in pdir.glob("*.json"))
+    log(f"  {n} tronçons dans {len(chunks)} tuiles, {size / 1e6:.1f} Mo ; natures vues :", dict(sorted(natures.items(), key=lambda kv: -kv[1])[:12]))
+    return n or None
+
+
 # ------------------------------------------------------------------ 5. relief
 def dem():
     """Altitude sur notre grille : IGN RGE ALTI (WMS, format BIL) sinon Copernicus GLO-30."""
@@ -375,9 +480,10 @@ def dem():
                 continue
             for dt in ("<f4", ">f4"):
                 a = np.frombuffer(r.content, dt).reshape(hh, ww).astype(np.float32)
-                v = a[(a > -100) & (a < 2000)]
-                if v.size > a.size * 0.5 and -20 < np.median(v) < 600:
-                    a[(a <= -100) | (a >= 2000)] = np.nan
+                good = (a > -5) & (a < 450)
+                v = a[good]
+                if v.size > a.size * 0.3 and -5 < np.median(v) < 400:
+                    a[~good] = np.nan
                     out[r0:r0 + hh, c0:c0 + ww] = a; ok += 1; break
     log(f"  MNT IGN : {ok} tuiles, {np.isfinite(out).mean() * 100:.1f} % couvert")
     if np.isfinite(out).mean() > 0.95:
@@ -548,6 +654,10 @@ def main():
             meta["files"][key] = fname; log(f"  {key} : version précédente conservée")
 
     keep("pub", "pub.bin.gz", stage("Forêts publiques (ONF)", public_forests))
+    if stage("Chemins et sentiers (IGN BD TOPO)", paths):
+        meta["paths"] = "paths/index.json"
+    elif old.get("paths") and (OUT / "paths" / "index.json").exists():
+        meta["paths"] = old["paths"]
     rel = stage("Relief", relief)
     keep("relief", "relief.bin.gz", rel[0] if rel else None)
     if rel and rel[1]: meta["relief_source"] = rel[1]

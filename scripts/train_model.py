@@ -8,7 +8,7 @@ peuplements où elles tombent à la surface de chaque peuplement.
 
 Résultat : data/model.json (lu par l'app), data/train-log.txt
 """
-import json, random, sys, time, traceback
+import json, os, random, sys, time, traceback
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -155,6 +155,15 @@ def main():
     cls = read_gz("terrain.bin.gz", (H, W)) if meta else None
     rel = read_gz("relief.bin.gz", (H, W)) if meta else None
     model = {"version": 1, "generated": now_iso(), "box": BOX, "species": {}}
+    # Après un recalcul du terrain, on ne refait que les habitats si les modèles météo ont moins de 20 jours
+    prev = json.loads((OUT / "model.json").read_text()) if (OUT / "model.json").exists() else None
+    reuse = False
+    if prev and os.environ.get("FULL") != "1":
+        from datetime import datetime, timezone
+        age = (datetime.now(timezone.utc) - datetime.fromisoformat(prev.get("weather_generated", prev["generated"]))).days
+        reuse = age < 20
+    model["weather_generated"] = prev.get("weather_generated", prev["generated"]) if reuse else now_iso()
+    log("Modèles météo :", "repris du calcul précédent" if reuse else "recalculés")
     for key, name in SPECIES.items():
         log(f"\n== {name}")
         tk = taxon_key(name)
@@ -171,6 +180,12 @@ def main():
         if cls is not None:
             entry["habitat"] = habitat(occ, cls, rel)
             log("  habitat :", entry["habitat"])
+        if reuse:
+            if prev["species"].get(key, {}).get("weather"):
+                entry["weather"] = prev["species"][key]["weather"]
+            model["species"][key] = entry
+            (OUT / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
+            continue
         sample = random.sample(occ, min(PER_SPECIES, len(occ)))
         X, y, g = [], [], []
         for gi, o in enumerate(sample):

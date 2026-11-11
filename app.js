@@ -62,9 +62,10 @@ const PHPREF={cepe:[4.5,6.5],girolle:[4,6],craterelle:[4,6],trompette:[5.5,7.5],
 let finds=store.get("sb.finds",[]);
 let outings=store.get("sb.outings",[]);
 let active=store.get("sb.active",null);           // sortie en cours
-const DEFAULT_LAYERS={zones:true,meteo:false,forest:false,geol:false,ph:false,finds:true,cadastre:false,pubOutline:false};
+const DEFAULT_LAYERS={zones:true,paths:true,meteo:false,forest:false,geol:false,ph:false,finds:true,cadastre:false,pubOutline:false};
 const prefs=Object.assign({species:"cepe",day:0,base:"sat",own:"all",collapsed:false,layers:{...DEFAULT_LAYERS},view:{lat:48.15,lon:-1.62,z:11}},store.get("sb.prefs",{}));
 if(prefs.v!==3){prefs.v=3;prefs.base="sat";prefs.own=prefs.own||"all";prefs.layers={...DEFAULT_LAYERS}}
+for(const k in DEFAULT_LAYERS)if(!(k in prefs.layers))prefs.layers[k]=DEFAULT_LAYERS[k];
 const savePrefs=()=>store.set("sb.prefs",prefs);
 let calVersion=1;                                   // change dès que les données perso ou le modèle changent
 function saveFinds(){if(!store.set("sb.finds",finds))toast("Mémoire pleine : exporte tes données.");calVersion++;updateCount()}
@@ -310,7 +311,7 @@ function pixelScore(key,AE,t,w){
 /* ====================================================================== Carte */
 const map=L.map("map",{zoomControl:false,preferCanvas:true,attributionControl:true}).setView([prefs.view.lat,prefs.view.lon],prefs.view.z);
 const geopf=(l,fmt="image/png",style="normal")=>`https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=${l}&STYLE=${encodeURIComponent(style)}&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=${fmt}`;
-const STYLES={pub:"normal",roads:"normal"};
+const STYLES={pub:"FORETS PUBLIQUES ONF",roads:"normal"};
 const BASES={
   sat:{name:"Satellite + chemins",layer:L.layerGroup([
     L.tileLayer(geopf("ORTHOIMAGERY.ORTHOPHOTOS","image/jpeg"),{maxZoom:19,maxNativeZoom:19,attribution:"© IGN"}),
@@ -358,16 +359,46 @@ const ZonesLayer=L.GridLayer.extend({createTile(coords){
   try{drawZones(cv,coords)}catch(e){console.error(e)}return cv}});
 const zonesLayer=new ZonesLayer({zIndex:6,updateWhenZooming:false,keepBuffer:1,attribution:"Zones : IGN, OSM, UMD, ISRIC, Open-Meteo"});
 const meteoLayer=L.layerGroup(),findsLayer=L.layerGroup(),trackLayer=L.layerGroup();
+
+/* Chemins et sentiers de l'IGN (BD TOPO), découpés en tuiles de 0,1° et affichés à partir du zoom 14 */
+const PATHS={index:null,chunks:new Map(),loading:new Set(),layer:L.layerGroup(),drawn:new Set(),renderer:L.canvas({padding:0.3})};
+const PATH_STYLE={
+  sat:{1:{color:"#FFFFFF",weight:2.6,opacity:.9},2:{color:"#FFF3C4",weight:2.2,opacity:.95,dashArray:"7 5"},3:{color:"#FFE08A",weight:1.8,opacity:.95,dashArray:"2 5"},4:{color:"#B9F0FF",weight:1.8,opacity:.9,dashArray:"5 4"}},
+  map:{1:{color:"#7A5230",weight:2.4,opacity:.85},2:{color:"#7A5230",weight:2,opacity:.85,dashArray:"7 5"},3:{color:"#7A5230",weight:1.6,opacity:.85,dashArray:"2 5"},4:{color:"#2C7FB8",weight:1.6,opacity:.8,dashArray:"5 4"}}};
+async function loadPathIndex(){try{const r=await fetch("data/paths/index.json",{cache:"no-cache"});if(r.ok){PATHS.index=await r.json();PATHS.index.set=new Set(PATHS.index.tiles);updatePaths()}}catch(e){}}
+function decodePaths(j){return j.l.map(a=>{const code=a[0];let x=a[1],y=a[2];const pts=[[y/1e5,x/1e5]];for(let k=3;k<a.length;k+=2){x+=a[k];y+=a[k+1];pts.push([y/1e5,x/1e5])}return [code,pts]})}
+function drawChunk(key){
+  if(PATHS.drawn.has(key))return;const lines=PATHS.chunks.get(key);if(!lines)return;
+  const st=PATH_STYLE[prefs.base==="sat"?"sat":"map"];
+  const g=L.layerGroup();for(const[code,pts]of lines)L.polyline(pts,{...st[code]||st[2],renderer:PATHS.renderer,interactive:false}).addTo(g);
+  g.addTo(PATHS.layer);g._key=key;PATHS.drawn.add(key);
+}
+function updatePaths(){
+  const on=prefs.layers.paths&&map.getZoom()>=14&&PATHS.index;
+  if(!on){if(map.hasLayer(PATHS.layer))map.removeLayer(PATHS.layer);return}
+  if(!map.hasLayer(PATHS.layer))PATHS.layer.addTo(map);
+  const b=map.getBounds().pad(0.3),st=PATHS.index.step,need=new Set();
+  for(let i=Math.floor(b.getWest()/st);i<=Math.floor(b.getEast()/st);i++)for(let j=Math.floor(b.getSouth()/st);j<=Math.floor(b.getNorth()/st);j++){const k=i+"_"+j;if(PATHS.index.set.has(k))need.add(k)}
+  // Retire les tuiles éloignées pour garder la carte fluide
+  PATHS.layer.eachLayer(g=>{if(!need.has(g._key)){PATHS.layer.removeLayer(g);PATHS.drawn.delete(g._key)}});
+  for(const k of need){
+    if(PATHS.chunks.has(k)){drawChunk(k);continue}
+    if(PATHS.loading.has(k))continue;PATHS.loading.add(k);
+    fetch(`data/paths/${k}.json`).then(r=>r.ok?r.json():null).then(j=>{PATHS.loading.delete(k);if(!j)return;PATHS.chunks.set(k,decodePaths(j));
+      if(PATHS.chunks.size>40){const first=PATHS.chunks.keys().next().value;if(!need.has(first))PATHS.chunks.delete(first)}updatePaths()}).catch(()=>PATHS.loading.delete(k));
+  }
+}
+function restylePaths(){PATHS.layer.clearLayers();PATHS.drawn.clear();updatePaths()}
 let activeLine=null;
 let currentBase=null;
 function setBase(k){if(!BASES[k])k="sat";if(currentBase)map.removeLayer(currentBase);currentBase=BASES[k].layer.addTo(map);
-  if(currentBase.bringToBack)currentBase.bringToBack();prefs.base=k;savePrefs();renderBaseChoices()}
+  if(currentBase.bringToBack)currentBase.bringToBack();prefs.base=k;savePrefs();renderBaseChoices();if(typeof restylePaths==="function")restylePaths()}
 function applyLayers(){
   for(const k of Object.keys(OVER))prefs.layers[k]?OVER[k].addTo(map):map.removeLayer(OVER[k]);
   prefs.layers.zones?zonesLayer.addTo(map):map.removeLayer(zonesLayer);
   prefs.layers.meteo?meteoLayer.addTo(map):map.removeLayer(meteoLayer);
   if(prefs.layers.finds){findsLayer.addTo(map);trackLayer.addTo(map)}else{map.removeLayer(findsLayer);map.removeLayer(trackLayer)}
-  savePrefs();
+  updatePaths();savePrefs();
 }
 function renderGrid(){
   meteoLayer.clearLayers();if(!SPECIES[prefs.species]||!prefs.layers.meteo)return;
@@ -378,7 +409,7 @@ function renderGrid(){
 }
 function refreshAll(){renderGrid();zonesLayer.redraw();updateTop();updateZoneStatus()}
 let moveTimer;
-map.on("moveend",()=>{const c=map.getCenter();prefs.view={lat:c.lat,lon:c.lng,z:map.getZoom()};savePrefs();updateTop();updateZoneStatus();
+map.on("moveend",()=>{const c=map.getCenter();prefs.view={lat:c.lat,lon:c.lng,z:map.getZoom()};savePrefs();updateTop();updateZoneStatus();updatePaths();
   clearTimeout(moveTimer);moveTimer=setTimeout(()=>{ensureWeather();renderGrid()},700)});
 
 /* ====================================================================== Bandeau du haut */
@@ -774,7 +805,7 @@ $("#importFile").onchange=async e=>{
 };
 
 /* ====================================================================== Couches */
-const SW={zones:"#lyZones",meteo:"#lyMeteo",forest:"#lyForest",geol:"#lyGeol",ph:"#lyPh",finds:"#lyFinds",cadastre:"#lyCadastre",pubOutline:"#lyPub"};
+const SW={zones:"#lyZones",paths:"#lyPaths",meteo:"#lyMeteo",forest:"#lyForest",geol:"#lyGeol",ph:"#lyPh",finds:"#lyFinds",cadastre:"#lyCadastre",pubOutline:"#lyPub"};
 function syncLayerSwitches(){for(const[k,s]of Object.entries(SW))$(s).checked=!!prefs.layers[k]}
 for(const[k,s]of Object.entries(SW))$(s).onchange=e=>{prefs.layers[k]=e.target.checked;applyLayers();if(k==="meteo")renderGrid()};
 function renderBaseChoices(){$("#baseChoices").innerHTML=Object.entries(BASES).map(([k,b])=>`<button data-base="${k}" aria-pressed="${prefs.base===k}">${b.name}</button>`).join("")}
@@ -820,7 +851,7 @@ $("#btnInfo").onclick=()=>{renderInfo();show("#sheetInfo")};
 /* ====================================================================== Démarrage */
 setBase(prefs.base);applyLayers();
 renderDays();applyCollapse();renderFindMarkers();renderTracks();updateCount();updateTop();updateZoneStatus();
-loadTerrain();loadMeteo().then(()=>ensureWeather());loadModel();
+loadTerrain();loadMeteo().then(()=>ensureWeather());loadModel();loadPathIndex();
 if(active){startTracking();drawActive();toast("Sortie en cours reprise.")}
 setTimeout(async()=>{for(const f of finds.filter(f=>!f.wx).slice(0,5))await enrich(f);for(const o of outings.filter(o=>!o.wx).slice(0,3))await enrichOuting(o)},3000);
 window.addEventListener("online",()=>{for(const f of finds.filter(f=>!f.wx).slice(0,5))enrich(f)});

@@ -3,7 +3,6 @@ name: Météo de la nuit
 on:
   schedule:
     - cron: "41 3 * * *"
-    - cron: "41 14 * * *"
   push:
     paths:
       - "scripts/build_meteo.py"
