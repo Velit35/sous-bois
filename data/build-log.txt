@@ -1,4 +1,4 @@
-Calcul du 2026-11-11T18:08:07+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
+Calcul du 2026-11-11T18:22:38+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
 
 == Sondage des services
 WMTS utiles : ['ADEME_EPCI_lineaire-haie-a-stock', 'ADEME_EPCI_lineaire-haie-preleve-par-an', 'ADEME_EPCI_lineaire-haie-preleve-totalement-par-an', 'ADEME_EPCI_lineaire-haie-total', 'ADEME_EPCI_volume-bois-de-haie-preleve-par-an', 'ADEME_EPCI_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_EPCI_volume-bois-de-haie-sur-pied', 'ADEME_KM2_lineaire-haie-a-stock', 'ADEME_KM2_lineaire-haie-preleve-par-an', 'ADEME_KM2_lineaire-haie-preleve-totalement-par-an', 'ADEME_KM2_lineaire-haie-total', 'ADEME_KM2_volume-bois-de-haie-preleve-par-an', 'ADEME_KM2_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_KM2_volume-bois-de-haie-sur-pied', 'Aire-Parcellaire', 'BDORTHOHISTORIQUE', 'BDTOPO-DIFF-BATI', 'BDTOPO-DIFF-HYDROGRAPHIE', 'BDTOPO-DIFF-RESEAU_ROUTIER', 'BDTOPO-DIFF-ZONE_ACTIVITES', 'CADASTRAL.PARCELS.SECTIONS', 'CADASTRALPARCELS.HEATMAP', 'CADASTRALPARCELS.HISTO.2008-2013.PARCELS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS.L93', 'CADASTRALPARCELS.PARCELS', 'CADASTRALPARCELS.PARCELS.L93', 'CADASTRALPARCELS.QUALREFBDP', 'CADASTRES.SOLAIRES.DETAILLES', 'CADASTRES.SOLAIRES.LOCAUX', 'CADASTRES.SOLAIRES.LOCAUX.DROM', 'CONSERVATOIRE_LITTORAL.PARCELLES', 'DECALAGE DE LA REPRESENTATION CADASTRALE', 'ENR.PERIMETRE.ROUTE', 'FORETS PUBLIQUES ONF', 'FORETS.PUBLIQUES', 'GAZ.CORRIDOR.TRANSPORT', 'GAZ.RESEAU.TRANSPORT', 'HR.ORTHOIMAGERY.ORTHOPHOTOS', 'HR.ORTHOIMAGERY.ORTHOPHOTOS.L93', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR-MASQUE-FORETV3', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER-MASQUE-FORETV3', 'IGNF_BD-FRANCE-TOPO-VEGETATION', 'IGNF_BD-HAIE-V1_2020', 'IGNF_FORETS-ANCIENNES', 'IGNF_MASQUE-FORET.2021-2023', 'IGNF_ORTHO-61_RVB_0M08_ZONES-TESTS', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.BDORTHO', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.ORTHO-EXPRESS', 'IGNF_POI-ENVIRONNEMENT-LOGEMENT-TRANSPORTS', 'IGNF_RPG_GRANDES-CATEGORIES-PARCELLES_2025', 'IGNF_RPG_PARCELLES-AGRICOLES-CATEGORISEES_2024', 'IGNF_RPG_PARCELLES-BIO_2025', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2024', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2025', 'IMPACTS-CLIMAT-Bassins-Versants-Topographiques', 'MGP_PLANIFICATION_SCOT2023_TRANSPORT', 'ORTHO-EDUGEO_PYR-PNG_WLD_WM', 'ORTHOIMAGERY.EDUGEO.AJACCIO1975', 'ORTHOIMAGERY.EDUGEO.AJACCIO1990', 'ORTHOIMAGERY.EDUGEO.ARCACHON2010', 'ORTHOIMAGERY.EDUGEO.ARRAS-LENS-BETHUNE2008', 'ORTHOIMAGERY.EDUGEO.BELFORT-MONTBELLIARD1951', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1950', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1970', 'ORTHOIMAGERY.EDUGEO.BETHUNE1963', 'ORTHOIMAGERY.EDUGEO.BETHUNE1964', 'ORTHOIMAGERY.EDUGEO.BETHUNE1988', 'ORTHOIMAGERY.EDUGEO.BIARRITZ1977', 'ORTHOIMAGERY.EDUGEO.BIARRTITZ1979', 'ORTHOIMAGERY.EDUGEO.BORDEAUX2003', 'ORTHOIMAGERY.EDUGEO.BOURG-ST-MAURICE1956', 'ORTHOIMAGERY.EDUGEO.CAEN1991', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE1968', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE2008', 'ORTHOIMAGERY.EDUGEO.CAP-DAGE1981', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1965', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1985', 'ORTHOIMAGERY.EDUGEO.CREIL-SUD-PICARDIE1975', 'ORTHOIMAGERY.EDUGEO.DIJON1971', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1966', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1989', 'ORTHOIMAGERY.EDUGEO.GUADELOUPE1984', 'ORTHOIMAGERY.EDUGEO.GUYANE1955', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1961', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1980', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1989', 'ORTHOIMAGERY.EDUGEO.LA-REUNION2010', 'ORTHOIMAGERY.EDUGEO.LA-ROCHELLE-ROCHEFORT1973', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1955', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1964', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE2008', 'ORTHOIMAGERY.EDUGEO.LIMOGES1974', 'ORTHOIMAGERY.EDUGEO.LYON1965', 'ORTHOIMAGERY.EDUGEO.LYON1984', 'ORTHOIMAGERY.EDUGEO.LYON1988', 'ORTHOIMAGERY.EDUGEO.LYON2008', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1965', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1977', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1969', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1980', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1988', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES2010', 'ORTHOIMAGERY.EDUGEO.MARTINIQUE1988', 'ORTHOIMAGERY.EDUGEO.METZ-NANCY1982', 'ORTHOIMAGERY.EDUGEO.NANTES1971', 'ORTHOIMAGERY.EDUGEO.PARIS1949', 'ORTHOIMAGERY.EDUGEO.PARIS1965', 'ORTHOIMAGERY.EDUGEO.PARIS2010SPOT', 'ORTHOIMAGERY.EDUGEO.REIMS1963', 'ORTHOIMAGERY.EDUGEO.REIMS1973', 'ORTHOIMAGERY.EDUGEO.REIMS1988', 'ORTHOIMAGERY.EDUGEO.REIMS2010', 'ORTHOIMAGERY.EDUGEO.ROISSY1965', 'ORTHOIMAGERY.EDUGEO.ROISSY1987', 'ORTHOIMAGERY.EDUGEO.STRASBOURG1975']
@@ -16,12 +16,7 @@ WFS utiles : ['AOC-VITICOLES:aire_parcellaire', 'BAN-PLUS:lien_adresse_parcelle'
 == Forêts (IGN BD Forêt V2)
 BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
   inversion lat/lon : False
-  réponse non JSON : # HELP jmx_exporter_build_info A metric with a constant '1' value labeled with the version of the JMX exporter.
-# TYPE jmx_exporter_build_info gauge
-jmx_exporter_build_info{version="0.19.0",name="jmx_prometheus_javaagent",} 1.0
-# HELP jvm_threads_current Current thread count of a JVM
-# TYPE jvm_thre
-  polygones : 50393 → {'Chênes': 1193, 'Hêtre': 70, 'Châtaignier': 826, 'Autres feuillus': 17047, 'Mélange de feuillus': 10325, 'Pins': 2505, 'Douglas': 453, 'Épicéa / sapin': 337, 'Autres conifères': 965, 'Mixte feuillus-conifères': 6407, 'Peupleraie': 3201, 'Forêt ouverte': 3757, 'Lande': 3307}
+  polygones : 53830 → {'Chênes': 1227, 'Hêtre': 70, 'Châtaignier': 872, 'Autres feuillus': 17970, 'Mélange de feuillus': 11083, 'Pins': 2772, 'Douglas': 470, 'Épicéa / sapin': 342, 'Autres conifères': 1044, 'Mixte feuillus-conifères': 7176, 'Peupleraie': 3281, 'Forêt ouverte': 3975, 'Lande': 3548}
      Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
      Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
      Châtaignier                ← Forêt fermée de châtaignier pur | Châtaignier
@@ -51,51 +46,68 @@ jmx_exporter_build_info{version="0.19.0",name="jmx_prometheus_javaagent",} 1.0
      Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
      Lande                      ← Lande | NC
      Lande                      ← Formation herbacée | NC
-  (49 s)
-terrain-base.bin.gz : 0.33 Mo
+  (52 s)
+terrain-base.bin.gz : 0.35 Mo
 
 == Haies et petits bois (IGN BD TOPO)
-BD TOPO végétation : BDTOPO_V3_DIFF:zone_de_vegetation
-  filtre serveur : False
-  réponse non JSON : # HELP jmx_exporter_build_info A metric with a constant '1' value labeled with the version of the JMX exporter.
-# TYPE jmx_exporter_build_info gauge
-jmx_exporter_build_info{version="0.19.0",name="jmx_prometheus_javaagent",} 1.0
-# HELP jvm_threads_current Current thread count of a JVM
-# TYPE jvm_thre
-  réponse non JSON : # HELP jvm_classes_currently_loaded The number of classes that are currently loaded in the JVM
-# TYPE jvm_classes_currently_loaded gauge
-jvm_classes_currently_loaded 23039.0
-# HELP jvm_classes_loaded_total The total number of classes that have been loaded since the JVM has started execution
-# TYPE j
-  objets : 0 natures : {}
-  ajoutés : petits bois 0 px, haies 0 px
-  (29 s)
+BD TOPO végétation : BDTOPO_V3:zone_de_vegetation
+  filtre serveur : True
+  inversion lat/lon : False
+  objets : 646920 natures : {'Haie': 375830, 'Bois': 234014, 'Forêt fermée de feuillus': 27246, 'Forêt fermée mixte': 6215, 'Forêt fermée de conifères': 3615}
+  ajoutés : petits bois 59273 px, haies 1502814 px
+  (247 s)
 
 == Zones bâties et parcs (OpenStreetMap)
-  Overpass https://overpass-api.de/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
-  Overpass https://overpass-api.de/api/interpreter : HTTP 502 '# 502 Gateway Timeout\n\nThis Overpass API server is currently at capacity. All query workers are busy\nand the request queue is full.\n\n## What to do\n\nRetry your request using exponential backoff: wait a'
-  Overpass https://overpass.kumi.systems/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
-  Overpass https://overpass.kumi.systems/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
-  Overpass https://maps.mail.ru/osm/tools/overpass/api/interpreter : HTTP 504 '<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n'
-  Overpass https://maps.mail.ru/osm/tools/overpass/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
-  (499 s)
-  pas de masque urbain
-terrain.bin.gz : 0.33 Mo
-Pixels par classe : {'Hors forêt': 4285291, 'Chênes': 55239, 'Hêtre': 7059, 'Châtaignier': 11408, 'Autres feuillus': 49206, 'Mélange de feuillus': 225954, 'Pins': 59624, 'Douglas': 7359, 'Épicéa / sapin': 6758, 'Autres conifères': 6100, 'Mixte feuillus-conifères': 56991, 'Peupleraie': 13608, 'Forêt ouverte': 24327, 'Lande': 23576, 'Haie / talus boisé': 0, 'Petit bois': 0}
+  BD TOPO : 68440 zones retenues ; natures : {'Lieu-dit habité': 54608, 'Religieux Culte chrétien': 1403, 'Science et enseignement Enseignement primaire': 1103, 'Quartier': 1086, 'Culture et loisirs Espace public': 940, 'Administratif ou militaire Mairie': 773, 'Château': 768, "Gestion des eaux Station d'épuration": 682, 'Industriel et commercial Zone industrielle': 679, 'Culture et loisirs Centre de documentation': 495, 'Culture et loisirs Monument': 453, 'Culture et loisirs Salle de spectacle ou conférence': 349, 'Sport Autre équipement sportif': 338, 'Administratif ou militaire Poste': 317, 'Industriel et commercial Divers industriel': 314, 'Gestion des eaux Station de pompage': 313, 'Moulin': 302, 'Culture et loisirs Aire de détente': 296, 'Santé Maison de retraite': 236, "Science et enseignement Autre établissement d'enseignement": 233, 'Sport Complexe sportif couvert': 232, 'Culture et loisirs Mégalithe': 218, 'Ruines': 206, 'Sport Stade': 203, 'Industriel et commercial Elevage': 199}
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass overpass.kumi.systems : HTTP 502
+    Overpass maps.mail.ru : HTTP 504
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+  OSM : 29/30 tuiles, polygones {'parking': 15360, 'residential': 12550, 'pitch': 3872, 'garden': 2705, 'playground': 1128, 'park': 1078, 'industrial': 1019, 'school': 956, 'cemetery': 721, 'construction': 635, 'sports_centre': 584, 'railway': 280}
+  masque : 471995 px
+  (2862 s)
+urban.bin.gz : 0.16 Mo
+  forêt retirée en zone bâtie ou parc : 265588 px (12.4 %)
+terrain.bin.gz : 0.84 Mo
+Pixels par classe : {'Hors forêt': 2959736, 'Chênes': 54754, 'Hêtre': 6964, 'Châtaignier': 11806, 'Autres feuillus': 45371, 'Mélange de feuillus': 220202, 'Pins': 63168, 'Douglas': 7556, 'Épicéa / sapin': 6767, 'Autres conifères': 6062, 'Mixte feuillus-conifères': 58740, 'Peupleraie': 13442, 'Forêt ouverte': 22840, 'Lande': 18789, 'Haie / talus boisé': 1292542, 'Petit bois': 43761}
 
 == Forêts publiques (ONF)
 Forêts publiques WFS : ['BDTOPO_V3:foret_publique', 'ONF.FORETS_PUBLIQUES:ONF_FORETS_PUBLIQUES', 'ObsForets.Gestion:part_forets_publiques_dep_2017_2021']
   exemple : {"cleabs": "FORETPUB0000002052450432", "nature": "Autre forêt publique", "toponyme": "Forêt des Captages de la Ville de Rennes", "statut_du_toponyme": "Collecté", "importance": "5", "date_creation": "2018-09-14T15:40:00Z", "date_modification": "2021-10-19T12:34:32.388Z", "date_d_apparition": null, "date_de_confirmation": "2016-06-01Z", "sources": "ONF 2021", "identifiants_sources": "ONF:F09653G", 
   forêts publiques : 85 polygones, 50338 px
-  (3 s)
+  (4 s)
 pub.bin.gz : 0.02 Mo
 
+== Chemins et sentiers (IGN BD TOPO)
+Tronçons : BDTOPO_V3:troncon_de_route
+  filtre serveur : True
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  168940 tronçons dans 208 tuiles, 6.7 Mo ; natures vues : {'Route empierrée': 62916, 'Chemin': 59586, 'Sentier': 46438}
+  (84 s)
+
 == Relief
-  MNT IGN : 20 tuiles, 95.3 % couvert
+  MNT IGN : 20 tuiles, 93.1 % couvert
+  Copernicus : 333447 px complétés, couverture 100.0 %
   pysheds indisponible, position dans le relief seule : module 'numpy' has no attribute 'in1d'
-  relief : altitude -100–1997 m (IGN RGE ALTI)
-  (59 s)
-relief.bin.gz : 4.20 Mo
+  relief : altitude -31–365 m (Copernicus GLO-30)
+  (62 s)
+relief.bin.gz : 4.32 Mo
 
 == Coupes récentes (Hansen / UMD)
   Hansen GFC 2025 : 53828 px touchés, dernière année 2025
@@ -106,4 +118,4 @@ loss.bin.gz : 0.08 Mo
   (1 s)
 ph.bin.gz : 0.06 Mo
 
-Terminé : 2026-11-11T18:18:52+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
+Terminé : 2026-11-11T19:18:01+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
