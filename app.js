@@ -789,6 +789,29 @@ $("#exportOutCsv").onclick=()=>{
   const rows=outings.map(o=>{const m=o.wx?o.wx.m:{};return [o.date,o.start,o.end,o.dist,finds.filter(f=>f.outingId===o.id).length,...spp.map(k=>o.ratings&&o.ratings[k]!=null?RATINGS[o.ratings[k]]:""),m.r15,m.t7,m.sm,m.ts,o.note].map(csvQ).join(";")});
   download(`sous-bois-sorties-${todayISO()}.csv`,"﻿"+[head.join(";"),...rows].join("\n"),"text/csv");
 };
+// Export anonyme : ce qui sert à apprendre, sans rien qui dise où (ni coordonnées, ni parcours, ni jour, ni notes)
+function anonMetrics(m){if(!m)return null;const r=(v,st)=>v==null?null:Math.round(v/st)*st;
+  return {er:r(m.er,5),r7:r(m.r7,5),r15:r(m.r15,5),r30:r(m.r30,5),t7:r(m.t7,1),fmin:r(m.fmin,1),sm:r(m.sm,0.02),ts:r(m.ts,1),drop:r(m.drop,0.5)}}
+const relBucket=v=>v?Math.min(5,1+Math.floor(v/51.2)):null;   // 1 point haut sec → 5 fond humide
+function anonRecords(){
+  const out=[];
+  for(const f of finds){if(!SPECIES[f.species]||!f.wx)continue;const t=terrainAt(f.lat,f.lon);
+    out.push({type:"trouvaille",sp:f.species,mois:f.date.slice(0,7),qty:f.qty,m:anonMetrics(f.wx.m),cls:t?t.cls:f.cls??null,rel:relBucket(t?t.rel:f.rel),ph:t&&t.ph!=null?Math.round(t.ph*2)/2:f.ph!=null?Math.round(f.ph*2)/2:null})}
+  for(const o of outings){if(!o.wx||!o.ratings)continue;
+    let share=null;
+    if(TERRAIN.ready&&o.track&&o.track.length>1){const c=new Array(16).fill(0);let n=0;for(const i of trackCells(o)){const k=TERRAIN.cls[i];if(k){c[k]++;n++}}
+      if(n)share=Object.fromEntries(c.map((v,k)=>[k,Math.round(v/n*10)/10]).filter(([k,v])=>v>0))}
+    for(const[sp,r]of Object.entries(o.ratings))if(SPECIES[sp])out.push({type:"sortie",sp,mois:o.date.slice(0,7),bilan:r,m:anonMetrics(o.wx.m),bois:share})}
+  // Ordre mélangé pour ne pas trahir la chronologie
+  for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
+  return out;
+}
+$("#exportAnon").onclick=()=>{
+  const rec=anonRecords();
+  if(!rec.length){toast("Rien à partager pour l'instant : note des trouvailles ou des sorties d'abord (la météo doit être arrivée).");return}
+  download(`sous-bois-anonyme-${todayISO().slice(0,7)}.json`,JSON.stringify({app:"sous-bois",type:"anonyme",version:1,cree:todayISO().slice(0,7),records:rec}),"application/json");
+  toast(`${rec.length} relevés exportés, sans aucune position. Envoie le fichier pour l'entraînement.`,4000);
+};
 $("#importBtn").onclick=()=>$("#importFile").click();
 $("#importFile").onchange=async e=>{
   const file=e.target.files[0];if(!file)return;

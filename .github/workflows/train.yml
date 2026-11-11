@@ -4,6 +4,10 @@ on:
   workflow_run:
     workflows: ["Préparer le terrain"]
     types: [completed]
+  push:
+    paths:
+      - "data/perso/**"
+      - "scripts/train_model.py"
   schedule:
     - cron: "23 2 3 * *"
   workflow_dispatch:
@@ -31,7 +35,7 @@ jobs:
         id: build
         continue-on-error: true
         env:
-          FULL: ${{ github.event_name != 'workflow_run' && '1' || '0' }}
+          FULL: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '1' || '0' }}
         run: python scripts/train_model.py
       - name: Enregistrer
         if: always()

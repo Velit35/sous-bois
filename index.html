@@ -284,6 +284,11 @@ textarea{min-height:70px;resize:vertical}
     <div class="summary" id="findSummary"></div>
     <div id="findList" style="display:flex;flex-direction:column;gap:10px"></div>
     <div class="box">
+      <span class="label">Améliorer la carte</span>
+      <p class="hint">Crée un fichier avec la météo, le type de bois et le bilan de tes sorties et trouvailles, sans aucune position, aucun parcours, aucun jour précis ni aucune note. Envoie-le pour qu'il serve à l'entraînement du modèle.</p>
+      <button class="btn small" id="exportAnon">Partager anonymement</button>
+    </div>
+    <div class="box">
       <span class="label">Sauvegarde</span>
       <p class="hint">Trouvailles et sorties sont gardées sur ce téléphone. Exporte-les de temps en temps pour ne rien perdre.</p>
       <div class="row">
@@ -362,6 +367,6 @@ window.addEventListener("unhandledrejection",function(e){var f=document.getEleme
 </script>
 
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="app.js?v=5"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>

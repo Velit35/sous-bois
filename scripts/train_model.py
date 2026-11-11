@@ -148,22 +148,43 @@ def habitat(occ, cls, rel):
         res["relief_mean"] = round(float(np.mean(rel_v)), 1)
     return res
 
+def perso_records():
+    """Fichiers anonymes envoyés depuis l'app (data/perso/*.json) : aucune position, juste météo, bois et bilan."""
+    recs = []
+    for p in sorted((OUT / "perso").glob("*.json")):
+        try:
+            j = json.loads(p.read_text(encoding="utf-8"))
+            recs += [r for r in j.get("records", []) if isinstance(r, dict)]
+        except Exception as ex:
+            log("  fichier perso illisible :", p.name, ex)
+    # Un même relevé exporté deux fois ne compte qu'une fois
+    seen, out = set(), []
+    for r in recs:
+        k = json.dumps(r, sort_keys=True)
+        if k not in seen:
+            seen.add(k); out.append(r)
+    return out
+
+def load_samples(key):
+    p = OUT / "samples" / f"{key}.json"
+    return json.loads(p.read_text()) if p.exists() else None
+
+def save_samples(key, X, y, g):
+    (OUT / "samples").mkdir(exist_ok=True)
+    (OUT / "samples" / f"{key}.json").write_text(json.dumps({"generated": now_iso(), "X": [[round(v, 2) for v in x] for x in X], "y": y, "g": g}))
+
 def main():
     log("Entraînement du", now_iso())
     last = date.today() - timedelta(days=7)
     meta = json.loads((OUT / "meta.json").read_text()) if (OUT / "meta.json").exists() else None
     cls = read_gz("terrain.bin.gz", (H, W)) if meta else None
     rel = read_gz("relief.bin.gz", (H, W)) if meta else None
-    model = {"version": 1, "generated": now_iso(), "box": BOX, "species": {}}
-    # Après un recalcul du terrain, on ne refait que les habitats si les modèles météo ont moins de 20 jours
-    prev = json.loads((OUT / "model.json").read_text()) if (OUT / "model.json").exists() else None
-    reuse = False
-    if prev and os.environ.get("FULL") != "1":
-        from datetime import datetime, timezone
-        age = (datetime.now(timezone.utc) - datetime.fromisoformat(prev.get("weather_generated", prev["generated"]))).days
-        reuse = age < 20
-    model["weather_generated"] = prev.get("weather_generated", prev["generated"]) if reuse else now_iso()
-    log("Modèles météo :", "repris du calcul précédent" if reuse else "recalculés")
+    model = {"version": 2, "generated": now_iso(), "box": BOX, "species": {}}
+    # La météo des observations publiques coûte des appels à l'API : on la garde en cache
+    # et on ne la retélécharge qu'au calcul mensuel (FULL=1) ou si le cache manque.
+    full = os.environ.get("FULL") == "1"
+    perso = perso_records()
+    log("Calcul", "complet" if full else "rapide (météo publique en cache)", f"— {len(perso)} relevés perso anonymes")
     for key, name in SPECIES.items():
         log(f"\n== {name}")
         tk = taxon_key(name)
@@ -172,32 +193,52 @@ def main():
         occ = dedupe(occurrences(tk))
         months = np.bincount([o["date"].month for o in occ], minlength=13)[1:]
         log(f"  observations datées : {len(occ)} — par mois : {months.tolist()}")
-        srcs = {}
-        for o in occ:
-            srcs[o["src"]] = srcs.get(o["src"], 0) + 1
-        log("  sources :", dict(sorted(srcs.items(), key=lambda kv: -kv[1])[:6]))
         entry = {"name": name, "taxonKey": tk, "n_obs": len(occ), "months": months.tolist()}
+        mine = [r for r in perso if r.get("sp") == key]
         if cls is not None:
             entry["habitat"] = habitat(occ, cls, rel)
-            log("  habitat :", entry["habitat"])
-        if reuse:
-            if prev["species"].get(key, {}).get("weather"):
-                entry["weather"] = prev["species"][key]["weather"]
-            model["species"][key] = entry
-            (OUT / "model.json").write_text(json.dumps(model, ensure_ascii=False, indent=1), encoding="utf-8")
-            continue
-        sample = random.sample(occ, min(PER_SPECIES, len(occ)))
-        X, y, g = [], [], []
-        for gi, o in enumerate(sample):
-            for lab, m in weather_samples(o, last):
-                v = vec(m)
-                if v is not None:
-                    X.append(v); y.append(lab); g.append(gi)
-            time.sleep(0.5)
-        log(f"  échantillons météo : {sum(y)} poussées, {len(y) - sum(y)} jours témoins")
+            # Tes trouvailles ajoutent leur type de bois (sans position)
+            add = [r["cls"] for r in mine if r.get("type") == "trouvaille" and r.get("cls")]
+            if add and entry["habitat"].get("N", 0) + len(add) > 0:
+                h = entry["habitat"]; n = np.array(h.get("n", [0] * NCLS), float)
+                for c in add:
+                    if 0 < c < NCLS: n[c] += 1
+                area = np.bincount(cls[cls > 0].ravel(), minlength=NCLS).astype(float)
+                N = n.sum(); share_n = (n + 0.5) / (N + 0.5 * NCLS); share_a = np.where(area > 0, area / area.sum(), np.nan)
+                ratio = share_n / share_a; big = share_a > 0.004
+                aff = np.where(np.isfinite(ratio), ratio / np.nanmax(np.where(big, ratio, np.nan)), 0)
+                h.update({"N": int(N), "n": n.astype(int).tolist(), "aff": np.clip(aff, 0, 1.2).round(3).tolist(), "perso": len(add)})
+            log("  habitat :", {k: v for k, v in entry["habitat"].items() if k != "aff"})
+        cache = None if full else load_samples(key)
+        if cache:
+            X, y, g = cache["X"], cache["y"], cache["g"]
+            log(f"  météo publique en cache ({cache['generated'][:10]})")
+        else:
+            sample = random.sample(occ, min(PER_SPECIES, len(occ)))
+            X, y, g = [], [], []
+            for gi, o in enumerate(sample):
+                for lab, m in weather_samples(o, last):
+                    v = vec(m)
+                    if v is not None:
+                        X.append(v); y.append(lab); g.append(gi)
+                time.sleep(0.5)
+            save_samples(key, X, y, g)
+        n_pub = sum(y)
+        # Tes relevés : de vrais « trouvé » et « rien trouvé », comptés triple
+        np_, na_ = 0, 0
+        for k, r in enumerate(mine):
+            v = vec(r.get("m") or {})
+            if v is None:
+                continue
+            lab = 1 if r.get("type") == "trouvaille" or (r.get("bilan") or 0) >= 1 else 0
+            for _ in range(3):
+                X.append(v); y.append(lab); g.append(100000 + k)
+            np_ += lab; na_ += 1 - lab
+        log(f"  échantillons météo : {n_pub} poussées publiques ; perso : {np_} réussites, {na_} « rien »")
         if sum(y) >= 25:
             entry["weather"] = fit(X, y, g)
-            entry["weather"]["n"] = int(sum(y))
+            entry["weather"]["n"] = int(n_pub + np_)
+            entry["weather"]["perso"] = {"ok": np_, "rien": na_}
             P = np.array([x for x, l in zip(X, y) if l == 1])
             entry["weather"]["at_finds"] = {f: [round(float(np.percentile(P[:, i], q)), 1) for q in (10, 50, 90)]
                                             for i, f in enumerate(FEATS) if f != "t7sq"}
