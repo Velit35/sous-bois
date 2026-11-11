@@ -1,42 +1,37 @@
-Entraînement du 2026-11-11T19:29:55+00:00
-Calcul rapide (météo publique en cache) — 0 relevés perso anonymes
+Entraînement du 2026-11-11T22:52:39+00:00 — budget de 330 appels météo
+Terrain : indisponible (habitats non appris)
+Relevés perso anonymes : 0
+Boletus edulis : 1216 observations datées en France (dont 92 dans l'Ouest), météo en cache 0, à compléter 500 — par mois [36, 3, 4, 1, 7, 23, 28, 124, 307, 507, 145, 31]
+Cantharellus cibarius : 802 observations datées en France (dont 46 dans l'Ouest), météo en cache 0, à compléter 500 — par mois [55, 6, 2, 1, 21, 98, 105, 142, 158, 137, 68, 9]
+Craterellus tubaeformis : 763 observations datées en France (dont 66 dans l'Ouest), météo en cache 0, à compléter 500 — par mois [114, 15, 2, 2, 1, 7, 3, 38, 127, 249, 133, 72]
+Craterellus cornucopioides : 544 observations datées en France (dont 12 dans l'Ouest), météo en cache 0, à compléter 500 — par mois [74, 2, 0, 2, 1, 7, 17, 47, 93, 182, 92, 27]
+Hydnum repandum : 983 observations datées en France (dont 47 dans l'Ouest), météo en cache 0, à compléter 500 — par mois [134, 12, 4, 4, 1, 13, 23, 87, 206, 283, 158, 58]
+
+Appels à l'archive météo : 330 ; reste à compléter : 2170
 
 == Boletus edulis
-  observations datées : 67 — par mois : [0, 0, 0, 0, 0, 3, 0, 1, 14, 37, 11, 1]
-  habitat : {'N': 14, 'outside': 1, 'n': [0, 2, 0, 0, 2, 4, 1, 0, 0, 0, 1, 1, 0, 0, 3, 0], 'relief_mean': 119.3}
-  météo publique en cache (2026-11-11)
-  échantillons météo : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.557, 'coef': [0.2367, -0.0361, 0.6544, -0.7151, -0.0463, -0.1185, 0.1808], 'n': 66}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [38.2, 64.9, 102.9], 'r7': [3.2, 15.8, 52.5], 't7': [11.0, 13.3, 16.4], 'ts': [9.9, 13.1, 17.2], 'drop': [-1.8, 0.4, 3.0], 'fmin': [4.6, 7.6, 11.0]}
+  échantillons : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.463, 'auc_nw': 0.463, 'n': 66}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [23.9, 64.2, 102.8], 'r7': [1.6, 15.6, 52.5], 't7': [8.6, 12.9, 16.2], 'ts': [7.7, 13.0, 16.4], 'drop': [-1.4, 0.3, 2.4], 'fmin': [3.7, 7.2, 11.0]}
 
 == Cantharellus cibarius
-  observations datées : 35 — par mois : [0, 0, 0, 0, 0, 4, 5, 7, 6, 6, 7, 0]
-  habitat : {'N': 3, 'outside': 1, 'n': [0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'relief_mean': 100.7}
-  météo publique en cache (2026-11-11)
-  échantillons météo : 35 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.678, 'coef': [0.6885, 0.1223, 0.2757, 0.0535, -0.2942, -0.1705, 0.1335], 'n': 35}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [49.4, 79.0, 114.7], 'r7': [7.2, 17.8, 53.6], 't7': [11.7, 15.6, 18.0], 'ts': [11.7, 16.0, 18.6], 'drop': [-1.7, 0.0, 1.6], 'fmin': [5.4, 10.1, 12.6]}
+  échantillons : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.61, 'auc_nw': 0.653, 'n': 66}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [26.5, 81.3, 128.9], 'r7': [4.7, 21.7, 59.5], 't7': [8.3, 14.4, 18.0], 'ts': [7.8, 14.6, 18.5], 'drop': [-1.9, -0.1, 2.2], 'fmin': [2.4, 8.6, 13.6]}
 
 == Craterellus tubaeformis
-  observations datées : 50 — par mois : [4, 1, 0, 0, 0, 3, 0, 0, 3, 19, 10, 10]
-  habitat : {'N': 9, 'outside': 0, 'n': [0, 1, 0, 0, 0, 4, 3, 0, 0, 0, 1, 0, 0, 0, 0, 0], 'relief_mean': 102.8}
-  météo publique en cache (2026-11-11)
-  échantillons météo : 50 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.575, 'coef': [-0.1417, 0.4178, -0.0141, -0.3854, 0.0938, -0.0893, 0.411], 'n': 50}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [31.9, 72.3, 101.4], 'r7': [2.5, 21.6, 52.2], 't7': [7.1, 11.1, 13.9], 'ts': [7.4, 11.4, 13.9], 'drop': [-1.8, 0.2, 3.0], 'fmin': [0.7, 5.7, 9.4]}
+  échantillons : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.546, 'auc_nw': 0.546, 'n': 66}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [21.4, 70.5, 100.5], 'r7': [2.2, 21.6, 55.9], 't7': [7.1, 11.1, 13.9], 'ts': [7.2, 11.1, 14.3], 'drop': [-1.9, 0.2, 2.9], 'fmin': [0.8, 5.5, 9.4]}
 
 == Craterellus cornucopioides
-  observations datées : 7 — par mois : [0, 0, 0, 0, 0, 3, 0, 0, 2, 2, 0, 0]
-  habitat : {'N': 2, 'outside': 0, 'n': [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'relief_mean': 203.5}
-  météo publique en cache (2026-11-11)
-  échantillons météo : 7 poussées publiques ; perso : 0 réussites, 0 « rien »
+  échantillons : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.59, 'auc_nw': None, 'n': 66}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.8, 77.7, 144.2], 'r7': [2.0, 16.6, 50.9], 't7': [4.2, 11.4, 16.5], 'ts': [4.4, 11.8, 17.1], 'drop': [-2.1, -0.2, 2.7], 'fmin': [-1.9, 5.0, 10.5]}
 
 == Hydnum repandum
-  observations datées : 35 — par mois : [4, 0, 0, 0, 0, 3, 1, 0, 0, 15, 11, 1]
-  habitat : {'N': 6, 'outside': 0, 'n': [0, 1, 0, 0, 0, 3, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0], 'relief_mean': 152.3}
-  météo publique en cache (2026-11-11)
-  échantillons météo : 35 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.552, 'coef': [0.1183, 0.1989, 0.0913, -0.0274, -0.3961, -0.0751, 0.4223], 'n': 35}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [37.9, 72.2, 112.4], 'r7': [8.5, 22.6, 63.4], 't7': [7.6, 12.7, 15.0], 'ts': [7.2, 12.4, 15.0], 'drop': [-2.1, -0.1, 2.6], 'fmin': [2.6, 7.0, 9.9]}
+  échantillons : 66 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.49, 'auc_nw': 0.549, 'n': 66}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [27.9, 67.6, 108.9], 'r7': [2.2, 19.8, 64.2], 't7': [7.0, 12.1, 15.5], 'ts': [6.5, 12.2, 16.6], 'drop': [-2.0, 0.2, 2.9], 'fmin': [0.2, 5.8, 10.1]}
 
-Terminé 2026-11-11T19:30:01+00:00
+Terminé 2026-11-11T22:56:00+00:00
