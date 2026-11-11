@@ -291,7 +291,7 @@ function affEff(key){
   const ck=key+"|"+calVersion;if(affCache.has(ck))return affCache.get(ck);
   const base=AFF[key];if(!base)return null;
   const H=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat;
-  const w=H&&H.N>0&&H.aff?H.N/(H.N+40):0;
+  const w=H&&H.N>=30&&H.aff?H.N/(H.N+100):0;   // trop peu d'observations précises dans la zone : on garde le réglage de base
   const pers=personalHabitat(key);
   const out=base.map((a,k)=>{if(!a)return 0;let v=w?(1-w)*a+w*(H.aff[k]??a):a;if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
   out.learnedN=w?H.N:0;out.personal=pers;
