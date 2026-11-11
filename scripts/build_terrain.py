@@ -49,6 +49,8 @@ def classify(tfv, essence=""):
     if "peupleraie" in t: return 11
     if "lande" in t or "herbace" in t: return 13
     ouverte = "ouverte" in t
+    if "sans couvert" in t: return 12          # coupe rase, jeune plantation
+    if "autre que pin" in t: return 9
     if "mixte" in t or ("conifere" in t and "feuillu" in t): c = 10
     elif "chene" in t: c = 1
     elif "hetre" in t: c = 2
