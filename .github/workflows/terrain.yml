@@ -27,10 +27,12 @@ jobs:
       - name: Dépendances
         run: |
           pip install "numpy<2" scipy requests rasterio shapely pillow
-          pip install pysheds || echo "pysheds non installé"
+          pip install "numpy<2" pysheds || echo "pysheds non installé"
       - name: Calcul des couches
         id: build
         continue-on-error: true
+        env:
+          FULL: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
         run: python scripts/build_terrain.py
       - name: Enregistrer les données
         if: always()

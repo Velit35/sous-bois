@@ -219,7 +219,9 @@ def hedges(arr):
         return
     from shapely.geometry import shape, mapping
     from shapely.affinity import affine_transform
-    hedge = np.zeros((H, W), np.uint8); wood = np.zeros((H, W), np.uint8)
+    from rasterio.transform import from_origin
+    fine_tr = from_origin(REGION["west"], REGION["north"], DLON / 3, DLAT / 3)
+    hedge = np.zeros((H * 3, W * 3), np.uint8); wood = np.zeros((H, W), np.uint8)
     natures, n, swap = {}, 0, None
     # Filtre côté serveur ; si refusé, téléchargement complet de la tuile et tri ici
     cql = "nature IN ('Haie','Bois','Forêt fermée de feuillus','Forêt fermée mixte','Forêt fermée de conifères') AND BBOX(geometrie,{w},{s},{e},{n},'EPSG:4326')"
@@ -241,13 +243,20 @@ def hedges(arr):
                 target.append((mapping(g), 1))
             except Exception:
                 pass
-        burn(hs, hedge, all_touched=True); burn(ws, wood)
+        if hs:
+            from rasterio import features as rf
+            rf.rasterize(hs, out=hedge, transform=fine_tr)
+        burn(ws, wood)
         n += len(feats)
     log("  objets :", n, "natures :", dict(sorted(natures.items(), key=lambda kv: -kv[1])[:15]))
+    frac = hedge.reshape(H, 3, W, 3).mean(axis=(1, 3))      # part du pixel couverte par des haies
     free = arr == 0
     arr[free & (wood > 0)] = 15
-    arr[(arr == 0) & (hedge > 0)] = 14
-    log(f"  ajoutés : petits bois {int((free & (wood > 0)).sum())} px, haies {int(((arr == 14)).sum())} px")
+    # Seuls les pixels vraiment boisés comptent : haies épaisses ou doubles, talus boisés (≥ 1/3 du carré)
+    dense = (arr == 0) & (frac >= 0.33)
+    arr[dense] = 14
+    log(f"  ajoutés : petits bois {int((free & (wood > 0)).sum())} px, haies denses {int(dense.sum())} px "
+        f"(pixels touchés par une haie : {int((frac > 0).sum())})")
 
 
 # ------------------------------------------------------------------ 3. zones bâties et parcs (OpenStreetMap)
@@ -506,7 +515,7 @@ def dem():
             except Exception as ex:
                 log(f"  Copernicus {name} : {str(ex)[:150]}")
     log(f"  Copernicus : {filled} px complétés, couverture {np.isfinite(out).mean() * 100:.1f} %")
-    return (out, "Copernicus GLO-30") if np.isfinite(out).mean() > 0.9 else (None, None)
+    return (out, "IGN RGE ALTI, complété par Copernicus GLO-30") if np.isfinite(out).mean() > 0.9 else (None, None)
 
 def relief():
     from scipy import ndimage as nd
@@ -634,11 +643,21 @@ def main():
         log("Rien à faire sans forêts."); log.save(); return 1
     arr = arr.copy()
     stage("Haies et petits bois (IGN BD TOPO)", lambda: hedges(arr))
-    m = stage("Zones bâties et parcs (OpenStreetMap)", urban_mask)
-    if m is not None:
-        write_gz("urban.bin.gz", m, log)
-    else:
-        m = read_gz("urban.bin.gz", (H, W)); log("  reprise du masque précédent" if m is not None else "  pas de masque urbain")
+    # Le masque urbain (≈ 50 min de téléchargements) est réutilisé pendant 60 jours, sauf lancement manuel
+    up = OUT / "urban.bin.gz"
+    prev_ts = old.get("urban_ts") or (up.stat().st_mtime if up.exists() else 0)
+    m = None
+    if up.exists() and os.environ.get("FULL") != "1" and time.time() - prev_ts < 60 * 86400:
+        m = read_gz("urban.bin.gz", (H, W))
+        if m is not None:
+            log("\n== Zones bâties et parcs : masque récent réutilisé"); meta["urban_ts"] = prev_ts
+    if m is None:
+        m = stage("Zones bâties et parcs (BD TOPO + OpenStreetMap)", urban_mask)
+        if m is not None:
+            meta["urban_ts"] = time.time(); write_gz("urban.bin.gz", m, log)
+        else:
+            m = read_gz("urban.bin.gz", (H, W)); log("  reprise du masque précédent" if m is not None else "  pas de masque urbain")
+            if m is not None: meta["urban_ts"] = prev_ts
     if m is not None:
         apply_urban(arr, m)
     write_gz("terrain.bin.gz", arr, log)
