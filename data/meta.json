@@ -1,6 +1,6 @@
 {
- "version": 1,
- "generated": "2026-11-11T11:33:28+00:00",
+ "version": 2,
+ "generated": "2026-11-11T18:08:07+00:00",
  "region": {
   "name": "Ille-et-Vilaine",
   "west": -2.4,
@@ -22,24 +22,60 @@
   "Mixte feuillus-conifères",
   "Peupleraie",
   "Forêt ouverte",
-  "Lande"
+  "Lande",
+  "Haie / talus boisé",
+  "Petit bois"
  ],
- "terrain": {
-  "file": "terrain.bin.gz",
+ "grid": {
   "w": 1933,
   "h": 2500,
   "dlat": 0.0005,
   "dlon": 0.00075,
   "west": -2.4,
-  "north": 48.8,
-  "forest_share": 0.1192
+  "north": 48.8
  },
+ "files": {
+  "terrain": "terrain.bin.gz",
+  "pub": "pub.bin.gz",
+  "relief": "relief.bin.gz",
+  "loss": "loss.bin.gz"
+ },
+ "forest_share": 0.1132,
+ "class_px": {
+  "Hors forêt": 4285291,
+  "Chênes": 55239,
+  "Hêtre": 7059,
+  "Châtaignier": 11408,
+  "Autres feuillus": 49206,
+  "Mélange de feuillus": 225954,
+  "Pins": 59624,
+  "Douglas": 7359,
+  "Épicéa / sapin": 6758,
+  "Autres conifères": 6100,
+  "Mixte feuillus-conifères": 56991,
+  "Peupleraie": 13608,
+  "Forêt ouverte": 24327,
+  "Lande": 23576,
+  "Haie / talus boisé": 0,
+  "Petit bois": 0
+ },
+ "relief_source": "IGN RGE ALTI",
+ "loss_until": 2025,
  "ph": {
   "file": "ph.bin.gz",
   "w": 387,
   "h": 500,
   "dlat": 0.0025,
   "dlon": 0.00375,
+  "west": -2.4,
+  "north": 48.8
+ },
+ "terrain": {
+  "file": "terrain.bin.gz",
+  "w": 1933,
+  "h": 2500,
+  "dlat": 0.0005,
+  "dlon": 0.00075,
   "west": -2.4,
   "north": 48.8
  }

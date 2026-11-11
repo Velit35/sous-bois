@@ -1,49 +1,109 @@
-Calcul du 2026-11-11T11:33:28+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8}
-Couches forêt trouvées : ['LANDCOVER.FORESTINVENTORY.V1:resu_bdv1_shape', 'LANDCOVER.FORESTINVENTORY.V2:formation_vegetale', 'BDFORETV1_BDD_FXX_LAMB93_20140403:resu_bdv1_shape']
-Couche utilisée : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
-  bande lon -2.40 : 13452 polygones cumulés
-  bande lon -2.15 : 24201 polygones cumulés
-  bande lon -1.90 : 32518 polygones cumulés
-  bande lon -1.65 : 38791 polygones cumulés
-  bande lon -1.40 : 43928 polygones cumulés
-  bande lon -1.15 : 47748 polygones cumulés
-Polygones téléchargés : 47748
-Exemple de propriétés : {"id": "FORESTIE0000000005600003", "code_tfv": "FF2-51-51", "tfv": "Forêt fermée de pin maritime pur", "tfv_g11": "Forêt fermée conifères", "essence": "Pin maritime"}
-Inversion lat/lon : False
-Classes (polygones) : {'Chênes': 1073, 'Hêtre': 62, 'Châtaignier': 756, 'Autres feuillus': 16105, 'Mélange de feuillus': 9713, 'Pins': 2454, 'Douglas': 416, 'Épicéa / sapin': 308, 'Autres conifères': 939, 'Mixte feuillus-conifères': 6323, 'Peupleraie': 2923, 'Forêt ouverte': 3514, 'Lande': 3162}
-Types rencontrés → classe :
-   Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
-   Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
-   Châtaignier                ← Forêt fermée de châtaignier pur | Châtaignier
-   Autres feuillus            ← Forêt fermée de feuillus purs en îlots | Feuillus
-   Autres feuillus            ← Forêt fermée d’un autre feuillu pur | Feuillus
-   Autres feuillus            ← Forêt fermée dun autre feuillu pur | Feuillus
-   Mélange de feuillus        ← Forêt fermée à mélange de feuillus | Feuillus
-   Pins                       ← Forêt fermée de pin maritime pur | Pin maritime
-   Pins                       ← Forêt fermée à mélange de pins purs | Pins mélangés
-   Pins                       ← Forêt fermée de pin laricio ou pin noir pur | Pin laricio, pin noir
-   Pins                       ← Forêt fermée de pin sylvestre pur | Pin sylvestre
-   Pins                       ← Forêt fermée d’un autre pin pur | Pin autre
-   Douglas                    ← Forêt fermée de douglas pur | Douglas
-   Épicéa / sapin             ← Forêt fermée de sapin ou épicéa | Sapin, épicéa
-   Autres conifères           ← Forêt fermée de conifères purs en îlots | Conifères
-   Autres conifères           ← Forêt fermée à mélange de conifères | Conifères
-   Autres conifères           ← Forêt fermée à mélange d’autres conifères | Conifères
-   Autres conifères           ← Forêt fermée de mélèze pur | Mélèze
-   Autres conifères           ← Forêt fermée d’un autre conifère pur autre que pin  | Conifères
-   Mixte feuillus-conifères   ← Forêt fermée à mélange de conifères prépondérants et feuillus | Mixte
-   Mixte feuillus-conifères   ← Forêt fermée à mélange de feuillus prépondérants et conifères | Mixte
-   Peupleraie                 ← Peupleraie | Peuplier
-   Forêt ouverte              ← Forêt fermée sans couvert arboré | NR
-   Forêt ouverte              ← Forêt ouverte à mélange de feuillus et conifères | Mixte
-   Forêt ouverte              ← Forêt ouverte de feuillus purs | Feuillus
-   Forêt ouverte              ← Forêt ouverte de conifères purs | Conifères
-   Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
-   Lande                      ← Lande | NC
-   Lande                      ← Formation herbacée | NC
-terrain.bin.gz : 0.35 Mo
-Part de forêt dans la zone : 11.9 %
-SoilGrids : 686 × 565 crs EPSG:4326 nodata None
-pH : min 5.0, médiane 6.0, max 7.2
+Calcul du 2026-11-11T18:08:07+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
+
+== Sondage des services
+WMTS utiles : ['ADEME_EPCI_lineaire-haie-a-stock', 'ADEME_EPCI_lineaire-haie-preleve-par-an', 'ADEME_EPCI_lineaire-haie-preleve-totalement-par-an', 'ADEME_EPCI_lineaire-haie-total', 'ADEME_EPCI_volume-bois-de-haie-preleve-par-an', 'ADEME_EPCI_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_EPCI_volume-bois-de-haie-sur-pied', 'ADEME_KM2_lineaire-haie-a-stock', 'ADEME_KM2_lineaire-haie-preleve-par-an', 'ADEME_KM2_lineaire-haie-preleve-totalement-par-an', 'ADEME_KM2_lineaire-haie-total', 'ADEME_KM2_volume-bois-de-haie-preleve-par-an', 'ADEME_KM2_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_KM2_volume-bois-de-haie-sur-pied', 'Aire-Parcellaire', 'BDORTHOHISTORIQUE', 'BDTOPO-DIFF-BATI', 'BDTOPO-DIFF-HYDROGRAPHIE', 'BDTOPO-DIFF-RESEAU_ROUTIER', 'BDTOPO-DIFF-ZONE_ACTIVITES', 'CADASTRAL.PARCELS.SECTIONS', 'CADASTRALPARCELS.HEATMAP', 'CADASTRALPARCELS.HISTO.2008-2013.PARCELS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS.L93', 'CADASTRALPARCELS.PARCELS', 'CADASTRALPARCELS.PARCELS.L93', 'CADASTRALPARCELS.QUALREFBDP', 'CADASTRES.SOLAIRES.DETAILLES', 'CADASTRES.SOLAIRES.LOCAUX', 'CADASTRES.SOLAIRES.LOCAUX.DROM', 'CONSERVATOIRE_LITTORAL.PARCELLES', 'DECALAGE DE LA REPRESENTATION CADASTRALE', 'ENR.PERIMETRE.ROUTE', 'FORETS PUBLIQUES ONF', 'FORETS.PUBLIQUES', 'GAZ.CORRIDOR.TRANSPORT', 'GAZ.RESEAU.TRANSPORT', 'HR.ORTHOIMAGERY.ORTHOPHOTOS', 'HR.ORTHOIMAGERY.ORTHOPHOTOS.L93', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR-MASQUE-FORETV3', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER-MASQUE-FORETV3', 'IGNF_BD-FRANCE-TOPO-VEGETATION', 'IGNF_BD-HAIE-V1_2020', 'IGNF_FORETS-ANCIENNES', 'IGNF_MASQUE-FORET.2021-2023', 'IGNF_ORTHO-61_RVB_0M08_ZONES-TESTS', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.BDORTHO', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.ORTHO-EXPRESS', 'IGNF_POI-ENVIRONNEMENT-LOGEMENT-TRANSPORTS', 'IGNF_RPG_GRANDES-CATEGORIES-PARCELLES_2025', 'IGNF_RPG_PARCELLES-AGRICOLES-CATEGORISEES_2024', 'IGNF_RPG_PARCELLES-BIO_2025', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2024', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2025', 'IMPACTS-CLIMAT-Bassins-Versants-Topographiques', 'MGP_PLANIFICATION_SCOT2023_TRANSPORT', 'ORTHO-EDUGEO_PYR-PNG_WLD_WM', 'ORTHOIMAGERY.EDUGEO.AJACCIO1975', 'ORTHOIMAGERY.EDUGEO.AJACCIO1990', 'ORTHOIMAGERY.EDUGEO.ARCACHON2010', 'ORTHOIMAGERY.EDUGEO.ARRAS-LENS-BETHUNE2008', 'ORTHOIMAGERY.EDUGEO.BELFORT-MONTBELLIARD1951', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1950', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1970', 'ORTHOIMAGERY.EDUGEO.BETHUNE1963', 'ORTHOIMAGERY.EDUGEO.BETHUNE1964', 'ORTHOIMAGERY.EDUGEO.BETHUNE1988', 'ORTHOIMAGERY.EDUGEO.BIARRITZ1977', 'ORTHOIMAGERY.EDUGEO.BIARRTITZ1979', 'ORTHOIMAGERY.EDUGEO.BORDEAUX2003', 'ORTHOIMAGERY.EDUGEO.BOURG-ST-MAURICE1956', 'ORTHOIMAGERY.EDUGEO.CAEN1991', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE1968', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE2008', 'ORTHOIMAGERY.EDUGEO.CAP-DAGE1981', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1965', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1985', 'ORTHOIMAGERY.EDUGEO.CREIL-SUD-PICARDIE1975', 'ORTHOIMAGERY.EDUGEO.DIJON1971', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1966', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1989', 'ORTHOIMAGERY.EDUGEO.GUADELOUPE1984', 'ORTHOIMAGERY.EDUGEO.GUYANE1955', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1961', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1980', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1989', 'ORTHOIMAGERY.EDUGEO.LA-REUNION2010', 'ORTHOIMAGERY.EDUGEO.LA-ROCHELLE-ROCHEFORT1973', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1955', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1964', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE2008', 'ORTHOIMAGERY.EDUGEO.LIMOGES1974', 'ORTHOIMAGERY.EDUGEO.LYON1965', 'ORTHOIMAGERY.EDUGEO.LYON1984', 'ORTHOIMAGERY.EDUGEO.LYON1988', 'ORTHOIMAGERY.EDUGEO.LYON2008', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1965', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1977', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1969', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1980', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1988', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES2010', 'ORTHOIMAGERY.EDUGEO.MARTINIQUE1988', 'ORTHOIMAGERY.EDUGEO.METZ-NANCY1982', 'ORTHOIMAGERY.EDUGEO.NANTES1971', 'ORTHOIMAGERY.EDUGEO.PARIS1949', 'ORTHOIMAGERY.EDUGEO.PARIS1965', 'ORTHOIMAGERY.EDUGEO.PARIS2010SPOT', 'ORTHOIMAGERY.EDUGEO.REIMS1963', 'ORTHOIMAGERY.EDUGEO.REIMS1973', 'ORTHOIMAGERY.EDUGEO.REIMS1988', 'ORTHOIMAGERY.EDUGEO.REIMS2010', 'ORTHOIMAGERY.EDUGEO.ROISSY1965', 'ORTHOIMAGERY.EDUGEO.ROISSY1987', 'ORTHOIMAGERY.EDUGEO.STRASBOURG1975']
+WFS : 862 couches
+WFS utiles : ['AOC-VITICOLES:aire_parcellaire', 'BAN-PLUS:lien_adresse_parcelle', 'BAN-PLUS:lien_bati_parcelle', 'BDCARTO_ETAT-MAJOR.NIVEAU3:b_1_troncon_de_route', 'BDCARTO_ETAT-MAJOR.NIVEAU3:b_2_troncon_de_voie_ferree', 'BDCARTO_ETAT-MAJOR.NIVEAU3:b_3_troncon_de_cours_d_eau', 'BDCARTO_ETAT-MAJOR.NIVEAU4:b_1_troncon_de_route', 'BDCARTO_ETAT-MAJOR.NIVEAU4:b_2_troncon_de_voie_ferree', 'BDCARTO_ETAT-MAJOR.NIVEAU4:b_3_troncon_de_cours_d_eau', 'BDCARTO_V5:troncon_de_route', 'BDCARTO_V5:troncon_hydrographique', 'BDFORETV1_BDD_FXX_LAMB93_20140403:resu_bdv1_shape', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:arrondissement', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:batiment', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:commune', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:divcad', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:localisant', 'BDPARCELLAIRE-VECTEUR_WLD_BDD_WGS84G:parcelle', 'BDTOPO_V3:foret_publique', 'BDTOPO_V3:haie', 'BDTOPO_V3:troncon_de_route', 'BDTOPO_V3:troncon_de_voie_ferree', 'BDTOPO_V3:troncon_hydrographique', 'BDTOPO_V3:zone_de_vegetation', 'BDTOPO_V3_DIFF:troncon_de_route', 'BDTOPO_V3_DIFF:troncon_de_voie_ferree', 'BDTOPO_V3_DIFF:troncon_hydrographique', 'BDTOPO_V3_DIFF:zone_de_vegetation', 'CADASTRALPARCELS.GRAPHE:graphe', 'CADASTRALPARCELS.HEATMAP:parcelle_wld', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:arrondissement', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:batiment', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:borne_limite_propriete', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:borne_parcelle', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:commune', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:feuille', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:localisant', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:parcelle', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS:subdivision_fiscale', 'CADASTRALPARCELS.QUALREFBDP:divcadmtd', 'CONSERVATOIRE_LITTORAL.PARCELLES:parcelles_protegees', 'HAIES.BOCAGES:haie', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-:acces_porteur', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-:acces_skidder', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-MASQUE-FORETV3:acces_porteur', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-MASQUE-FORETV3:acces_skidder', 'IGNF_BD-FRANCE-TOPO-VEGETATION:BD-FRANCE-TOPO-VEGETATION', 'IGNF_CARTO-FORMATIONS-VEGETALES_2004:formations_vegetales_d971_2004', 'IGNF_CARTO-FORMATIONS-VEGETALES_2010:formations_vegetales_d971_2010', 'IGNF_CARTO-FORMATIONS-VEGETALES_2016:formations_vegetales_d976_2016', 'IGNF_CARTO-FORMATIONS-VEGETALES_2017:formations_vegetales_d972_2017', 'IGNF_CARTO-FORMATIONS-VEGETALES_2022:formations_vegetales_d972_2022', 'IGNF_CARTO-FORMATIONS-VEGETALES_2023:formations_vegetales_d976_2023', 'IGNF_CARTO-FORMATIONS-VEGETALES_2024:formations_vegetales_d971_2024', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2004', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2010', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2016', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2017', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2022', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2023', 'IGNF_MASQUE-CARTO-FORMATIONS-VEGETALES:masque-foret_2024', 'IGNF_MASQUE-FORET.2021-2023:masque_foret', 'IGNF_RPG_GRANDES-CATEGORIES-PARCELLES_2025:grandes_categories_parcelles', 'IGNF_RPG_PARCELLES-AGRICOLES-CATEGORISEES_2024:parcelles_agricole_categorisees_2024', 'IGNF_RPG_PARCELLES-BIO_2025:parcelles_bio', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE:parcelles_eligibles_iae_2024', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2025:parcelles_eligibles_iae', 'IGNF_RPG_SURFACES-NON-AGRICOLES_2025:surfaces_non_agricoles_vegetation_ponctuelle', 'IGNF_RPG_SURFACES-NON-AGRICOLES_2025:surfaces_non_agricoles_vegetation_surfacique', 'LANDCOVER.FORESTINVENTORY.V2:formation_vegetale', 'LANDUSE.AGRICULTURE2025:parcelles_graphiques', 'NAVIFOREST_PUBLIC:itineraires-bois-ronds', 'ONF.FORETS_PUBLIQUES:ONF_FORETS_PUBLIQUES', 'ObsForets.Gestion:part_forets_publiques_dep_2017_2021', 'ObsForets.Ressources.TxBoisement:taux_boisement_communal', 'ObsForets.Ressources.TxBoisement:taux_boisement_dep_2018_2022', 'ObsForets.Ressources:volume_moyen_ha_dep_2018_2022', 'ObsForets.Ressources:volume_sur_pied_dep_2017_2021', 'ObsForets.Ressources:volume_sur_pied_region_2017_2021', 'ObsForets.Sols:repartition_niveaux_trophiques_2018_2022']
+  tuile témoin TRANSPORTNETWORKS.ROADS (normal) : 6754 octets
+  HTTP 400 sur https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=FORETS.PUBLIQUES&STYLE=FORETS+PUBLIQUES&TILEMATRIXSET=PM&TILEMATRIX=16&TILEROW=22731&TILECOL=32481&FORMA : '<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"><Exception exceptionCode="InvalidParameterValue" >Style FORETS PUBLIQUES unknown</Exception></ExceptionReport>'
+  HTTP 400 sur https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=FORETS.PUBLIQUES&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX=16&TILEROW=22731&TILECOL=32481&FORMAT=image%2F : '<ExceptionReport xmlns="http://www.opengis.net/ows/1.1"><Exception exceptionCode="InvalidParameterValue" >Style normal unknown</Exception></ExceptionReport>'
+  tuile témoin CADASTRALPARCELS.PARCELLAIRE_EXPRESS (normal) : 11898 octets
+  tuile témoin ORTHOIMAGERY.ORTHOPHOTOS (normal) : 10083 octets
+  TRANSPORTNETWORKS.ROADS styles : ['normal'] zoom ['6'] → ['18']
+  FORETS.PUBLIQUES styles : ['FORETS PUBLIQUES ONF'] zoom ['3'] → ['16']
+  (3 s)
+
+== Forêts (IGN BD Forêt V2)
+BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+  inversion lat/lon : False
+  réponse non JSON : # HELP jmx_exporter_build_info A metric with a constant '1' value labeled with the version of the JMX exporter.
+# TYPE jmx_exporter_build_info gauge
+jmx_exporter_build_info{version="0.19.0",name="jmx_prometheus_javaagent",} 1.0
+# HELP jvm_threads_current Current thread count of a JVM
+# TYPE jvm_thre
+  polygones : 50393 → {'Chênes': 1193, 'Hêtre': 70, 'Châtaignier': 826, 'Autres feuillus': 17047, 'Mélange de feuillus': 10325, 'Pins': 2505, 'Douglas': 453, 'Épicéa / sapin': 337, 'Autres conifères': 965, 'Mixte feuillus-conifères': 6407, 'Peupleraie': 3201, 'Forêt ouverte': 3757, 'Lande': 3307}
+     Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
+     Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
+     Châtaignier                ← Forêt fermée de châtaignier pur | Châtaignier
+     Autres feuillus            ← Forêt fermée de feuillus purs en îlots | Feuillus
+     Autres feuillus            ← Forêt fermée d’un autre feuillu pur | Feuillus
+     Autres feuillus            ← Forêt fermée dun autre feuillu pur | Feuillus
+     Mélange de feuillus        ← Forêt fermée à mélange de feuillus | Feuillus
+     Pins                       ← Forêt fermée de pin maritime pur | Pin maritime
+     Pins                       ← Forêt fermée à mélange de pins purs | Pins mélangés
+     Pins                       ← Forêt fermée de pin laricio ou pin noir pur | Pin laricio, pin noir
+     Pins                       ← Forêt fermée de pin sylvestre pur | Pin sylvestre
+     Pins                       ← Forêt fermée d’un autre pin pur | Pin autre
+     Douglas                    ← Forêt fermée de douglas pur | Douglas
+     Épicéa / sapin             ← Forêt fermée de sapin ou épicéa | Sapin, épicéa
+     Autres conifères           ← Forêt fermée de conifères purs en îlots | Conifères
+     Autres conifères           ← Forêt fermée à mélange de conifères | Conifères
+     Autres conifères           ← Forêt fermée à mélange d’autres conifères | Conifères
+     Autres conifères           ← Forêt fermée de mélèze pur | Mélèze
+     Autres conifères           ← Forêt fermée d’un autre conifère pur autre que pin  | Conifères
+     Mixte feuillus-conifères   ← Forêt fermée à mélange de conifères prépondérants et feuillus | Mixte
+     Mixte feuillus-conifères   ← Forêt fermée à mélange de feuillus prépondérants et conifères | Mixte
+     Peupleraie                 ← Peupleraie | Peuplier
+     Forêt ouverte              ← Forêt fermée sans couvert arboré | NR
+     Forêt ouverte              ← Forêt ouverte à mélange de feuillus et conifères | Mixte
+     Forêt ouverte              ← Forêt ouverte de feuillus purs | Feuillus
+     Forêt ouverte              ← Forêt ouverte de conifères purs | Conifères
+     Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
+     Lande                      ← Lande | NC
+     Lande                      ← Formation herbacée | NC
+  (49 s)
+terrain-base.bin.gz : 0.33 Mo
+
+== Haies et petits bois (IGN BD TOPO)
+BD TOPO végétation : BDTOPO_V3_DIFF:zone_de_vegetation
+  filtre serveur : False
+  réponse non JSON : # HELP jmx_exporter_build_info A metric with a constant '1' value labeled with the version of the JMX exporter.
+# TYPE jmx_exporter_build_info gauge
+jmx_exporter_build_info{version="0.19.0",name="jmx_prometheus_javaagent",} 1.0
+# HELP jvm_threads_current Current thread count of a JVM
+# TYPE jvm_thre
+  réponse non JSON : # HELP jvm_classes_currently_loaded The number of classes that are currently loaded in the JVM
+# TYPE jvm_classes_currently_loaded gauge
+jvm_classes_currently_loaded 23039.0
+# HELP jvm_classes_loaded_total The total number of classes that have been loaded since the JVM has started execution
+# TYPE j
+  objets : 0 natures : {}
+  ajoutés : petits bois 0 px, haies 0 px
+  (29 s)
+
+== Zones bâties et parcs (OpenStreetMap)
+  Overpass https://overpass-api.de/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
+  Overpass https://overpass-api.de/api/interpreter : HTTP 502 '# 502 Gateway Timeout\n\nThis Overpass API server is currently at capacity. All query workers are busy\nand the request queue is full.\n\n## What to do\n\nRetry your request using exponential backoff: wait a'
+  Overpass https://overpass.kumi.systems/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
+  Overpass https://overpass.kumi.systems/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
+  Overpass https://maps.mail.ru/osm/tools/overpass/api/interpreter : HTTP 504 '<html>\r\n<head><title>504 Gateway Time-out</title></head>\r\n<body>\r\n<center><h1>504 Gateway Time-out</h1></center>\r\n<hr><center>nginx</center>\r\n</body>\r\n</html>\r\n'
+  Overpass https://maps.mail.ru/osm/tools/overpass/api/interpreter : HTTP 504 '<?xml version="1.0" encoding="UTF-8"?>\n<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"\n    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">\n<html xmlns="http://www.w3.org/1999/xhtml" xml:'
+  (499 s)
+  pas de masque urbain
+terrain.bin.gz : 0.33 Mo
+Pixels par classe : {'Hors forêt': 4285291, 'Chênes': 55239, 'Hêtre': 7059, 'Châtaignier': 11408, 'Autres feuillus': 49206, 'Mélange de feuillus': 225954, 'Pins': 59624, 'Douglas': 7359, 'Épicéa / sapin': 6758, 'Autres conifères': 6100, 'Mixte feuillus-conifères': 56991, 'Peupleraie': 13608, 'Forêt ouverte': 24327, 'Lande': 23576, 'Haie / talus boisé': 0, 'Petit bois': 0}
+
+== Forêts publiques (ONF)
+Forêts publiques WFS : ['BDTOPO_V3:foret_publique', 'ONF.FORETS_PUBLIQUES:ONF_FORETS_PUBLIQUES', 'ObsForets.Gestion:part_forets_publiques_dep_2017_2021']
+  exemple : {"cleabs": "FORETPUB0000002052450432", "nature": "Autre forêt publique", "toponyme": "Forêt des Captages de la Ville de Rennes", "statut_du_toponyme": "Collecté", "importance": "5", "date_creation": "2018-09-14T15:40:00Z", "date_modification": "2021-10-19T12:34:32.388Z", "date_d_apparition": null, "date_de_confirmation": "2016-06-01Z", "sources": "ONF 2021", "identifiants_sources": "ONF:F09653G", 
+  forêts publiques : 85 polygones, 50338 px
+  (3 s)
+pub.bin.gz : 0.02 Mo
+
+== Relief
+  MNT IGN : 20 tuiles, 95.3 % couvert
+  pysheds indisponible, position dans le relief seule : module 'numpy' has no attribute 'in1d'
+  relief : altitude -100–1997 m (IGN RGE ALTI)
+  (59 s)
+relief.bin.gz : 4.20 Mo
+
+== Coupes récentes (Hansen / UMD)
+  Hansen GFC 2025 : 53828 px touchés, dernière année 2025
+  (1 s)
+loss.bin.gz : 0.08 Mo
+
+== pH du sol (SoilGrids)
+  (1 s)
 ph.bin.gz : 0.06 Mo
-Terminé : OK
+
+Terminé : 2026-11-11T18:18:52+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
