@@ -1,6 +1,5 @@
-Météo du 2026-11-11T18:07:45+00:00 — 1462 nœuds
-  erreur réseau (ChunkedEncodingError: Response ended prematurely)
-  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.8500%2C47.8830%2C47.9160%2C47.9490%2C47.9820%2C48.0150%2C48.0480%2C48.0810%2C48.1140%2C48.1470%2C48.1800%2C48.2130%2C48.2460%2C48 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+Météo du 2026-11-11T18:22:22+00:00 — 1462 nœuds
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.8500%2C47.8830%2C47.9160%2C47.9490%2C47.9820%2C48.0150%2C48.0480%2C48.0810%2C48.1140%2C48.1470%2C48.1800%2C48.2130%2C48.2460%2C48 : '{"reason":"Minutely API request limit exceeded. Please try again in one minute.","error":true}'
 Nœuds obtenus : 1462/1462, lots en échec : 0
 meteo.json : 265 ko
 Exemple (premier nœud, aujourd'hui) : {'er': 25.0, 'r7': 3.8, 'r15': 4.2, 'r30': 45.8, 't7': 9.3, 'fmin': 2.5, 'sm': 0.351, 'ts': 11.6, 'drop': -1.5}
