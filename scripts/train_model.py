@@ -63,11 +63,18 @@ def occurrences(key):
             if unc is not None and unc > 10000:
                 continue
             out.append({"id": str(o.get("key")), "lat": o["decimalLatitude"], "lon": o["decimalLongitude"], "date": d, "unc": unc,
-                        "src": o.get("datasetName") or o.get("publisher") or o.get("institutionCode") or "?"})
+                        "src": o.get("datasetKey") or "?"})
         off += len(res)
         if j.get("endOfRecords") or not res:
             break
     return out
+
+_titles = {}
+def dataset_title(k):
+    if k not in _titles:
+        r = get(f"https://api.gbif.org/v1/dataset/{k}", log=log, tries=2) if k and k != "?" else None
+        _titles[k] = (r.json().get("title") if r is not None else None) or k
+    return _titles[k]
 
 def dedupe(occ):
     seen, out = set(), []
@@ -232,8 +239,9 @@ def main():
         srcs = {}
         for o in occ:
             srcs[o["src"]] = srcs.get(o["src"], 0) + 1
-        fongi = sum(v for k, v in srcs.items() if "fongi" in str(k).lower() or "mycolog" in str(k).lower())
-        log(f"  sources principales : {dict(sorted(srcs.items(), key=lambda kv: -kv[1])[:5])} — FongiFrance / sociétés mycologiques : {fongi}")
+        named = {dataset_title(k): v for k, v in srcs.items()}
+        fongi = sum(v for k, v in named.items() if any(w in str(k).lower() for w in ("fongi", "mycolog", "inpn", "champignon")))
+        log(f"  sources principales : {dict(sorted(named.items(), key=lambda kv: -kv[1])[:8])} — FongiFrance, sociétés mycologiques, INPN : {fongi}")
         months = np.bincount([o["date"].month for o in occ], minlength=13)[1:]
         log(f"{name} : {len(occ)} observations datées en France (dont {sum(in_nw(o['lat'], o['lon']) for o in occ)} dans l'Ouest), "
             f"météo en cache {len(cache['items'])}, à compléter {len(todo)} — par mois {months.tolist()}")
