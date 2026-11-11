@@ -314,8 +314,14 @@ function affEff(key){
   const H=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat;
   const w=H&&H.N>=30&&H.aff?H.N/(H.N+100):0;   // trop peu d'observations précises dans la zone : on garde le réglage de base
   const pers=personalHabitat(key);
-  const out=base.map((a,k)=>{if(!a)return 0;let v=w?(1-w)*a+w*(H.aff[k]??a):a;if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
-  out.learnedN=w?H.N:0;out.personal=pers;
+  // Habitats appris sur toute la France (observations GBIF comparées aux forêts voisines)
+  const F=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat_fr;
+  const wf=F&&F.aff&&F.N>=30?F.N/(F.N+150):0;
+  const out=base.map((a,k)=>{if(!a)return 0;let v=a;
+    if(wf&&F.aff[k]!=null)v=(1-wf)*v+wf*F.aff[k];
+    if(w)v=(1-w)*v+w*(H.aff[k]??v);
+    if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
+  out.learnedN=(wf?F.N:0)+(w?H.N:0);out.personal=pers;
   affCache.clear();affCache.set(ck,out);return out;
 }
 
@@ -870,17 +876,17 @@ function renderInfo(){
   const when=iso=>iso?new Date(iso).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}):"–";
   const sp=Object.entries(SPECIES).map(([k,s])=>{const E=MODEL&&MODEL.species&&MODEL.species[k];const W=E&&E.weather,Hb=E&&E.habitat;
     const used=weatherModel(k);
-    return `<tr><td>${esc(s.name)}</td><td>${E?fmt(E.n_obs):"–"}</td><td>${W&&modelAuc(W)!=null?fmt(modelAuc(W),2):"–"}${W?used?"":" (non utilisé)":""}</td><td>${Hb&&Hb.N?fmt(Hb.N):"–"}</td><td>${personalPresences(k).length}</td></tr>`}).join("");
+    return `<tr><td>${esc(s.name)}</td><td>${E?fmt(E.n_obs):"–"}</td><td>${W&&modelAuc(W)!=null?fmt(modelAuc(W),2):"–"}${W?used?"":" (non utilisé)":""}</td><td>${E&&E.habitat_fr&&E.habitat_fr.N?fmt(E.habitat_fr.N):"–"}${Hb&&Hb.N?` + ${fmt(Hb.N)} ici`:""}</td><td>${personalPresences(k).length}</td></tr>`}).join("");
   $("#infoBody").innerHTML=`
   <p>Zones détaillées : Côtes-d'Armor, Ille-et-Vilaine, Mayenne et Morbihan. Pour chaque carré de 55 m, la carte multiplie :</p>
   <ol class="info-list">
-    <li><b>Le peuplement</b> : essences de la BD Forêt de l'IGN, plus les haies et petits bois de la BD TOPO. Les quartiers, zones d'activités et parcs (OpenStreetMap) sont retirés.</li>
+    <li><b>Le peuplement</b> : essences de la BD Forêt de l'IGN, plus les haies et petits bois de la BD TOPO. Les quartiers, zones d'activités et parcs sont retirés. Les préférences de chaque espèce sont apprises sur les observations précises de toute la France, comparées aux forêts voisines.</li>
     <li><b>Le sol</b> : pH (ISRIC SoilGrids) comparé aux préférences de l'espèce.</li>
     <li><b>Le relief</b> : fonds de vallon et versants nord gardent l'humidité, les points hauts sèchent vite${M&&M.relief_source?` (${esc(M.relief_source)})`:""}.</li>
     <li><b>Les coupes</b> : trouées et coupes rases vues par satellite depuis 2001 (Université du Maryland), pénalisées pendant une dizaine d'années.</li>
     <li><b>La météo</b> : pluie des 30 derniers jours, humidité et température du sol, baisse de température qui déclenche les poussées, gel.</li>
   </ol>
-  <table class="info-table"><thead><tr><th>Espèce</th><th>Obs. en France</th><th>Fiabilité météo dans l'Ouest</th><th>Obs. précises dans la zone</th><th>Tes relevés</th></tr></thead><tbody>${sp}</tbody></table>
+  <table class="info-table"><thead><tr><th>Espèce</th><th>Obs. en France</th><th>Fiabilité météo dans l'Ouest</th><th>Habitats appris (obs. précises)</th><th>Tes relevés</th></tr></thead><tbody>${sp}</tbody></table>
   <p class="hint">Le modèle météo apprend sur les observations publiques de toute la France, et sur tes relevés anonymes. Sa fiabilité va de 0,5 (hasard) à 1 (parfait) : c'est sa capacité à distinguer un jour de poussée d'un jour ordinaire, mesurée sur des observations de l'Ouest qu'il n'a pas vues. Il n'est utilisé qu'au-dessus de 0,6.</p>
   <div class="facts">
     <span class="chip">Terrain : ${M?when(M.generated):"–"}</span>

@@ -31,6 +31,9 @@ BUDGET = int(os.environ.get("BUDGET", "330"))  # appels à l'archive météo par
 NW = {"lat": (46.6, 49.3), "lon": (-5.3, -0.2)}  # Bretagne et alentours, pour mesurer la fiabilité localement
 FEATS = ["er", "r7", "t7", "t7sq", "ts", "drop", "fmin"]
 NCLS = 16
+HAB_TARGET = 400                                   # observations précises par espèce pour les habitats
+HAB_BUDGET = int(os.environ.get("HAB_BUDGET", "1800"))   # lectures de la BD Forêt par calcul
+GEOPF_WFS = "https://data.geopf.fr/wfs/ows"
 
 def taxon_key(name):
     r = get("https://api.gbif.org/v1/species/match", {"name": name, "strict": "true"}, log=log)
@@ -170,6 +173,61 @@ def finish_habitat(n, N, area, out_forest=0, rel_v=()):
         res["relief_mean"] = round(float(np.mean(rel_v)), 1)
     return res
 
+# ---------------------------------------------------------------- habitats appris sur toute la France
+def forest_class_at(lat, lon):
+    """Peuplement BD Forêt V2 au point (0 = hors forêt cartographiée), None si l'IGN ne répond pas."""
+    from build_terrain import classify, pick
+    d = 0.00015
+    for attempt in range(3):
+        r = get(GEOPF_WFS, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature",
+                            "TYPENAMES": "LANDCOVER.FORESTINVENTORY.V2:formation_vegetale", "OUTPUTFORMAT": "application/json",
+                            "COUNT": 3, "SRSNAME": "EPSG:4326", "BBOX": f"{lat - d},{lon - d},{lat + d},{lon + d},urn:ogc:def:crs:EPSG::4326"},
+                log=log, timeout=60, tries=2, pause=5)
+        if r is None:
+            return None
+        try:
+            feats = r.json().get("features", [])
+        except Exception:
+            time.sleep(3 * (attempt + 1)); continue
+        if not feats:
+            return 0
+        p = feats[0].get("properties") or {}
+        return classify(pick(p, r"tfv", r"lib_tfv", r"libelle.*", r".*tfv.*") or "", pick(p, r"essence", r".*essence.*") or "")
+    return None
+
+def random_near(lat, lon, rng, radius_m=2000):
+    import math
+    a, dist = rng.uniform(0, 2 * math.pi), radius_m * math.sqrt(rng.uniform(0.04, 1))   # entre 400 m et 2 km
+    return lat + dist * math.cos(a) / 110540, lon + dist * math.sin(a) / (111320 * math.cos(math.radians(lat)))
+
+def load_hab(key):
+    p = OUT / "samples" / f"habitat-{key}.json"
+    try:
+        return json.loads(p.read_text()) if p.exists() else {"items": {}}
+    except Exception:
+        return {"items": {}}
+
+def habitat_fr(items):
+    """Préférence de chaque peuplement : part des observations / part des points témoins voisins (cas-témoins)."""
+    K = 14                                    # classes de la BD Forêt (haies et petits bois n'y figurent pas)
+    n = np.zeros(K); b = np.zeros(K)
+    for it in items.values():
+        if it.get("p") is None or not it.get("bg"):
+            continue
+        n[min(it["p"], K - 1)] += 1
+        for c in it["bg"]:
+            if c is not None:
+                b[min(c, K - 1)] += 0.5           # 2 témoins par observation
+    N, B = n[1:].sum(), b[1:].sum()
+    if N < 20:
+        return {"N": int(N), "B": int(B)}
+    ratio = ((n + 1) / (N + K)) / ((b + 1) / (B + K))
+    ok = b >= 7.5                         # au moins 15 points témoins dans ce peuplement
+    ok[0] = False
+    aff = np.where(ok, ratio / ratio[ok].max(), np.nan)
+    return {"N": int(N), "B": int(B), "outside": int(n[0]), "n": n.astype(int).tolist(), "b": b.round(1).tolist(),
+            "aff": [None if not np.isfinite(v) else round(float(v), 3) for v in aff]}
+
 def perso_records():
     """Fichiers anonymes envoyés depuis l'app (data/perso/*.json) : aucune position, juste météo, bois et bilan."""
     recs = []
@@ -264,6 +322,33 @@ def main():
         save_cache(key, d["cache"])
     log(f"\nAppels à l'archive météo : {calls} ; reste à compléter : {sum(len(q) for q in queues.values())}")
 
+    # 2 bis. Habitats : peuplement à chaque observation précise et à 2 points témoins voisins, par paliers
+    hab, hq = {}, {}
+    for key, d in data.items():
+        hab[key] = load_hab(key)
+        precise = [o for o in d["occ"] if o["unc"] is not None and o["unc"] <= 100]
+        r2 = random.Random("hab" + key)
+        order = sorted(precise, key=lambda o: o["id"]); r2.shuffle(order)
+        hq[key] = [o for o in order[:HAB_TARGET] if o["id"] not in hab[key]["items"]]
+        log(f"  habitats {SPECIES[key]} : {len(precise)} observations précises (≤ 100 m), en cache {len(hab[key]['items'])}, à lire {len(hq[key])}")
+    reads = 0
+    while reads < HAB_BUDGET and any(hq.values()):
+        for key in list(hq):
+            if not hq[key] or reads >= HAB_BUDGET:
+                continue
+            o = hq[key].pop(0)
+            r2 = random.Random(o["id"])
+            p = forest_class_at(o["lat"], o["lon"]); reads += 1
+            if p is None:
+                continue
+            bg = [forest_class_at(*random_near(o["lat"], o["lon"], r2)) for _ in range(2)]; reads += 2
+            hab[key]["items"][o["id"]] = {"p": p, "bg": bg}
+            time.sleep(0.15)
+    for key in hab:
+        (OUT / "samples").mkdir(exist_ok=True)
+        (OUT / "samples" / f"habitat-{key}.json").write_text(json.dumps(hab[key], separators=(",", ":")))
+    log(f"Lectures BD Forêt : {reads} ; reste à lire : {sum(len(q) for q in hq.values())} observations")
+
     # 3. Modèles
     area = np.bincount(cls[cls > 0].ravel(), minlength=NCLS).astype(float) if cls is not None else None
     for key, d in data.items():
@@ -272,6 +357,8 @@ def main():
         occ = d["occ"]
         entry = {"name": name, "taxonKey": d["tk"], "n_obs": len(occ), "months": np.bincount([o["date"].month for o in occ], minlength=13)[1:].tolist()}
         mine = [r for r in perso if r.get("sp") == key]
+        entry["habitat_fr"] = habitat_fr(hab[key]["items"])
+        log("  habitats appris en France :", entry["habitat_fr"])
         if cls is not None:
             h = habitat(occ, cls, rel)
             add = [r["cls"] for r in mine if r.get("type") == "trouvaille" and r.get("cls")]

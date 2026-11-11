@@ -22,7 +22,7 @@ concurrency:
 jobs:
   train:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,6 +34,10 @@ jobs:
       - name: Entraînement
         id: build
         continue-on-error: true
+        env:
+          # La météo des observations ne se télécharge qu'au calcul quotidien (quota gratuit d'Open-Meteo) ;
+          # les autres déclenchements réentraînent seulement avec ce qui est en cache.
+          BUDGET: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '330' || '0' }}
         run: python scripts/train_model.py
       - name: Enregistrer
         if: always()
