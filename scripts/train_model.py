@@ -59,7 +59,8 @@ def occurrences(key):
             except ValueError:
                 continue
             unc = o.get("coordinateUncertaintyInMeters")
-            if unc is not None and unc > 5000:
+            # 10 km suffisent pour la météo (les grilles météo ont cette finesse) : on garde les relevés d'inventaire par maille
+            if unc is not None and unc > 10000:
                 continue
             out.append({"id": str(o.get("key")), "lat": o["decimalLatitude"], "lon": o["decimalLongitude"], "date": d, "unc": unc,
                         "src": o.get("datasetName") or o.get("publisher") or o.get("institutionCode") or "?"})
@@ -228,6 +229,11 @@ def main():
         target = order[:TARGET]
         todo = [o for o in target if o["id"] not in cache["items"]]
         data[key] = {"tk": tk, "occ": occ, "cache": cache, "todo": todo, "rng": rng}
+        srcs = {}
+        for o in occ:
+            srcs[o["src"]] = srcs.get(o["src"], 0) + 1
+        fongi = sum(v for k, v in srcs.items() if "fongi" in str(k).lower() or "mycolog" in str(k).lower())
+        log(f"  sources principales : {dict(sorted(srcs.items(), key=lambda kv: -kv[1])[:5])} — FongiFrance / sociétés mycologiques : {fongi}")
         months = np.bincount([o["date"].month for o in occ], minlength=13)[1:]
         log(f"{name} : {len(occ)} observations datées en France (dont {sum(in_nw(o['lat'], o['lon']) for o in occ)} dans l'Ouest), "
             f"météo en cache {len(cache['items'])}, à compléter {len(todo)} — par mois {months.tolist()}")
