@@ -1,0 +1,46 @@
+{
+ "version": 1,
+ "generated": "2026-11-11T11:29:50+00:00",
+ "region": {
+  "name": "Ille-et-Vilaine",
+  "west": -2.4,
+  "east": -0.95,
+  "south": 47.55,
+  "north": 48.8
+ },
+ "classes": [
+  "Hors forêt",
+  "Chênes",
+  "Hêtre",
+  "Châtaignier",
+  "Autres feuillus",
+  "Mélange de feuillus",
+  "Pins",
+  "Douglas",
+  "Épicéa / sapin",
+  "Autres conifères",
+  "Mixte feuillus-conifères",
+  "Peupleraie",
+  "Forêt ouverte",
+  "Lande"
+ ],
+ "terrain": {
+  "file": "terrain.bin.gz",
+  "w": 1933,
+  "h": 2500,
+  "dlat": 0.0005,
+  "dlon": 0.00075,
+  "west": -2.4,
+  "north": 48.8,
+  "forest_share": 0.1192
+ },
+ "ph": {
+  "file": "ph.bin.gz",
+  "w": 387,
+  "h": 500,
+  "dlat": 0.0025,
+  "dlon": 0.00375,
+  "west": -2.4,
+  "north": 48.8
+ }
+}

@@ -1,0 +1,49 @@
+Calcul du 2026-11-11T11:29:50+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8}
+Couches forêt trouvées : ['LANDCOVER.FORESTINVENTORY.V1:resu_bdv1_shape', 'LANDCOVER.FORESTINVENTORY.V2:formation_vegetale', 'BDFORETV1_BDD_FXX_LAMB93_20140403:resu_bdv1_shape']
+Couche utilisée : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
+  bande lon -2.40 : 13452 polygones cumulés
+  bande lon -2.15 : 24201 polygones cumulés
+  bande lon -1.90 : 32518 polygones cumulés
+  bande lon -1.65 : 38791 polygones cumulés
+  bande lon -1.40 : 43928 polygones cumulés
+  bande lon -1.15 : 47748 polygones cumulés
+Polygones téléchargés : 47748
+Exemple de propriétés : {"id": "FORESTIE0000000005600003", "code_tfv": "FF2-51-51", "tfv": "Forêt fermée de pin maritime pur", "tfv_g11": "Forêt fermée conifères", "essence": "Pin maritime"}
+Inversion lat/lon : False
+Classes (polygones) : {'Chênes': 1073, 'Hêtre': 62, 'Châtaignier': 756, 'Autres feuillus': 17900, 'Mélange de feuillus': 9713, 'Pins': 2463, 'Douglas': 416, 'Épicéa / sapin': 308, 'Autres conifères': 930, 'Mixte feuillus-conifères': 6323, 'Peupleraie': 2923, 'Forêt ouverte': 1719, 'Lande': 3162}
+Types rencontrés → classe :
+   Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
+   Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
+   Châtaignier                ← Forêt fermée de châtaignier pur | Châtaignier
+   Autres feuillus            ← Forêt fermée de feuillus purs en îlots | Feuillus
+   Autres feuillus            ← Forêt fermée sans couvert arboré | NR
+   Autres feuillus            ← Forêt fermée d’un autre feuillu pur | Feuillus
+   Autres feuillus            ← Forêt fermée dun autre feuillu pur | Feuillus
+   Mélange de feuillus        ← Forêt fermée à mélange de feuillus | Feuillus
+   Pins                       ← Forêt fermée de pin maritime pur | Pin maritime
+   Pins                       ← Forêt fermée à mélange de pins purs | Pins mélangés
+   Pins                       ← Forêt fermée de pin laricio ou pin noir pur | Pin laricio, pin noir
+   Pins                       ← Forêt fermée de pin sylvestre pur | Pin sylvestre
+   Pins                       ← Forêt fermée d’un autre pin pur | Pin autre
+   Pins                       ← Forêt fermée d’un autre conifère pur autre que pin  | Conifères
+   Douglas                    ← Forêt fermée de douglas pur | Douglas
+   Épicéa / sapin             ← Forêt fermée de sapin ou épicéa | Sapin, épicéa
+   Autres conifères           ← Forêt fermée de conifères purs en îlots | Conifères
+   Autres conifères           ← Forêt fermée à mélange de conifères | Conifères
+   Autres conifères           ← Forêt fermée à mélange d’autres conifères | Conifères
+   Autres conifères           ← Forêt fermée de mélèze pur | Mélèze
+   Mixte feuillus-conifères   ← Forêt fermée à mélange de conifères prépondérants et feuillus | Mixte
+   Mixte feuillus-conifères   ← Forêt fermée à mélange de feuillus prépondérants et conifères | Mixte
+   Peupleraie                 ← Peupleraie | Peuplier
+   Forêt ouverte              ← Forêt ouverte à mélange de feuillus et conifères | Mixte
+   Forêt ouverte              ← Forêt ouverte de feuillus purs | Feuillus
+   Forêt ouverte              ← Forêt ouverte de conifères purs | Conifères
+   Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
+   Lande                      ← Lande | NC
+   Lande                      ← Formation herbacée | NC
+terrain.bin.gz : 0.34 Mo
+Part de forêt dans la zone : 11.9 %
+SoilGrids : 686 × 565 crs EPSG:4326 nodata None
+pH : min 5.0, médiane 6.0, max 7.2
+ph.bin.gz : 0.06 Mo
+Terminé : OK
