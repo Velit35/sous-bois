@@ -19,13 +19,19 @@ PAST, FC = 30, 4
 FIELDS = ["er", "r7", "r15", "r30", "t7", "fmin", "sm", "ts", "drop"]
 
 def nodes():
+    """Nœuds du quadrillage situés dans les départements (data/depts.json, préparé par le calcul du terrain)."""
+    from shapely.geometry import shape, Point
+    p = OUT / "depts.json"
+    geom = shape(json.loads(p.read_text())["geometry"]).buffer(0.03) if p.exists() else None
     pad = 0.06
     out = []
     i0, i1 = int((REGION["west"] - pad) // DLON), int((REGION["east"] + pad) // DLON) + 1
     j0, j1 = int((REGION["south"] - pad) // DLAT), int((REGION["north"] + pad) // DLAT) + 1
     for i in range(i0, i1 + 1):
         for j in range(j0, j1 + 1):
-            out.append((i, j, round(j * DLAT, 5), round(i * DLON, 5)))
+            la, lo = round(j * DLAT, 5), round(i * DLON, 5)
+            if geom is None or geom.contains(Point(lo, la)):
+                out.append((i, j, la, lo))
     return out
 
 def fetch(batch):
@@ -44,6 +50,8 @@ def rnd(v, k):
 
 def main():
     today = datetime.now(ZoneInfo("Europe/Paris")).date().isoformat()
+    if not (OUT / "depts.json").exists():
+        log("Contour des départements pas encore prêt : météo précédente conservée."); log.save(); return 1
     ns = nodes()
     log("Météo du", now_iso(), "—", len(ns), "nœuds")
     rows, dates, fails = [], None, 0

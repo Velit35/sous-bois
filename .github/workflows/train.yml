@@ -9,7 +9,7 @@ on:
       - "data/perso/**"
       - "scripts/train_model.py"
   schedule:
-    - cron: "23 2 3 * *"
+    - cron: "17 5 * * *"
   workflow_dispatch:
 
 permissions:
@@ -34,8 +34,6 @@ jobs:
       - name: Entraînement
         id: build
         continue-on-error: true
-        env:
-          FULL: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && '1' || '0' }}
         run: python scripts/train_model.py
       - name: Enregistrer
         if: always()

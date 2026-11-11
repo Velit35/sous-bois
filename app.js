@@ -146,7 +146,8 @@ function combine(wet,temp,fm,shock){
   s*=fm; if(wet>=0.4)s*=1+0.15*shock;
   return clamp(s);
 }
-function weatherModel(key){const M=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].weather;return M&&M.auc>=0.6&&M.n>=30?M:null}
+const modelAuc=M=>M?(M.auc_nw??M.auc):null;
+function weatherModel(key){const M=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].weather;return M&&modelAuc(M)>=0.6&&M.n>=30?M:null}
 function modelFactor(key,m){
   const M=weatherModel(key);if(!M)return 1;
   const x=[m.er,m.r7,m.t7,m.t7!=null?m.t7*m.t7:null,m.ts,m.drop,m.fmin];
@@ -167,10 +168,15 @@ const GRIDS={static:null,live:{kind:"live",dlon:0.1,dlat:0.067,nodes:new Map(),s
 (function restoreLive(){const c=store.get("sb.wx3",null);if(!c||c.day!==todayISO()||Date.now()-c.t>3*3600e3)return;
   for(const[k,v]of Object.entries(c.data))GRIDS.live.nodes.set(k,v);GRIDS.live.stamp=c.t})();
 function persistLive(){const data={};for(const[k,v]of GRIDS.live.nodes)data[k]=v;if(!store.set("sb.wx3",{day:todayISO(),t:GRIDS.live.stamp,data}))store.del("sb.wx3")}
+const REPO=(()=>{const m=location.hostname.match(/^([^.]+)\.github\.io$/);const p=location.pathname.split("/").filter(Boolean)[0];return m&&p?`${m[1]}/${p}`:"Velit35/sous-bois"})();
+const METEO_URL=`https://raw.githubusercontent.com/${REPO}/meteo/meteo.json`;
 async function loadMeteo(){
   try{
-    const r=await fetch("data/meteo.json",{cache:"no-cache"});if(!r.ok)return;
-    const j=await r.json();const off=j.days.indexOf(todayISO());
+    // Fichier de la nuit, publié sur la branche « meteo » du dépôt (secours : l'ancien fichier du site)
+    let j=null;
+    for(const url of [METEO_URL,"data/meteo.json"]){try{const r=await fetch(url,{cache:"no-cache"});if(r.ok){const x=await r.json();if(!j||x.generated>j.generated)j=x}}catch(e){}}
+    if(!j)return;
+    const off=j.days.indexOf(todayISO());
     if(off<0){STATUS.meteo="ancienne";return}
     const F=j.fields,nf=F.length,nodes=new Map();let w=999,e=-999,s=999,n=-999;
     for(const row of j.nodes){
@@ -183,7 +189,8 @@ async function loadMeteo(){
     STATUS.meteo="ok";refreshAll();
   }catch(e){}
 }
-function staticCovers(lat,lon){const G=GRIDS.static;if(!G||G.ndays<=prefs.day)return false;const x=G.ext;return lat>=x.s&&lat<=x.n&&lon>=x.w&&lon<=x.e}
+function staticCovers(lat,lon){const G=GRIDS.static;if(!G||G.ndays<=prefs.day)return false;const x=G.ext;if(lat<x.s||lat>x.n||lon<x.w||lon>x.e)return false;
+  return G.nodes.has(Math.round(lon/G.dlon)+","+Math.round(lat/G.dlat))}
 function gridFor(lat,lon){return staticCovers(lat,lon)?GRIDS.static:GRIDS.live}
 function nodeKeysFor(G,b){const out=[];for(let i=Math.floor(b.w/G.dlon);i<=Math.ceil(b.e/G.dlon);i++)for(let j=Math.floor(b.s/G.dlat);j<=Math.ceil(b.n/G.dlat);j++)out.push({i,j,key:i+","+j,lat:j*G.dlat,lon:i*G.dlon});return out}
 let busy=false;
@@ -226,7 +233,8 @@ function interp(G,lat,lon){
 function nearestNode(lat,lon){const G=gridFor(lat,lon);return G.nodes.get(Math.round(lon/G.dlon)+","+Math.round(lat/G.dlat))||null}
 
 /* ====================================================================== Terrain préparé */
-const TERRAIN={ready:false,meta:null,cls:null,rel:null,loss:null,pub:null,ph:null,error:null};
+const TERRAIN={ready:false,meta:null,A:null,B:null,has:{},ph:null,error:null};
+// A : peuplement (4 bits hauts) | relief 1→15 (4 bits bas) ; B : forêt publique (bit 7) | année de coupe − 2000 (7 bits)
 const STATUS={meteo:null};
 async function loadBin(url){
   const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error(url+" : "+r.status);
@@ -243,21 +251,34 @@ async function loadTerrain(){
     if(!r.ok){TERRAIN.error="pending";updateZoneStatus();return}
     const meta=await r.json();
     const g=meta.grid||meta.terrain;meta.grid=g;
-    const files=meta.files||{terrain:meta.terrain.file};
-    const size=g.w*g.h;
-    const opt=async k=>{if(!files[k])return null;try{const a=await loadBin("data/"+files[k]);return a.length===size?a:null}catch(e){return null}};
-    const cls=await loadBin("data/"+files.terrain);
-    if(cls.length!==size)throw new Error("Fichier de zones incomplet");
-    const [rel,loss,pub]=await Promise.all([opt("relief"),opt("loss"),opt("pub")]);
+    const size=g.w*g.h;let A,B,has;
+    if(meta.files&&meta.files.a){
+      [A,B]=await Promise.all([loadBin("data/"+meta.files.a),loadBin("data/"+meta.files.b)]);
+      if(A.length!==size||B.length!==size)throw new Error("Fichier de zones incomplet");
+      has=meta.has||{};
+    }else{
+      // Ancien format : un fichier par couche
+      const files=meta.files||{terrain:meta.terrain.file};
+      const opt=async k=>{if(!files[k])return null;try{const a=await loadBin("data/"+files[k]);return a.length===size?a:null}catch(e){return null}};
+      const cls=await loadBin("data/"+files.terrain);if(cls.length!==size)throw new Error("Fichier de zones incomplet");
+      const [rel,loss,pub]=await Promise.all([opt("relief"),opt("loss"),opt("pub")]);
+      A=new Uint8Array(size);B=new Uint8Array(size);
+      for(let i=0;i<size;i++){A[i]=(cls[i]&15)<<4|(rel&&rel[i]?1+((rel[i]-1)*15/255|0):0);B[i]=(loss?Math.min(loss[i],127):0)|(pub&&pub[i]?128:0)}
+      has={relief:!!rel,loss:!!loss,pub:!!pub};
+    }
     let ph=null;if(meta.ph){try{ph=await loadBin("data/"+meta.ph.file)}catch(e){}}
-    Object.assign(TERRAIN,{ready:true,meta,cls,rel,loss,pub,ph,error:null});
+    Object.assign(TERRAIN,{ready:true,meta,A,B,has,ph,error:null});
     calVersion++;updateZoneStatus();refreshAll();
   }catch(e){TERRAIN.error=e.message||"erreur";updateZoneStatus()}
 }
+const clsIdx=i=>TERRAIN.A[i]>>4;
+const relIdx=i=>(TERRAIN.A[i]&15)*17;
+const lossIdx=i=>TERRAIN.B[i]&127;
+const pubIdx=i=>TERRAIN.has.pub?TERRAIN.B[i]>>7:null;
 function idxAt(g,lat,lon){const c=Math.floor((lon-g.west)/g.dlon),r=Math.floor((g.north-lat)/g.dlat);return c<0||r<0||c>=g.w||r>=g.h?-1:r*g.w+c}
 function terrainAt(lat,lon){
   if(!TERRAIN.ready)return null;const i=idxAt(TERRAIN.meta.grid,lat,lon);if(i<0)return null;
-  return {i,cls:TERRAIN.cls[i],rel:TERRAIN.rel?TERRAIN.rel[i]:0,loss:TERRAIN.loss?TERRAIN.loss[i]:0,pub:TERRAIN.pub?TERRAIN.pub[i]:null,ph:phLocal(lat,lon)};
+  return {i,cls:clsIdx(i),rel:relIdx(i),loss:lossIdx(i),pub:pubIdx(i),ph:phLocal(lat,lon)};
 }
 function phLocal(lat,lon){if(!TERRAIN.ph)return null;const i=idxAt(TERRAIN.meta.ph,lat,lon);if(i<0)return null;const v=TERRAIN.ph[i];return v?v/10:null}
 function className(c){return TERRAIN.meta&&TERRAIN.meta.classes[c]||"?"}
@@ -279,7 +300,7 @@ function personalHabitat(key){
   const outs=outings.filter(o=>(o.species||[]).includes(key)&&o.track&&o.track.length>3);
   if(outs.length<3)return null;
   const E=new Array(16).fill(0),F=new Array(16).fill(0);
-  for(const o of outs){for(const i of trackCells(o)){const c=TERRAIN.cls[i];if(c)E[c]++}}
+  for(const o of outs){for(const i of trackCells(o)){const c=clsIdx(i);if(c)E[c]++}}
   for(const f of finds){if(f.species!==key)continue;const t=terrainAt(f.lat,f.lon);if(t&&t.cls)F[t.cls]++}
   const Ft=F.reduce((a,b)=>a+b,0),Et=E.reduce((a,b)=>a+b,0);
   if(Ft<3||Et<100)return null;
@@ -337,17 +358,17 @@ function drawZones(cv,coords){
   const G=gridFor((latT+latB)/2,(lonL+lonR)/2);if(!nodeParts(G).size)return;
   const ctx=cv.getContext("2d"),img=ctx.createImageData(N,N),d=img.data;
   const lons=new Float64Array(N);for(let px=0;px<N;px++)lons[px]=(coords.x*256+(px+0.5)*step)/world*360-180;
-  const t={cls:0,rel:0,loss:0,pub:null,ph:null};let any=false;
+  const t={cls:0,rel:0,loss:0,pub:null,ph:null};let any=false;const pubOn=!!TERRAIN.has.pub;
   for(let py=0;py<N;py++){
     const lat=tileLat(coords.y*256+(py+0.5)*step,z);
     const r=Math.floor((g.north-lat)/g.dlat);if(r<0||r>=g.h)continue;
     let w=null,wLon=-999;
     for(let px=0;px<N;px++){
       const lon=lons[px];const c=Math.floor((lon-g.west)/g.dlon);if(c<0||c>=g.w)continue;
-      const i=r*g.w+c;t.cls=TERRAIN.cls[i];if(!t.cls||!AE[t.cls])continue;
+      const i=r*g.w+c;const a=TERRAIN.A[i];t.cls=a>>4;if(!t.cls||!AE[t.cls])continue;
       if(lon-wLon>0.01||lon<wLon){w=interp(G,lat,lon);wLon=lon}
       if(!w)continue;
-      t.rel=TERRAIN.rel?TERRAIN.rel[i]:0;t.loss=TERRAIN.loss?TERRAIN.loss[i]:0;t.pub=TERRAIN.pub?TERRAIN.pub[i]:null;t.ph=phLocal(lat,lon);
+      const b=TERRAIN.B[i];t.rel=(a&15)*17;t.loss=b&127;t.pub=pubOn?b>>7:null;t.ph=phLocal(lat,lon);
       const lv=levelOf(pixelScore(key,AE,t,w));if(!lv)continue;
       const col=LEVELS[lv].rgba,o=(py*N+px)*4;d[o]=col[0];d[o+1]=col[1];d[o+2]=col[2];d[o+3]=col[3];any=true;
     }
@@ -799,7 +820,7 @@ function anonRecords(){
     out.push({type:"trouvaille",sp:f.species,mois:f.date.slice(0,7),qty:f.qty,m:anonMetrics(f.wx.m),cls:t?t.cls:f.cls??null,rel:relBucket(t?t.rel:f.rel),ph:t&&t.ph!=null?Math.round(t.ph*2)/2:f.ph!=null?Math.round(f.ph*2)/2:null})}
   for(const o of outings){if(!o.wx||!o.ratings)continue;
     let share=null;
-    if(TERRAIN.ready&&o.track&&o.track.length>1){const c=new Array(16).fill(0);let n=0;for(const i of trackCells(o)){const k=TERRAIN.cls[i];if(k){c[k]++;n++}}
+    if(TERRAIN.ready&&o.track&&o.track.length>1){const c=new Array(16).fill(0);let n=0;for(const i of trackCells(o)){const k=clsIdx(i);if(k){c[k]++;n++}}
       if(n)share=Object.fromEntries(c.map((v,k)=>[k,Math.round(v/n*10)/10]).filter(([k,v])=>v>0))}
     for(const[sp,r]of Object.entries(o.ratings))if(SPECIES[sp])out.push({type:"sortie",sp,mois:o.date.slice(0,7),bilan:r,m:anonMetrics(o.wx.m),bois:share})}
   // Ordre mélangé pour ne pas trahir la chronologie
@@ -836,7 +857,7 @@ $("#baseChoices").onclick=e=>{const b=e.target.closest("[data-base]");if(b)setBa
 const OWN=[["all","Toutes"],["pub","Forêts publiques"],["priv","Privé"]];
 function renderOwn(){
   $("#ownChoices").innerHTML=OWN.map(([k,t])=>`<button data-own="${k}" aria-pressed="${prefs.own===k}">${t}</button>`).join("");
-  $("#ownHint").textContent=TERRAIN.ready&&!TERRAIN.pub?"La carte des forêts publiques n'est pas encore prête : le filtre s'appliquera dès qu'elle le sera.":
+  $("#ownHint").textContent=TERRAIN.ready&&!TERRAIN.has.pub?"La carte des forêts publiques n'est pas encore prête : le filtre s'appliquera dès qu'elle le sera.":
     "En forêt privée, les champignons appartiennent au propriétaire : il faut son accord. En forêt publique, la cueillette familiale est en général tolérée, dans la limite des règles locales (quantités, arrêtés).";
 }
 $("#ownChoices").onclick=e=>{const b=e.target.closest("[data-own]");if(!b)return;prefs.own=b.dataset.own;savePrefs();renderOwn();refreshAll()};
@@ -849,9 +870,9 @@ function renderInfo(){
   const when=iso=>iso?new Date(iso).toLocaleString("fr-FR",{day:"numeric",month:"long",hour:"2-digit",minute:"2-digit"}):"–";
   const sp=Object.entries(SPECIES).map(([k,s])=>{const E=MODEL&&MODEL.species&&MODEL.species[k];const W=E&&E.weather,Hb=E&&E.habitat;
     const used=weatherModel(k);
-    return `<tr><td>${esc(s.name)}</td><td>${E?fmt(E.n_obs):"–"}</td><td>${W&&W.auc!=null?fmt(W.auc,2):"–"}${W?used?"":" (non utilisé)":""}</td><td>${Hb&&Hb.N?fmt(Hb.N):"–"}</td><td>${personalPresences(k).length}</td></tr>`}).join("");
+    return `<tr><td>${esc(s.name)}</td><td>${E?fmt(E.n_obs):"–"}</td><td>${W&&modelAuc(W)!=null?fmt(modelAuc(W),2):"–"}${W?used?"":" (non utilisé)":""}</td><td>${Hb&&Hb.N?fmt(Hb.N):"–"}</td><td>${personalPresences(k).length}</td></tr>`}).join("");
   $("#infoBody").innerHTML=`
-  <p>Pour chaque carré de 55 m, la carte multiplie :</p>
+  <p>Zones détaillées : Côtes-d'Armor, Ille-et-Vilaine, Mayenne et Morbihan. Pour chaque carré de 55 m, la carte multiplie :</p>
   <ol class="info-list">
     <li><b>Le peuplement</b> : essences de la BD Forêt de l'IGN, plus les haies et petits bois de la BD TOPO. Les quartiers, zones d'activités et parcs (OpenStreetMap) sont retirés.</li>
     <li><b>Le sol</b> : pH (ISRIC SoilGrids) comparé aux préférences de l'espèce.</li>
@@ -859,8 +880,8 @@ function renderInfo(){
     <li><b>Les coupes</b> : trouées et coupes rases vues par satellite depuis 2001 (Université du Maryland), pénalisées pendant une dizaine d'années.</li>
     <li><b>La météo</b> : pluie des 30 derniers jours, humidité et température du sol, baisse de température qui déclenche les poussées, gel.</li>
   </ol>
-  <table class="info-table"><thead><tr><th>Espèce</th><th>Obs. publiques</th><th>Fiabilité météo</th><th>Obs. dans la zone</th><th>Tes relevés</th></tr></thead><tbody>${sp}</tbody></table>
-  <p class="hint">La fiabilité va de 0,5 (hasard) à 1 (parfait) : c'est la capacité du modèle à distinguer un jour de poussée d'un jour ordinaire, mesurée sur des observations qu'il n'a pas vues. Il n'est utilisé qu'au-dessus de 0,6.</p>
+  <table class="info-table"><thead><tr><th>Espèce</th><th>Obs. en France</th><th>Fiabilité météo dans l'Ouest</th><th>Obs. précises dans la zone</th><th>Tes relevés</th></tr></thead><tbody>${sp}</tbody></table>
+  <p class="hint">Le modèle météo apprend sur les observations publiques de toute la France, et sur tes relevés anonymes. Sa fiabilité va de 0,5 (hasard) à 1 (parfait) : c'est sa capacité à distinguer un jour de poussée d'un jour ordinaire, mesurée sur des observations de l'Ouest qu'il n'a pas vues. Il n'est utilisé qu'au-dessus de 0,6.</p>
   <div class="facts">
     <span class="chip">Terrain : ${M?when(M.generated):"–"}</span>
     <span class="chip">Météo fine : ${G?when(G.generated):STATUS.meteo==="ancienne"?"pas encore mise à jour aujourd'hui":"en direct"}</span>

@@ -10,8 +10,9 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data"
 OUT.mkdir(exist_ok=True)
 
-# Ille-et-Vilaine et ses abords (Saint-Malo → Redon, Montfort → Vitré/Fougères)
-REGION = {"name": "Ille-et-Vilaine", "west": -2.40, "east": -0.95, "south": 47.55, "north": 48.80}
+# Côtes-d'Armor, Ille-et-Vilaine, Mayenne et Morbihan (îles comprises) ; tout ce qui sort des départements est masqué
+DEPTS = {"22": "Côtes-d'Armor", "35": "Ille-et-Vilaine", "53": "Mayenne", "56": "Morbihan"}
+REGION = {"name": "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan", "west": -3.80, "east": 0.00, "south": 47.24, "north": 48.92}
 DLAT = 0.0005      # ≈ 55 m
 DLON = 0.00075     # ≈ 55 m à 48° N
 W = int(round((REGION["east"] - REGION["west"]) / DLON))
@@ -74,6 +75,47 @@ def read_gz(name, shape):
 def transform():
     from rasterio.transform import from_origin
     return from_origin(REGION["west"], REGION["north"], DLON, DLAT)
+
+
+def dept_shape(log=print):
+    """Contour des départements (avec une marge de 2 km), enregistré dans data/depts.json pour les autres calculs."""
+    from shapely.geometry import shape, mapping
+    from shapely.ops import unary_union
+    p = OUT / "depts.json"
+    if p.exists():
+        try:
+            return shape(json.loads(p.read_text())["geometry"])
+        except Exception:
+            pass
+    url = "https://data.geopf.fr/wfs/ows"
+    for tn in ("ADMINEXPRESS-COG-CARTO.LATEST:departement", "ADMINEXPRESS-COG.LATEST:departement", "BDTOPO_V3:departement"):
+        r = get(url, {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": tn, "OUTPUTFORMAT": "application/json",
+                      "SRSNAME": "EPSG:4326", "BBOX": f"{REGION['south']},{REGION['west']},{REGION['north']},{REGION['east']},urn:ogc:def:crs:EPSG::4326",
+                      "COUNT": 200}, timeout=240, log=log, tries=3)
+        if r is None:
+            continue
+        try:
+            feats = r.json().get("features", [])
+        except Exception:
+            continue
+        keep = []
+        for f in feats:
+            pr = f.get("properties") or {}
+            code = str(pr.get("insee_dep") or pr.get("code_insee") or pr.get("code") or "")
+            if code in DEPTS:
+                keep.append(shape(f["geometry"]))
+        if len(keep) == len(DEPTS):
+            g = unary_union(keep)
+            c = g.centroid
+            if not (REGION["west"] < c.x < REGION["east"]):
+                from shapely.affinity import affine_transform
+                g = affine_transform(g, [0, 1, 1, 0, 0, 0])
+            g = g.buffer(0.02).simplify(0.003)
+            p.write_text(json.dumps({"source": tn, "depts": DEPTS, "geometry": mapping(g)}))
+            log(f"Départements ({tn}) : {', '.join(DEPTS.values())}")
+            return g
+        log(f"  {tn} : {len(keep)} départements trouvés sur {len(DEPTS)}")
+    return None
 
 
 def cell(lat, lon):

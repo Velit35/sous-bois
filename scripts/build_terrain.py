@@ -17,11 +17,19 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import OUT, REGION, DLAT, DLON, W, H, S, Log, get, now_iso, write_gz, read_gz, transform, cell
+from common import OUT, REGION, DEPTS, DLAT, DLON, W, H, S, Log, get, now_iso, write_gz, read_gz, transform, cell, dept_shape
 
 log = Log("build-log.txt")
 PH_DLAT, PH_DLON = 0.0025, 0.00375
 GEOPF_WFS = "https://data.geopf.fr/wfs/ows"
+DEPT = None          # contour des départements, fixé au démarrage
+MASK = None          # même contour, en pixels
+
+def in_depts(w, s, e, n):
+    if DEPT is None:
+        return True
+    from shapely.geometry import box
+    return DEPT.intersects(box(w, s, e, n))
 
 CLASSES = [
     "Hors forêt", "Chênes", "Hêtre", "Châtaignier", "Autres feuillus", "Mélange de feuillus",
@@ -71,6 +79,8 @@ def wfs_tiles(typename, step=0.25, cql=None, count=5000):
         lat = REGION["south"]
         while lat < REGION["north"] - 1e-9:
             w, s, e, n = lon, lat, min(lon + step, REGION["east"]), min(lat + step, REGION["north"])
+            if not in_depts(w, s, e, n):
+                lat += step; continue
             start, got_all = 0, []
             while True:
                 p = {"SERVICE": "WFS", "VERSION": "2.0.0", "REQUEST": "GetFeature", "TYPENAMES": typename,
@@ -263,9 +273,9 @@ def hedges(arr):
 def overpass_tile(q):
     for url in ("https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
                 "https://maps.mail.ru/osm/tools/overpass/api/interpreter"):
-        for i in range(2):
+        for i in range(1):
             try:
-                r = S.post(url, data={"data": q}, timeout=300)
+                r = S.post(url, data={"data": q}, timeout=150)
                 if r.status_code == 200:
                     return r.json()
                 log(f"    Overpass {url.split('/')[2]} : HTTP {r.status_code}")
@@ -281,11 +291,15 @@ def osm_urban(m):
     le = "park|garden|golf_course|pitch|sports_centre|stadium|playground|dog_park"
     am = "school|university|college|hospital|parking"
     step, ok, tot, kinds = 0.25, 0, 0, {}
+    t_end = time.time() + 100 * 60          # au-delà de 100 min, on s'arrête (serveurs saturés)
     lon = REGION["west"]
     while lon < REGION["east"] - 1e-9:
         lat = REGION["south"]
         while lat < REGION["north"] - 1e-9:
             s, w, n, e = lat, lon, min(lat + step, REGION["north"]), min(lon + step, REGION["east"])
+            if not in_depts(w, s, e, n) or time.time() > t_end:
+                if time.time() > t_end: log(f"    tuile OSM {w:.2f},{s:.2f} sautée (temps écoulé)")
+                lat += step; continue
             bb = f"({s},{w},{n},{e})"
             q = f"""[out:json][timeout:240];(way["landuse"~"^({lu})$"]{bb};relation["landuse"~"^({lu})$"]{bb};
 way["leisure"~"^({le})$"]{bb};relation["leisure"~"^({le})$"]{bb};way["amenity"~"^({am})$"]{bb};);out geom;"""
@@ -480,6 +494,8 @@ def dem():
             hh, ww = min(step, H - r0), min(step, W - c0)
             n_ = REGION["north"] - r0 * DLAT; s_ = n_ - hh * DLAT
             w_ = REGION["west"] + c0 * DLON; e_ = w_ + ww * DLON
+            if not in_depts(w_, s_, e_, n_):
+                continue
             r = get("https://data.geopf.fr/wms-r/wms", {"SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap",
                     "LAYERS": "ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES", "STYLES": "", "CRS": "EPSG:4326",
                     "BBOX": f"{s_},{w_},{n_},{e_}", "WIDTH": ww, "HEIGHT": hh, "FORMAT": "image/x-bil;bits=32"}, timeout=240, log=log, tries=3)
@@ -494,8 +510,9 @@ def dem():
                 if v.size > a.size * 0.3 and -5 < np.median(v) < 400:
                     a[~good] = np.nan
                     out[r0:r0 + hh, c0:c0 + ww] = a; ok += 1; break
-    log(f"  MNT IGN : {ok} tuiles, {np.isfinite(out).mean() * 100:.1f} % couvert")
-    if np.isfinite(out).mean() > 0.95:
+    cov = np.isfinite(out)[MASK > 0].mean() if MASK is not None else np.isfinite(out).mean()
+    log(f"  MNT IGN : {ok} tuiles, {cov * 100:.1f} % des départements couvert")
+    if cov > 0.97:
         return out, "IGN RGE ALTI"
     # Repli Copernicus (modèle de surface 30 m, arbres compris)
     import rasterio
@@ -514,8 +531,9 @@ def dem():
                     out[m] = tmp[m]; filled += int(m.sum())
             except Exception as ex:
                 log(f"  Copernicus {name} : {str(ex)[:150]}")
-    log(f"  Copernicus : {filled} px complétés, couverture {np.isfinite(out).mean() * 100:.1f} %")
-    return (out, "IGN RGE ALTI, complété par Copernicus GLO-30") if np.isfinite(out).mean() > 0.9 else (None, None)
+    cov = np.isfinite(out)[MASK > 0].mean() if MASK is not None else np.isfinite(out).mean()
+    log(f"  Copernicus : {filled} px complétés, couverture {cov * 100:.1f} %")
+    return (out, "IGN RGE ALTI, complété par Copernicus GLO-30") if cov > 0.9 else (None, None)
 
 def relief():
     from scipy import ndimage as nd
@@ -626,11 +644,34 @@ def stage(name, fn):
     log(f"  ({time.time() - t:.0f} s)")
     return res
 
+def pack(cls, rel, loss, pub):
+    """Deux octets par pixel : A = peuplement (4 bits) | relief (4 bits) ; B = forêt publique (bit 7) | année de coupe (7 bits)."""
+    a = (cls.astype(np.uint8) & 15) << 4
+    if rel is not None:
+        r = rel.astype(np.int32)
+        a |= np.where(r > 0, 1 + (r - 1) * 15 // 255, 0).astype(np.uint8)
+    b = np.zeros((H, W), np.uint8)
+    if loss is not None:
+        b |= np.minimum(loss, 127).astype(np.uint8)
+    if pub is not None:
+        b |= (pub > 0).astype(np.uint8) << 7
+    if MASK is not None:
+        a[MASK == 0] = 0; b[MASK == 0] = 0
+    return a, b
+
 def main():
+    global DEPT, MASK
     log("Calcul du", now_iso(), "zone", REGION, f"grille {W}×{H}")
     old = json.loads((OUT / "meta.json").read_text()) if (OUT / "meta.json").exists() else {}
-    meta = {"version": 2, "generated": now_iso(), "region": REGION, "classes": CLASSES,
-            "grid": {"w": W, "h": H, "dlat": DLAT, "dlon": DLON, "west": REGION["west"], "north": REGION["north"]}, "files": {}}
+    DEPT = dept_shape(log)
+    if DEPT is not None:
+        from shapely.geometry import mapping
+        MASK = np.zeros((H, W), np.uint8); burn([(mapping(DEPT), 1)], MASK)
+        log(f"Masque départemental : {MASK.mean() * 100:.0f} % du cadre")
+    else:
+        log("Contour des départements introuvable : tout le cadre est calculé")
+    meta = {"version": 3, "generated": now_iso(), "region": REGION, "depts": DEPTS, "classes": CLASSES,
+            "grid": {"w": W, "h": H, "dlat": DLAT, "dlon": DLON, "west": REGION["west"], "north": REGION["north"]}, "files": {}, "has": {}}
     stage("Sondage des services", probe)
 
     arr = stage("Forêts (IGN BD Forêt V2)", forests)
@@ -643,9 +684,9 @@ def main():
         log("Rien à faire sans forêts."); log.save(); return 1
     arr = arr.copy()
     stage("Haies et petits bois (IGN BD TOPO)", lambda: hedges(arr))
-    # Le masque urbain (≈ 50 min de téléchargements) est réutilisé pendant 60 jours, sauf lancement manuel
+    # Le masque urbain (long à télécharger) est réutilisé pendant 60 jours, sauf lancement manuel
     up = OUT / "urban.bin.gz"
-    prev_ts = old.get("urban_ts") or (up.stat().st_mtime if up.exists() else 0)
+    prev_ts = old.get("urban_ts") or 0
     m = None
     if up.exists() and os.environ.get("FULL") != "1" and time.time() - prev_ts < 60 * 86400:
         m = read_gz("urban.bin.gz", (H, W))
@@ -655,46 +696,40 @@ def main():
         m = stage("Zones bâties et parcs (BD TOPO + OpenStreetMap)", urban_mask)
         if m is not None:
             meta["urban_ts"] = time.time(); write_gz("urban.bin.gz", m, log)
-        else:
-            m = read_gz("urban.bin.gz", (H, W)); log("  reprise du masque précédent" if m is not None else "  pas de masque urbain")
-            if m is not None: meta["urban_ts"] = prev_ts
     if m is not None:
         apply_urban(arr, m)
-    write_gz("terrain.bin.gz", arr, log)
-    meta["files"]["terrain"] = "terrain.bin.gz"
-    meta["forest_share"] = round(float((arr > 0).mean()), 4)
+    if MASK is not None:
+        arr[MASK == 0] = 0
+    meta["forest_share"] = round(float((arr > 0)[MASK > 0].mean() if MASK is not None else (arr > 0).mean()), 4)
     meta["class_px"] = {CLASSES[k]: int((arr == k).sum()) for k in range(len(CLASSES))}
     log("Pixels par classe :", meta["class_px"])
 
-    def keep(key, fname, res):
-        if res is not None:
-            write_gz(fname, res, log); meta["files"][key] = fname
-        elif old.get("files", {}).get(key) and (OUT / fname).exists():
-            meta["files"][key] = fname; log(f"  {key} : version précédente conservée")
-
-    keep("pub", "pub.bin.gz", stage("Forêts publiques (ONF)", public_forests))
+    pub = stage("Forêts publiques (ONF)", public_forests)
     if stage("Chemins et sentiers (IGN BD TOPO)", paths):
         meta["paths"] = "paths/index.json"
     elif old.get("paths") and (OUT / "paths" / "index.json").exists():
         meta["paths"] = old["paths"]
     rel = stage("Relief", relief)
-    keep("relief", "relief.bin.gz", rel[0] if rel else None)
+    rel_arr = rel[0] if rel else None
     if rel and rel[1]: meta["relief_source"] = rel[1]
-    elif old.get("relief_source"): meta["relief_source"] = old["relief_source"]
     loss = stage("Coupes récentes (Hansen / UMD)", forest_loss)
-    keep("loss", "loss.bin.gz", loss[0] if loss else None)
+    loss_arr = loss[0] if loss else None
     if loss and loss[1]: meta["loss_until"] = loss[1]
-    elif old.get("loss_until"): meta["loss_until"] = old["loss_until"]
     ph = stage("pH du sol (SoilGrids)", soil_ph)
     if ph:
         write_gz("ph.bin.gz", ph[0], log)
         meta["ph"] = {"file": "ph.bin.gz", "w": ph[1], "h": ph[2], "dlat": PH_DLAT, "dlon": PH_DLON, "west": REGION["west"], "north": REGION["north"]}
-    elif old.get("ph"):
-        meta["ph"] = old["ph"]
-    # Compatibilité avec l'ancienne version de l'app
-    meta["terrain"] = {"file": "terrain.bin.gz", **meta["grid"]}
+
+    a, b = pack(arr, rel_arr, loss_arr, pub)
+    write_gz("terrain-a.bin.gz", a, log); write_gz("terrain-b.bin.gz", b, log)
+    meta["files"] = {"a": "terrain-a.bin.gz", "b": "terrain-b.bin.gz"}
+    meta["has"] = {"relief": rel_arr is not None, "loss": loss_arr is not None, "pub": pub is not None}
+    # Anciens fichiers (format d'avant) : supprimés pour ne pas alourdir le site
+    for f in ("terrain.bin.gz", "relief.bin.gz", "loss.bin.gz", "pub.bin.gz"):
+        if (OUT / f).exists():
+            (OUT / f).unlink()
     (OUT / "meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=1), encoding="utf-8")
-    log("\nTerminé :", now_iso(), "fichiers", meta["files"])
+    log("\nTerminé :", now_iso(), "couches", meta["has"])
     log.save()
     return 0
 
