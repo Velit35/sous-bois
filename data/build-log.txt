@@ -1,4 +1,4 @@
-Calcul du 2026-11-11T18:22:38+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
+Calcul du 2026-11-11T19:20:02+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
 
 == Sondage des services
 WMTS utiles : ['ADEME_EPCI_lineaire-haie-a-stock', 'ADEME_EPCI_lineaire-haie-preleve-par-an', 'ADEME_EPCI_lineaire-haie-preleve-totalement-par-an', 'ADEME_EPCI_lineaire-haie-total', 'ADEME_EPCI_volume-bois-de-haie-preleve-par-an', 'ADEME_EPCI_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_EPCI_volume-bois-de-haie-sur-pied', 'ADEME_KM2_lineaire-haie-a-stock', 'ADEME_KM2_lineaire-haie-preleve-par-an', 'ADEME_KM2_lineaire-haie-preleve-totalement-par-an', 'ADEME_KM2_lineaire-haie-total', 'ADEME_KM2_volume-bois-de-haie-preleve-par-an', 'ADEME_KM2_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_KM2_volume-bois-de-haie-sur-pied', 'Aire-Parcellaire', 'BDORTHOHISTORIQUE', 'BDTOPO-DIFF-BATI', 'BDTOPO-DIFF-HYDROGRAPHIE', 'BDTOPO-DIFF-RESEAU_ROUTIER', 'BDTOPO-DIFF-ZONE_ACTIVITES', 'CADASTRAL.PARCELS.SECTIONS', 'CADASTRALPARCELS.HEATMAP', 'CADASTRALPARCELS.HISTO.2008-2013.PARCELS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS.L93', 'CADASTRALPARCELS.PARCELS', 'CADASTRALPARCELS.PARCELS.L93', 'CADASTRALPARCELS.QUALREFBDP', 'CADASTRES.SOLAIRES.DETAILLES', 'CADASTRES.SOLAIRES.LOCAUX', 'CADASTRES.SOLAIRES.LOCAUX.DROM', 'CONSERVATOIRE_LITTORAL.PARCELLES', 'DECALAGE DE LA REPRESENTATION CADASTRALE', 'ENR.PERIMETRE.ROUTE', 'FORETS PUBLIQUES ONF', 'FORETS.PUBLIQUES', 'GAZ.CORRIDOR.TRANSPORT', 'GAZ.RESEAU.TRANSPORT', 'HR.ORTHOIMAGERY.ORTHOPHOTOS', 'HR.ORTHOIMAGERY.ORTHOPHOTOS.L93', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR-MASQUE-FORETV3', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER-MASQUE-FORETV3', 'IGNF_BD-FRANCE-TOPO-VEGETATION', 'IGNF_BD-HAIE-V1_2020', 'IGNF_FORETS-ANCIENNES', 'IGNF_MASQUE-FORET.2021-2023', 'IGNF_ORTHO-61_RVB_0M08_ZONES-TESTS', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.BDORTHO', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.ORTHO-EXPRESS', 'IGNF_POI-ENVIRONNEMENT-LOGEMENT-TRANSPORTS', 'IGNF_RPG_GRANDES-CATEGORIES-PARCELLES_2025', 'IGNF_RPG_PARCELLES-AGRICOLES-CATEGORISEES_2024', 'IGNF_RPG_PARCELLES-BIO_2025', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2024', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2025', 'IMPACTS-CLIMAT-Bassins-Versants-Topographiques', 'MGP_PLANIFICATION_SCOT2023_TRANSPORT', 'ORTHO-EDUGEO_PYR-PNG_WLD_WM', 'ORTHOIMAGERY.EDUGEO.AJACCIO1975', 'ORTHOIMAGERY.EDUGEO.AJACCIO1990', 'ORTHOIMAGERY.EDUGEO.ARCACHON2010', 'ORTHOIMAGERY.EDUGEO.ARRAS-LENS-BETHUNE2008', 'ORTHOIMAGERY.EDUGEO.BELFORT-MONTBELLIARD1951', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1950', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1970', 'ORTHOIMAGERY.EDUGEO.BETHUNE1963', 'ORTHOIMAGERY.EDUGEO.BETHUNE1964', 'ORTHOIMAGERY.EDUGEO.BETHUNE1988', 'ORTHOIMAGERY.EDUGEO.BIARRITZ1977', 'ORTHOIMAGERY.EDUGEO.BIARRTITZ1979', 'ORTHOIMAGERY.EDUGEO.BORDEAUX2003', 'ORTHOIMAGERY.EDUGEO.BOURG-ST-MAURICE1956', 'ORTHOIMAGERY.EDUGEO.CAEN1991', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE1968', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE2008', 'ORTHOIMAGERY.EDUGEO.CAP-DAGE1981', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1965', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1985', 'ORTHOIMAGERY.EDUGEO.CREIL-SUD-PICARDIE1975', 'ORTHOIMAGERY.EDUGEO.DIJON1971', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1966', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1989', 'ORTHOIMAGERY.EDUGEO.GUADELOUPE1984', 'ORTHOIMAGERY.EDUGEO.GUYANE1955', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1961', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1980', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1989', 'ORTHOIMAGERY.EDUGEO.LA-REUNION2010', 'ORTHOIMAGERY.EDUGEO.LA-ROCHELLE-ROCHEFORT1973', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1955', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1964', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE2008', 'ORTHOIMAGERY.EDUGEO.LIMOGES1974', 'ORTHOIMAGERY.EDUGEO.LYON1965', 'ORTHOIMAGERY.EDUGEO.LYON1984', 'ORTHOIMAGERY.EDUGEO.LYON1988', 'ORTHOIMAGERY.EDUGEO.LYON2008', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1965', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1977', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1969', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1980', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1988', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES2010', 'ORTHOIMAGERY.EDUGEO.MARTINIQUE1988', 'ORTHOIMAGERY.EDUGEO.METZ-NANCY1982', 'ORTHOIMAGERY.EDUGEO.NANTES1971', 'ORTHOIMAGERY.EDUGEO.PARIS1949', 'ORTHOIMAGERY.EDUGEO.PARIS1965', 'ORTHOIMAGERY.EDUGEO.PARIS2010SPOT', 'ORTHOIMAGERY.EDUGEO.REIMS1963', 'ORTHOIMAGERY.EDUGEO.REIMS1973', 'ORTHOIMAGERY.EDUGEO.REIMS1988', 'ORTHOIMAGERY.EDUGEO.REIMS2010', 'ORTHOIMAGERY.EDUGEO.ROISSY1965', 'ORTHOIMAGERY.EDUGEO.ROISSY1987', 'ORTHOIMAGERY.EDUGEO.STRASBOURG1975']
@@ -11,7 +11,7 @@ WFS utiles : ['AOC-VITICOLES:aire_parcellaire', 'BAN-PLUS:lien_adresse_parcelle'
   tuile témoin ORTHOIMAGERY.ORTHOPHOTOS (normal) : 10083 octets
   TRANSPORTNETWORKS.ROADS styles : ['normal'] zoom ['6'] → ['18']
   FORETS.PUBLIQUES styles : ['FORETS PUBLIQUES ONF'] zoom ['3'] → ['16']
-  (3 s)
+  (4 s)
 
 == Forêts (IGN BD Forêt V2)
 BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
@@ -46,7 +46,7 @@ BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
      Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
      Lande                      ← Lande | NC
      Lande                      ← Formation herbacée | NC
-  (52 s)
+  (55 s)
 terrain-base.bin.gz : 0.35 Mo
 
 == Haies et petits bois (IGN BD TOPO)
@@ -54,44 +54,19 @@ BD TOPO végétation : BDTOPO_V3:zone_de_vegetation
   filtre serveur : True
   inversion lat/lon : False
   objets : 646920 natures : {'Haie': 375830, 'Bois': 234014, 'Forêt fermée de feuillus': 27246, 'Forêt fermée mixte': 6215, 'Forêt fermée de conifères': 3615}
-  ajoutés : petits bois 59273 px, haies 1502814 px
-  (247 s)
+  ajoutés : petits bois 59273 px, haies denses 300243 px (pixels touchés par une haie : 1003066)
+  (331 s)
 
-== Zones bâties et parcs (OpenStreetMap)
-  BD TOPO : 68440 zones retenues ; natures : {'Lieu-dit habité': 54608, 'Religieux Culte chrétien': 1403, 'Science et enseignement Enseignement primaire': 1103, 'Quartier': 1086, 'Culture et loisirs Espace public': 940, 'Administratif ou militaire Mairie': 773, 'Château': 768, "Gestion des eaux Station d'épuration": 682, 'Industriel et commercial Zone industrielle': 679, 'Culture et loisirs Centre de documentation': 495, 'Culture et loisirs Monument': 453, 'Culture et loisirs Salle de spectacle ou conférence': 349, 'Sport Autre équipement sportif': 338, 'Administratif ou militaire Poste': 317, 'Industriel et commercial Divers industriel': 314, 'Gestion des eaux Station de pompage': 313, 'Moulin': 302, 'Culture et loisirs Aire de détente': 296, 'Santé Maison de retraite': 236, "Science et enseignement Autre établissement d'enseignement": 233, 'Sport Complexe sportif couvert': 232, 'Culture et loisirs Mégalithe': 218, 'Ruines': 206, 'Sport Stade': 203, 'Industriel et commercial Elevage': 199}
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass overpass.kumi.systems : HTTP 502
-    Overpass maps.mail.ru : HTTP 504
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-  OSM : 29/30 tuiles, polygones {'parking': 15360, 'residential': 12550, 'pitch': 3872, 'garden': 2705, 'playground': 1128, 'park': 1078, 'industrial': 1019, 'school': 956, 'cemetery': 721, 'construction': 635, 'sports_centre': 584, 'railway': 280}
-  masque : 471995 px
-  (2862 s)
-urban.bin.gz : 0.16 Mo
-  forêt retirée en zone bâtie ou parc : 265588 px (12.4 %)
-terrain.bin.gz : 0.84 Mo
-Pixels par classe : {'Hors forêt': 2959736, 'Chênes': 54754, 'Hêtre': 6964, 'Châtaignier': 11806, 'Autres feuillus': 45371, 'Mélange de feuillus': 220202, 'Pins': 63168, 'Douglas': 7556, 'Épicéa / sapin': 6767, 'Autres conifères': 6062, 'Mixte feuillus-conifères': 58740, 'Peupleraie': 13442, 'Forêt ouverte': 22840, 'Lande': 18789, 'Haie / talus boisé': 1292542, 'Petit bois': 43761}
+== Zones bâties et parcs : masque récent réutilisé
+  forêt retirée en zone bâtie ou parc : 103034 px (11.0 %)
+terrain.bin.gz : 0.60 Mo
+Pixels par classe : {'Hors forêt': 3999753, 'Chênes': 54754, 'Hêtre': 6964, 'Châtaignier': 11806, 'Autres feuillus': 45371, 'Mélange de feuillus': 220202, 'Pins': 63168, 'Douglas': 7556, 'Épicéa / sapin': 6767, 'Autres conifères': 6062, 'Mixte feuillus-conifères': 58740, 'Peupleraie': 13442, 'Forêt ouverte': 22840, 'Lande': 18789, 'Haie / talus boisé': 252525, 'Petit bois': 43761}
 
 == Forêts publiques (ONF)
 Forêts publiques WFS : ['BDTOPO_V3:foret_publique', 'ONF.FORETS_PUBLIQUES:ONF_FORETS_PUBLIQUES', 'ObsForets.Gestion:part_forets_publiques_dep_2017_2021']
   exemple : {"cleabs": "FORETPUB0000002052450432", "nature": "Autre forêt publique", "toponyme": "Forêt des Captages de la Ville de Rennes", "statut_du_toponyme": "Collecté", "importance": "5", "date_creation": "2018-09-14T15:40:00Z", "date_modification": "2021-10-19T12:34:32.388Z", "date_d_apparition": null, "date_de_confirmation": "2016-06-01Z", "sources": "ONF 2021", "identifiants_sources": "ONF:F09653G", 
   forêts publiques : 85 polygones, 50338 px
-  (4 s)
+  (2 s)
 pub.bin.gz : 0.02 Mo
 
 == Chemins et sentiers (IGN BD TOPO)
@@ -99,15 +74,15 @@ Tronçons : BDTOPO_V3:troncon_de_route
   filtre serveur : True
   réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
   168940 tronçons dans 208 tuiles, 6.7 Mo ; natures vues : {'Route empierrée': 62916, 'Chemin': 59586, 'Sentier': 46438}
-  (84 s)
+  (93 s)
 
 == Relief
   MNT IGN : 20 tuiles, 93.1 % couvert
   Copernicus : 333447 px complétés, couverture 100.0 %
-  pysheds indisponible, position dans le relief seule : module 'numpy' has no attribute 'in1d'
-  relief : altitude -31–365 m (Copernicus GLO-30)
-  (62 s)
-relief.bin.gz : 4.32 Mo
+  indice d'humidité : TWI (pysheds) + position dans le relief
+  relief : altitude -31–365 m (IGN RGE ALTI, complété par Copernicus GLO-30)
+  (71 s)
+relief.bin.gz : 4.52 Mo
 
 == Coupes récentes (Hansen / UMD)
   Hansen GFC 2025 : 53828 px touchés, dernière année 2025
@@ -118,4 +93,4 @@ loss.bin.gz : 0.08 Mo
   (1 s)
 ph.bin.gz : 0.06 Mo
 
-Terminé : 2026-11-11T19:18:01+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
+Terminé : 2026-11-11T19:29:25+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
