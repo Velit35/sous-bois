@@ -1,12 +1,18 @@
 {
- "version": 2,
- "generated": "2026-11-11T19:20:02+00:00",
+ "version": 3,
+ "generated": "2026-11-11T22:52:59+00:00",
  "region": {
-  "name": "Ille-et-Vilaine",
-  "west": -2.4,
-  "east": -0.95,
-  "south": 47.55,
-  "north": 48.8
+  "name": "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan",
+  "west": -3.8,
+  "east": 0.0,
+  "south": 47.24,
+  "north": 48.92
+ },
+ "depts": {
+  "22": "Côtes-d'Armor",
+  "35": "Ille-et-Vilaine",
+  "53": "Mayenne",
+  "56": "Morbihan"
  },
  "classes": [
   "Hors forêt",
@@ -27,58 +33,52 @@
   "Petit bois"
  ],
  "grid": {
-  "w": 1933,
-  "h": 2500,
+  "w": 5067,
+  "h": 3360,
   "dlat": 0.0005,
   "dlon": 0.00075,
-  "west": -2.4,
-  "north": 48.8
+  "west": -3.8,
+  "north": 48.92
  },
  "files": {
-  "terrain": "terrain.bin.gz",
-  "pub": "pub.bin.gz",
-  "relief": "relief.bin.gz",
-  "loss": "loss.bin.gz"
+  "a": "terrain-a.bin.gz",
+  "b": "terrain-b.bin.gz"
  },
- "urban_ts": 1794424774.3233793,
- "forest_share": 0.1723,
+ "has": {
+  "relief": true,
+  "loss": true,
+  "pub": true
+ },
+ "urban_ts": 1794444599.5756536,
+ "forest_share": 0.2062,
  "class_px": {
-  "Hors forêt": 3999753,
-  "Chênes": 54754,
-  "Hêtre": 6964,
-  "Châtaignier": 11806,
-  "Autres feuillus": 45371,
-  "Mélange de feuillus": 220202,
-  "Pins": 63168,
-  "Douglas": 7556,
-  "Épicéa / sapin": 6767,
-  "Autres conifères": 6062,
-  "Mixte feuillus-conifères": 58740,
-  "Peupleraie": 13442,
-  "Forêt ouverte": 22840,
-  "Lande": 18789,
-  "Haie / talus boisé": 252525,
-  "Petit bois": 43761
+  "Hors forêt": 15117725,
+  "Chênes": 78338,
+  "Hêtre": 10907,
+  "Châtaignier": 17047,
+  "Autres feuillus": 92141,
+  "Mélange de feuillus": 637034,
+  "Pins": 111566,
+  "Douglas": 27504,
+  "Épicéa / sapin": 29322,
+  "Autres conifères": 25258,
+  "Mixte feuillus-conifères": 161222,
+  "Peupleraie": 29742,
+  "Forêt ouverte": 63989,
+  "Lande": 69216,
+  "Haie / talus boisé": 481891,
+  "Petit bois": 72218
  },
  "paths": "paths/index.json",
  "relief_source": "IGN RGE ALTI, complété par Copernicus GLO-30",
  "loss_until": 2025,
  "ph": {
   "file": "ph.bin.gz",
-  "w": 387,
-  "h": 500,
+  "w": 1013,
+  "h": 672,
   "dlat": 0.0025,
   "dlon": 0.00375,
-  "west": -2.4,
-  "north": 48.8
- },
- "terrain": {
-  "file": "terrain.bin.gz",
-  "w": 1933,
-  "h": 2500,
-  "dlat": 0.0005,
-  "dlon": 0.00075,
-  "west": -2.4,
-  "north": 48.8
+  "west": -3.8,
+  "north": 48.92
  }
 }

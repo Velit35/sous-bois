@@ -1,4 +1,6 @@
-Calcul du 2026-11-11T19:20:02+00:00 zone {'name': 'Ille-et-Vilaine', 'west': -2.4, 'east': -0.95, 'south': 47.55, 'north': 48.8} grille 1933×2500
+Calcul du 2026-11-11T22:52:50+00:00 zone {'name': "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan", 'west': -3.8, 'east': 0.0, 'south': 47.24, 'north': 48.92} grille 5067×3360
+Départements (ADMINEXPRESS-COG-CARTO.LATEST:departement) : Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan
+Masque départemental : 54 % du cadre
 
 == Sondage des services
 WMTS utiles : ['ADEME_EPCI_lineaire-haie-a-stock', 'ADEME_EPCI_lineaire-haie-preleve-par-an', 'ADEME_EPCI_lineaire-haie-preleve-totalement-par-an', 'ADEME_EPCI_lineaire-haie-total', 'ADEME_EPCI_volume-bois-de-haie-preleve-par-an', 'ADEME_EPCI_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_EPCI_volume-bois-de-haie-sur-pied', 'ADEME_KM2_lineaire-haie-a-stock', 'ADEME_KM2_lineaire-haie-preleve-par-an', 'ADEME_KM2_lineaire-haie-preleve-totalement-par-an', 'ADEME_KM2_lineaire-haie-total', 'ADEME_KM2_volume-bois-de-haie-preleve-par-an', 'ADEME_KM2_volume-bois-de-haie-preleve-totalement-par-an', 'ADEME_KM2_volume-bois-de-haie-sur-pied', 'Aire-Parcellaire', 'BDORTHOHISTORIQUE', 'BDTOPO-DIFF-BATI', 'BDTOPO-DIFF-HYDROGRAPHIE', 'BDTOPO-DIFF-RESEAU_ROUTIER', 'BDTOPO-DIFF-ZONE_ACTIVITES', 'CADASTRAL.PARCELS.SECTIONS', 'CADASTRALPARCELS.HEATMAP', 'CADASTRALPARCELS.HISTO.2008-2013.PARCELS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS', 'CADASTRALPARCELS.PARCELLAIRE_EXPRESS.L93', 'CADASTRALPARCELS.PARCELS', 'CADASTRALPARCELS.PARCELS.L93', 'CADASTRALPARCELS.QUALREFBDP', 'CADASTRES.SOLAIRES.DETAILLES', 'CADASTRES.SOLAIRES.LOCAUX', 'CADASTRES.SOLAIRES.LOCAUX.DROM', 'CONSERVATOIRE_LITTORAL.PARCELLES', 'DECALAGE DE LA REPRESENTATION CADASTRALE', 'ENR.PERIMETRE.ROUTE', 'FORETS PUBLIQUES ONF', 'FORETS.PUBLIQUES', 'GAZ.CORRIDOR.TRANSPORT', 'GAZ.RESEAU.TRANSPORT', 'HR.ORTHOIMAGERY.ORTHOPHOTOS', 'HR.ORTHOIMAGERY.ORTHOPHOTOS.L93', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-PORTEUR-MASQUE-FORETV3', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER', 'IGNF_ACCESSIBILITE-PHYSIQUE-FORETS-SKIDDER-MASQUE-FORETV3', 'IGNF_BD-FRANCE-TOPO-VEGETATION', 'IGNF_BD-HAIE-V1_2020', 'IGNF_FORETS-ANCIENNES', 'IGNF_MASQUE-FORET.2021-2023', 'IGNF_ORTHO-61_RVB_0M08_ZONES-TESTS', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.BDORTHO', 'IGNF_ORTHOIMAGERY.ORTHOPHOTOS-MIXTE.ORTHO-EXPRESS', 'IGNF_POI-ENVIRONNEMENT-LOGEMENT-TRANSPORTS', 'IGNF_RPG_GRANDES-CATEGORIES-PARCELLES_2025', 'IGNF_RPG_PARCELLES-AGRICOLES-CATEGORISEES_2024', 'IGNF_RPG_PARCELLES-BIO_2025', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2024', 'IGNF_RPG_PARCELLES-ELIGIBLES-IAE_2025', 'IMPACTS-CLIMAT-Bassins-Versants-Topographiques', 'MGP_PLANIFICATION_SCOT2023_TRANSPORT', 'ORTHO-EDUGEO_PYR-PNG_WLD_WM', 'ORTHOIMAGERY.EDUGEO.AJACCIO1975', 'ORTHOIMAGERY.EDUGEO.AJACCIO1990', 'ORTHOIMAGERY.EDUGEO.ARCACHON2010', 'ORTHOIMAGERY.EDUGEO.ARRAS-LENS-BETHUNE2008', 'ORTHOIMAGERY.EDUGEO.BELFORT-MONTBELLIARD1951', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1950', 'ORTHOIMAGERY.EDUGEO.BERRY-SUD1970', 'ORTHOIMAGERY.EDUGEO.BETHUNE1963', 'ORTHOIMAGERY.EDUGEO.BETHUNE1964', 'ORTHOIMAGERY.EDUGEO.BETHUNE1988', 'ORTHOIMAGERY.EDUGEO.BIARRITZ1977', 'ORTHOIMAGERY.EDUGEO.BIARRTITZ1979', 'ORTHOIMAGERY.EDUGEO.BORDEAUX2003', 'ORTHOIMAGERY.EDUGEO.BOURG-ST-MAURICE1956', 'ORTHOIMAGERY.EDUGEO.CAEN1991', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE1968', 'ORTHOIMAGERY.EDUGEO.CAP-D-AGDE2008', 'ORTHOIMAGERY.EDUGEO.CAP-DAGE1981', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1965', 'ORTHOIMAGERY.EDUGEO.CLERMONT-FERRAND1985', 'ORTHOIMAGERY.EDUGEO.CREIL-SUD-PICARDIE1975', 'ORTHOIMAGERY.EDUGEO.DIJON1971', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1966', 'ORTHOIMAGERY.EDUGEO.GRENOBLE1989', 'ORTHOIMAGERY.EDUGEO.GUADELOUPE1984', 'ORTHOIMAGERY.EDUGEO.GUYANE1955', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1961', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1980', 'ORTHOIMAGERY.EDUGEO.LA-REUNION1989', 'ORTHOIMAGERY.EDUGEO.LA-REUNION2010', 'ORTHOIMAGERY.EDUGEO.LA-ROCHELLE-ROCHEFORT1973', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1955', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE1964', 'ORTHOIMAGERY.EDUGEO.LE-HAVRE2008', 'ORTHOIMAGERY.EDUGEO.LIMOGES1974', 'ORTHOIMAGERY.EDUGEO.LYON1965', 'ORTHOIMAGERY.EDUGEO.LYON1984', 'ORTHOIMAGERY.EDUGEO.LYON1988', 'ORTHOIMAGERY.EDUGEO.LYON2008', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1965', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1977', 'ORTHOIMAGERY.EDUGEO.MARNE-LA-VALLEE1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1969', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1980', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1987', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES1988', 'ORTHOIMAGERY.EDUGEO.MARSEILLE-MARTIGUES2010', 'ORTHOIMAGERY.EDUGEO.MARTINIQUE1988', 'ORTHOIMAGERY.EDUGEO.METZ-NANCY1982', 'ORTHOIMAGERY.EDUGEO.NANTES1971', 'ORTHOIMAGERY.EDUGEO.PARIS1949', 'ORTHOIMAGERY.EDUGEO.PARIS1965', 'ORTHOIMAGERY.EDUGEO.PARIS2010SPOT', 'ORTHOIMAGERY.EDUGEO.REIMS1963', 'ORTHOIMAGERY.EDUGEO.REIMS1973', 'ORTHOIMAGERY.EDUGEO.REIMS1988', 'ORTHOIMAGERY.EDUGEO.REIMS2010', 'ORTHOIMAGERY.EDUGEO.ROISSY1965', 'ORTHOIMAGERY.EDUGEO.ROISSY1987', 'ORTHOIMAGERY.EDUGEO.STRASBOURG1975']
@@ -11,86 +13,141 @@ WFS utiles : ['AOC-VITICOLES:aire_parcellaire', 'BAN-PLUS:lien_adresse_parcelle'
   tuile témoin ORTHOIMAGERY.ORTHOPHOTOS (normal) : 10083 octets
   TRANSPORTNETWORKS.ROADS styles : ['normal'] zoom ['6'] → ['18']
   FORETS.PUBLIQUES styles : ['FORETS PUBLIQUES ONF'] zoom ['3'] → ['16']
-  (4 s)
+  (2 s)
 
 == Forêts (IGN BD Forêt V2)
 BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
   inversion lat/lon : False
-  polygones : 53830 → {'Chênes': 1227, 'Hêtre': 70, 'Châtaignier': 872, 'Autres feuillus': 17970, 'Mélange de feuillus': 11083, 'Pins': 2772, 'Douglas': 470, 'Épicéa / sapin': 342, 'Autres conifères': 1044, 'Mixte feuillus-conifères': 7176, 'Peupleraie': 3281, 'Forêt ouverte': 3975, 'Lande': 3548}
+  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
+  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
+  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
+  polygones : 153918 → {'Chênes': 3398, 'Hêtre': 275, 'Châtaignier': 1987, 'Autres feuillus': 43402, 'Mélange de feuillus': 34014, 'Pins': 6617, 'Douglas': 2100, 'Épicéa / sapin': 2434, 'Autres conifères': 3995, 'Mixte feuillus-conifères': 19221, 'Peupleraie': 9014, 'Forêt ouverte': 13450, 'Lande': 14011}
      Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
      Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
      Châtaignier                ← Forêt fermée de châtaignier pur | Châtaignier
      Autres feuillus            ← Forêt fermée de feuillus purs en îlots | Feuillus
-     Autres feuillus            ← Forêt fermée d’un autre feuillu pur | Feuillus
      Autres feuillus            ← Forêt fermée dun autre feuillu pur | Feuillus
+     Autres feuillus            ← Forêt fermée d’un autre feuillu pur | Feuillus
+     Autres feuillus            ← Forêt fermée de robinier pur | Robinier
      Mélange de feuillus        ← Forêt fermée à mélange de feuillus | Feuillus
      Pins                       ← Forêt fermée de pin maritime pur | Pin maritime
-     Pins                       ← Forêt fermée à mélange de pins purs | Pins mélangés
      Pins                       ← Forêt fermée de pin laricio ou pin noir pur | Pin laricio, pin noir
+     Pins                       ← Forêt fermée à mélange de pins purs | Pins mélangés
      Pins                       ← Forêt fermée de pin sylvestre pur | Pin sylvestre
+     Pins                       ← Forêt fermée dun autre pin pur | Pin autre
      Pins                       ← Forêt fermée d’un autre pin pur | Pin autre
      Douglas                    ← Forêt fermée de douglas pur | Douglas
      Épicéa / sapin             ← Forêt fermée de sapin ou épicéa | Sapin, épicéa
-     Autres conifères           ← Forêt fermée de conifères purs en îlots | Conifères
      Autres conifères           ← Forêt fermée à mélange de conifères | Conifères
      Autres conifères           ← Forêt fermée à mélange d’autres conifères | Conifères
+     Autres conifères           ← Forêt fermée de conifères purs en îlots | Conifères
+     Autres conifères           ← Forêt fermée dun autre conifère pur autre que pin  | Conifères
      Autres conifères           ← Forêt fermée de mélèze pur | Mélèze
+     Autres conifères           ← Forêt fermée à mélange dautres conifères | Conifères
      Autres conifères           ← Forêt fermée d’un autre conifère pur autre que pin  | Conifères
      Mixte feuillus-conifères   ← Forêt fermée à mélange de conifères prépondérants et feuillus | Mixte
      Mixte feuillus-conifères   ← Forêt fermée à mélange de feuillus prépondérants et conifères | Mixte
      Peupleraie                 ← Peupleraie | Peuplier
-     Forêt ouverte              ← Forêt fermée sans couvert arboré | NR
-     Forêt ouverte              ← Forêt ouverte à mélange de feuillus et conifères | Mixte
      Forêt ouverte              ← Forêt ouverte de feuillus purs | Feuillus
+     Forêt ouverte              ← Forêt fermée sans couvert arboré | NR
      Forêt ouverte              ← Forêt ouverte de conifères purs | Conifères
+     Forêt ouverte              ← Forêt ouverte à mélange de feuillus et conifères | Mixte
      Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
-     Lande                      ← Lande | NC
      Lande                      ← Formation herbacée | NC
-  (55 s)
-terrain-base.bin.gz : 0.35 Mo
+     Lande                      ← Lande | NC
+  (193 s)
+terrain-base.bin.gz : 1.13 Mo
 
 == Haies et petits bois (IGN BD TOPO)
 BD TOPO végétation : BDTOPO_V3:zone_de_vegetation
   filtre serveur : True
   inversion lat/lon : False
-  objets : 646920 natures : {'Haie': 375830, 'Bois': 234014, 'Forêt fermée de feuillus': 27246, 'Forêt fermée mixte': 6215, 'Forêt fermée de conifères': 3615}
-  ajoutés : petits bois 59273 px, haies denses 300243 px (pixels touchés par une haie : 1003066)
-  (331 s)
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  objets : 1414060 natures : {'Haie': 946333, 'Bois': 378382, 'Forêt fermée de feuillus': 63496, 'Forêt fermée mixte': 15766, 'Forêt fermée de conifères': 10083}
+  ajoutés : petits bois 110481 px, haies denses 639633 px (pixels touchés par une haie : 2250403)
+  (704 s)
 
-== Zones bâties et parcs : masque récent réutilisé
-  forêt retirée en zone bâtie ou parc : 103034 px (11.0 %)
-terrain.bin.gz : 0.60 Mo
-Pixels par classe : {'Hors forêt': 3999753, 'Chênes': 54754, 'Hêtre': 6964, 'Châtaignier': 11806, 'Autres feuillus': 45371, 'Mélange de feuillus': 220202, 'Pins': 63168, 'Douglas': 7556, 'Épicéa / sapin': 6767, 'Autres conifères': 6062, 'Mixte feuillus-conifères': 58740, 'Peupleraie': 13442, 'Forêt ouverte': 22840, 'Lande': 18789, 'Haie / talus boisé': 252525, 'Petit bois': 43761}
+== Zones bâties et parcs (BD TOPO + OpenStreetMap)
+  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
+  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
+  BD TOPO : 177463 zones retenues ; natures : {'Lieu-dit habité': 139601, 'Religieux Culte chrétien': 4062, 'Quartier': 3464, 'Science et enseignement Enseignement primaire': 2703, 'Culture et loisirs Espace public': 2283, 'Administratif ou militaire Mairie': 1879, 'Château': 1828, "Gestion des eaux Station d'épuration": 1753, 'Industriel et commercial Zone industrielle': 1541, 'Culture et loisirs Monument': 1239, 'Culture et loisirs Mégalithe': 1197, 'Culture et loisirs Centre de documentation': 1146, 'Culture et loisirs Salle de spectacle ou conférence': 1057, 'Industriel et commercial Aquaculture': 1019, 'Moulin': 850, 'Administratif ou militaire Poste': 845, 'Sport Autre équipement sportif': 837, 'Gestion des eaux Station de pompage': 824, 'Culture et loisirs Aire de détente': 818, 'Industriel et commercial Divers industriel': 746, 'Culture et loisirs Camping': 713, 'Ruines': 663, 'Santé Maison de retraite': 578, "Science et enseignement Autre établissement d'enseignement": 545, 'Sport Complexe sportif couvert': 540}
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 504
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : HTTP 504
+    Overpass maps.mail.ru : HTTP 504
+    Overpass overpass-api.de : HTTP 502
+    Overpass overpass.kumi.systems : ReadTimeout
+    Overpass maps.mail.ru : HTTP 504
+  OSM : 71/82 tuiles, polygones {'parking': 32045, 'residential': 20442, 'pitch': 8759, 'garden': 5026, 'school': 2234, 'park': 2080, 'industrial': 2013, 'playground': 1979, 'cemetery': 1696, 'sports_centre': 1256, 'construction': 915, 'retail': 591}
+  masque : 1222684 px
+  (6118 s)
+urban.bin.gz : 0.42 Mo
+  forêt retirée en zone bâtie ou parc : 236057 px (9.0 %)
+Pixels par classe : {'Hors forêt': 15117725, 'Chênes': 78338, 'Hêtre': 10907, 'Châtaignier': 17047, 'Autres feuillus': 92141, 'Mélange de feuillus': 637034, 'Pins': 111566, 'Douglas': 27504, 'Épicéa / sapin': 29322, 'Autres conifères': 25258, 'Mixte feuillus-conifères': 161222, 'Peupleraie': 29742, 'Forêt ouverte': 63989, 'Lande': 69216, 'Haie / talus boisé': 481891, 'Petit bois': 72218}
 
 == Forêts publiques (ONF)
 Forêts publiques WFS : ['BDTOPO_V3:foret_publique', 'ONF.FORETS_PUBLIQUES:ONF_FORETS_PUBLIQUES', 'ObsForets.Gestion:part_forets_publiques_dep_2017_2021']
-  exemple : {"cleabs": "FORETPUB0000002052450432", "nature": "Autre forêt publique", "toponyme": "Forêt des Captages de la Ville de Rennes", "statut_du_toponyme": "Collecté", "importance": "5", "date_creation": "2018-09-14T15:40:00Z", "date_modification": "2021-10-19T12:34:32.388Z", "date_d_apparition": null, "date_de_confirmation": "2016-06-01Z", "sources": "ONF 2021", "identifiants_sources": "ONF:F09653G", 
-  forêts publiques : 85 polygones, 50338 px
-  (2 s)
-pub.bin.gz : 0.02 Mo
+  exemple : {"cleabs": "FORETPUB0000002221756772", "nature": "Autre forêt publique", "toponyme": "Forêt Départementale des Rives du Scorff et du Scave", "statut_du_toponyme": "Collecté", "importance": "5", "date_creation": "2020-12-10T12:50:54.081Z", "date_modification": "2021-10-19T12:34:32.388Z", "date_d_apparition": null, "date_de_confirmation": null, "sources": "ONF 2021", "identifiants_sources": "ONF:F49
+  forêts publiques : 243 polygones, 162412 px
+  (6 s)
 
 == Chemins et sentiers (IGN BD TOPO)
 Tronçons : BDTOPO_V3:troncon_de_route
   filtre serveur : True
   réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
-  168940 tronçons dans 208 tuiles, 6.7 Mo ; natures vues : {'Route empierrée': 62916, 'Chemin': 59586, 'Sentier': 46438}
-  (93 s)
+  373479 tronçons dans 456 tuiles, 15.5 Mo ; natures vues : {'Chemin': 138420, 'Route empierrée': 132678, 'Sentier': 102381}
+  (305 s)
 
 == Relief
-  MNT IGN : 20 tuiles, 93.1 % couvert
-  Copernicus : 333447 px complétés, couverture 100.0 %
+  MNT IGN : 41 tuiles, 96.8 % des départements couvert
+  Copernicus : 3787649 px complétés, couverture 100.0 %
   indice d'humidité : TWI (pysheds) + position dans le relief
-  relief : altitude -31–365 m (IGN RGE ALTI, complété par Copernicus GLO-30)
-  (71 s)
-relief.bin.gz : 4.52 Mo
+  relief : altitude -73–450 m (IGN RGE ALTI, complété par Copernicus GLO-30)
+  (124 s)
 
 == Coupes récentes (Hansen / UMD)
-  Hansen GFC 2025 : 53828 px touchés, dernière année 2025
-  (1 s)
-loss.bin.gz : 0.08 Mo
+  Hansen GFC 2025 : 235947 px touchés, dernière année 2025
+  (3 s)
 
 == pH du sol (SoilGrids)
-  (1 s)
-ph.bin.gz : 0.06 Mo
+  (2 s)
+ph.bin.gz : 0.21 Mo
+terrain-a.bin.gz : 5.41 Mo
+terrain-b.bin.gz : 0.28 Mo
 
-Terminé : 2026-11-11T19:29:25+00:00 fichiers {'terrain': 'terrain.bin.gz', 'pub': 'pub.bin.gz', 'relief': 'relief.bin.gz', 'loss': 'loss.bin.gz'}
+Terminé : 2026-11-12T00:57:23+00:00 couches {'relief': True, 'loss': True, 'pub': True}
