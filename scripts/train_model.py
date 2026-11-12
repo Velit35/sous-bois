@@ -381,7 +381,8 @@ def main():
             v = vec(r.get("m") or {})
             if v is None:
                 continue
-            lab = 1 if r.get("type") == "trouvaille" or (r.get("bilan") or 0) >= 1 else 0
+            # « déjà ramassé » : les champignons étaient là, la météo était bonne
+            lab = 1 if r.get("type") == "trouvaille" or (r.get("bilan") or 0) >= 1 or r.get("ramasse") else 0
             gid = 1_000_000 + k
             for _ in range(3):                      # tes relevés comptent triple
                 X.append(v); y.append(lab); g.append(gid)

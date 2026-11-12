@@ -175,6 +175,9 @@ textarea{min-height:70px;resize:vertical}
 .rating-row b{display:flex;align-items:center;gap:8px;font-family:var(--f-display)}
 .choices.rating{gap:6px}
 .choices.rating button{padding:7px 10px;font-size:13px}
+.rating-row .picked{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.35}
+.rating-row .picked input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent,#2f6b4f)}
+.rating-row .picked small{opacity:.7}
 .choices.rating button[aria-pressed="true"].r0{background:#7E8A80;border-color:#7E8A80;color:#fff}
 .choices.rating button[aria-pressed="true"].r1{background:#E9C46A;border-color:#E9C46A;color:#2a2005}
 .choices.rating button[aria-pressed="true"].r2{background:#F4A261;border-color:#F4A261;color:#2a1405}
@@ -344,7 +347,7 @@ textarea{min-height:70px;resize:vertical}
     <header><h2>Bilan de la sortie</h2><button class="x" data-close aria-label="Fermer">×</button></header>
     <div class="summary" id="oeSummary"></div>
     <div class="field"><span class="label">Cueillette par espèce</span><div id="oeRatings" class="rating-list"></div></div>
-    <div class="field"><span class="label">Note</span><textarea id="oeNote" placeholder="Sol sec sous les pins, beaucoup de limaces, déjà ramassé…"></textarea></div>
+    <div class="field"><span class="label">Note</span><textarea id="oeNote" placeholder="Sol sec sous les pins, beaucoup de limaces…"></textarea></div>
     <button class="btn primary" id="oeSave">Enregistrer la sortie</button>
     <div class="row"><button class="btn" id="oeContinue">Continuer la sortie</button><button class="btn danger" id="oeDiscard">Annuler la sortie</button></div>
   </div>
@@ -368,6 +371,6 @@ window.addEventListener("unhandledrejection",function(e){var f=document.getEleme
 </script>
 
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="app.js?v=13"></script>
+<script src="app.js?v=14"></script>
 </body>
 </html>

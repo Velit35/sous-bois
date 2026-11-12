@@ -114,7 +114,8 @@ const quant=(a,q)=>{const s=[...a].sort((x,y)=>x-y);const i=(s.length-1)*q;const
 function personalPresences(key){
   const out=[];
   for(const f of finds)if(f.species===key&&f.wx&&f.wx.m&&f.wx.m.t7!=null){out.push(f.wx.m);if(f.qty==="16+")out.push(f.wx.m)}
-  for(const o of outings){const r=o.ratings&&o.ratings[key];if(r>=1&&o.wx&&o.wx.m&&o.wx.m.t7!=null){out.push(o.wx.m);if(r>=3)out.push(o.wx.m)}}
+  for(const o of outings){const r=o.ratings&&o.ratings[key],pk=o.picked&&o.picked[key];
+    if((r>=1||pk)&&o.wx&&o.wx.m&&o.wx.m.t7!=null){out.push(o.wx.m);if(r>=3)out.push(o.wx.m)}}
   return out;
 }
 const profCache=new Map();
@@ -312,7 +313,7 @@ function trackCells(o){
 }
 function personalHabitat(key){
   if(!TERRAIN.ready)return null;
-  const outs=outings.filter(o=>(o.species||[]).includes(key)&&o.track&&o.track.length>3);
+  const outs=outings.filter(o=>(o.species||[]).includes(key)&&o.track&&o.track.length>3&&!(o.picked&&o.picked[key]));
   if(outs.length<3)return null;
   const E=new Array(16).fill(0),F=new Array(16).fill(0);
   for(const o of outs){for(const i of trackCells(o)){const c=clsIdx(i);if(c)E[c]++}}
@@ -707,10 +708,10 @@ $("#osStart").onclick=()=>{
   toast("Sortie démarrée : garde l'app ouverte pour suivre ton parcours.",4000);
 };
 $("#outingEnd").onclick=()=>openEnd();
-let oeRatings={},oeDiscard=false;
+let oeRatings={},oePicked={},oeDiscard=false;
 function openEnd(){
   if(!active)return;
-  oeDiscard=false;oeRatings={};
+  oeDiscard=false;oeRatings={};oePicked={};
   const spp=[...new Set([...active.species,...finds.filter(f=>active.findIds.includes(f.id)&&SPECIES[f.species]).map(f=>f.species)])];
   for(const k of spp){const fs=finds.filter(f=>active.findIds.includes(f.id)&&f.species===k);
     oeRatings[k]=!fs.length?0:fs.some(f=>f.qty==="16+")?3:fs.length>=3||fs.some(f=>f.qty==="6-15")?2:1}
@@ -719,13 +720,15 @@ function openEnd(){
 function renderEnd(){
   $("#oeSummary").innerHTML=`<span class="chip">${dateFR(active.date,{weekday:"long",day:"numeric",month:"long"})}</span><span class="chip">${durTxt(active.startTs,Date.now())}</span><span class="chip">${kmTxt(outDist(active))}</span><span class="chip">${active.findIds.length} trouvaille${active.findIds.length>1?"s":""} notée${active.findIds.length>1?"s":""}</span>`;
   $("#oeRatings").innerHTML=Object.keys(oeRatings).map(k=>`<div class="rating-row" data-sp="${k}"><b><span class="sw" style="background:${ALL[k].color}"></span>${esc(ALL[k].name)}</b>
-    <div class="choices rating">${RATINGS.map((r,i)=>`<button data-r="${i}" aria-pressed="${oeRatings[k]===i}" class="r${i}">${r}</button>`).join("")}</div></div>`).join("");
+    <div class="choices rating">${RATINGS.map((r,i)=>`<button data-r="${i}" aria-pressed="${oeRatings[k]===i}" class="r${i}">${r}</button>`).join("")}</div>
+    ${oeRatings[k]===0?`<label class="picked"><input type="checkbox" data-picked ${oePicked[k]?"checked":""}><span>Déjà ramassé avant moi<br><small>pieds coupés, trous, chapeaux abandonnés</small></span></label>`:""}</div>`).join("");
   $("#oeDiscard").textContent=oeDiscard?"Confirmer : supprimer cette sortie":"Annuler la sortie";
 }
-$("#oeRatings").onclick=e=>{const b=e.target.closest("[data-r]");if(!b)return;oeRatings[b.closest("[data-sp]").dataset.sp]=+b.dataset.r;renderEnd()};
+$("#oeRatings").onclick=e=>{const b=e.target.closest("[data-r]");if(!b)return;const k=b.closest("[data-sp]").dataset.sp;oeRatings[k]=+b.dataset.r;if(oeRatings[k])delete oePicked[k];renderEnd()};
+$("#oeRatings").onchange=e=>{const c=e.target.closest("[data-picked]");if(!c)return;const k=c.closest("[data-sp]").dataset.sp;if(c.checked)oePicked[k]=true;else delete oePicked[k]};
 $("#oeSave").onclick=()=>{
   const o={id:active.id,date:active.date,start:new Date(active.startTs).toISOString(),end:new Date().toISOString(),species:Object.keys(oeRatings),
-    ratings:{...oeRatings},findIds:active.findIds,track:active.track,dist:Math.round(outDist(active)),note:$("#oeNote").value.trim(),wx:null};
+    ratings:{...oeRatings},picked:{...oePicked},findIds:active.findIds,track:active.track,dist:Math.round(outDist(active)),note:$("#oeNote").value.trim(),wx:null};
   outings.unshift(o);saveOutings();active=null;saveActive();stopTracking();drawActive();renderTracks();closeSheet();
   toast("Sortie enregistrée. Merci, ça nourrit la carte.");enrichOuting(o);
 };
@@ -735,6 +738,7 @@ $("#oeDiscard").onclick=()=>{
   active=null;saveActive();stopTracking();drawActive();closeSheet();toast("Sortie annulée. Les trouvailles notées sont conservées.");
 };
 $("#oeContinue").onclick=()=>closeSheet();
+const rateTxt=(o,k)=>RATINGS[o.ratings[k]]+(o.picked&&o.picked[k]?" (déjà ramassé)":"");
 const bestRating=o=>Math.max(0,...Object.values(o.ratings||{}));
 const RCOL=["#7E8A80","#E9C46A","#F4A261","#E76F51","#B5179E"];
 function renderTracks(){
@@ -742,7 +746,7 @@ function renderTracks(){
   for(const o of outings){if(!o.track||o.track.length<2)continue;
     L.polyline(o.track.map(p=>[p[0],p[1]]),{color:RCOL[bestRating(o)],weight:3,opacity:.75,dashArray:bestRating(o)?null:"4 6"})
       .bindPopup(()=>`<b>Sortie du ${dateFR(o.date)}</b><br>${kmTxt(o.dist||0)} · ${durTxt(new Date(o.start),new Date(o.end))}<br>`+
-        Object.entries(o.ratings||{}).map(([k,r])=>`${esc(ALL[k]?ALL[k].name:k)} : ${RATINGS[r]}`).join("<br>")).addTo(trackLayer)}
+        Object.entries(o.ratings||{}).map(([k,r])=>`${esc(ALL[k]?ALL[k].name:k)} : ${rateTxt(o,k)}`).join("<br>")).addTo(trackLayer)}
 }
 
 /* ====================================================================== Trouvailles : carte et liste */
@@ -803,7 +807,7 @@ function renderOutingList(){
       <div class="find-head"><span class="sw" style="background:${RCOL[bestRating(o)]}"></span><b>Sortie</b><time>${dateFR(o.date)}</time></div>
       <div class="facts"><span class="chip">${durTxt(new Date(o.start),new Date(o.end))}</span><span class="chip">${kmTxt(o.dist||0)}</span><span class="chip">${nF} trouvaille${nF>1?"s":""}</span>
         ${o.wx?`<span class="chip">Pluie 15 j ${fmt(o.wx.m.r15)} mm</span><span class="chip">Air 7 j ${fmt(o.wx.m.t7,1)} °C</span>`:`<span class="chip">Météo en attente</span>`}</div>
-      <div class="facts">${Object.entries(o.ratings||{}).map(([k,r])=>`<span class="chip rate r${r}">${esc(ALL[k]?ALL[k].name:k)} : ${RATINGS[r]}</span>`).join("")}</div>
+      <div class="facts">${Object.entries(o.ratings||{}).map(([k,r])=>`<span class="chip rate r${r}">${esc(ALL[k]?ALL[k].name:k)} : ${rateTxt(o,k)}</span>`).join("")}</div>
       ${o.note?`<div>${esc(o.note)}</div>`:""}
       <div class="actions"><button class="btn small" data-oact="go">Voir le parcours</button>
         ${pendingDelete===o.id?`<button class="btn small danger" data-oact="del2">Confirmer la suppression</button><button class="btn small" data-oact="cancel">Annuler</button>`:`<button class="btn small danger" data-oact="del">Supprimer</button>`}</div>
@@ -841,7 +845,7 @@ $("#exportCsv").onclick=()=>{
 $("#exportOutCsv").onclick=()=>{
   const spp=Object.keys(SPECIES);
   const head=["date","debut","fin","distance_m","nb_trouvailles",...spp.map(k=>"bilan_"+k),"pluie_15j_mm","tmoy_7j_c","humidite_sol","temp_sol_c","note"];
-  const rows=outings.map(o=>{const m=o.wx?o.wx.m:{};return [o.date,o.start,o.end,o.dist,finds.filter(f=>f.outingId===o.id).length,...spp.map(k=>o.ratings&&o.ratings[k]!=null?RATINGS[o.ratings[k]]:""),m.r15,m.t7,m.sm,m.ts,o.note].map(csvQ).join(";")});
+  const rows=outings.map(o=>{const m=o.wx?o.wx.m:{};return [o.date,o.start,o.end,o.dist,finds.filter(f=>f.outingId===o.id).length,...spp.map(k=>o.ratings&&o.ratings[k]!=null?rateTxt(o,k):""),m.r15,m.t7,m.sm,m.ts,o.note].map(csvQ).join(";")});
   download(`sous-bois-sorties-${todayISO()}.csv`,"﻿"+[head.join(";"),...rows].join("\n"),"text/csv");
 };
 // Export anonyme : ce qui sert à apprendre, sans rien qui dise où (ni coordonnées, ni parcours, ni jour, ni notes)
@@ -856,7 +860,7 @@ function anonRecords(){
     let share=null;
     if(TERRAIN.ready&&o.track&&o.track.length>1){const c=new Array(16).fill(0);let n=0;for(const i of trackCells(o)){const k=clsIdx(i);if(k){c[k]++;n++}}
       if(n)share=Object.fromEntries(c.map((v,k)=>[k,Math.round(v/n*10)/10]).filter(([k,v])=>v>0))}
-    for(const[sp,r]of Object.entries(o.ratings))if(SPECIES[sp])out.push({type:"sortie",sp,mois:o.date.slice(0,7),bilan:r,m:anonMetrics(o.wx.m),bois:share})}
+    for(const[sp,r]of Object.entries(o.ratings))if(SPECIES[sp])out.push({type:"sortie",sp,mois:o.date.slice(0,7),bilan:r,...(o.picked&&o.picked[sp]?{ramasse:true}:{}),m:anonMetrics(o.wx.m),bois:share})}
   // Ordre mélangé pour ne pas trahir la chronologie
   for(let i=out.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[out[i],out[j]]=[out[j],out[i]]}
   return out;
