@@ -308,20 +308,32 @@ function personalHabitat(key){
   return {mult:E.map((e,k)=>clamp((F[k]+2)/(e*R+2),0.6,1.5)),outs:outs.length,F:Ft};
 }
 const affCache=new Map();
+/* Observé / attendu par peuplement dans la zone. L'attendu tient compte de la surface de chaque
+   peuplement et de l'affinité actuelle ; la correction ne fait que redistribuer (moyenne inchangée). */
+function regionalMult(H,cur){
+  const M=TERRAIN.meta;if(!H||!H.n||H.N<20||!M||!M.class_px)return null;
+  const area=M.classes.map((nm,k)=>k?(M.class_px[nm]||0):0);
+  const wsum=area.reduce((s,a,k)=>s+a*(cur[k]||0),0);if(!wsum)return null;
+  const PRIOR=3;let num=0,den=0;
+  const raw=cur.map((v,k)=>{if(!v||!area[k])return 1;const E=H.N*area[k]*v/wsum;if(E<2)return 1;
+    const m=(H.n[k]+PRIOR)/(E+PRIOR);num+=area[k]*v;den+=area[k]*v*m;return m});
+  if(!den)return null;const f=num/den;
+  return raw.map(m=>m===1?1:clamp(m*f,0.7,1.4));
+}
 function affEff(key){
-  const ck=key+"|"+calVersion;if(affCache.has(ck))return affCache.get(ck);
+  const ck=key+"|"+calVersion+"|"+TERRAIN.ready;if(affCache.has(ck))return affCache.get(ck);
   const base=AFF[key];if(!base)return null;
   const H=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat;
-  const w=H&&H.N>=30&&H.aff?H.N/(H.N+100):0;   // trop peu d'observations précises dans la zone : on garde le réglage de base
   const pers=personalHabitat(key);
   // Habitats appris sur toute la France (observations GBIF comparées aux forêts voisines)
   const F=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat_fr;
   const wf=F&&F.aff&&F.N>=30?F.N/(F.N+150):0;
-  const out=base.map((a,k)=>{if(!a)return 0;let v=a;
-    if(wf&&F.aff[k]!=null)v=(1-wf)*v+wf*F.aff[k];
-    if(w)v=(1-w)*v+w*(H.aff[k]??v);
-    if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
-  out.learnedN=(wf?F.N:0)+(w?H.N:0);out.personal=pers;
+  let out=base.map((a,k)=>{if(!a)return 0;let v=a;
+    if(wf&&F.aff[k]!=null)v=(1-wf)*v+wf*F.aff[k];return v});
+  // Observations des 4 départements : correction douce, seulement là où on en attendait assez
+  const rm=regionalMult(H,out);
+  out=out.map((v,k)=>{if(!v)return 0;if(rm)v*=rm[k];if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
+  out.learnedN=(wf?F.N:0)+(rm?H.N:0);out.personal=pers;
   affCache.clear();affCache.set(ck,out);return out;
 }
 
