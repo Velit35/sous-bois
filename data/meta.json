@@ -1,6 +1,6 @@
 {
  "version": 3,
- "generated": "2026-11-11T22:52:59+00:00",
+ "generated": "2026-11-12T12:55:34+00:00",
  "region": {
   "name": "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan",
   "west": -3.8,
@@ -47,7 +47,8 @@
  "has": {
   "relief": true,
   "loss": true,
-  "pub": true
+  "pub": true,
+  "aspect": true
  },
  "urban_ts": 1794444599.5756536,
  "forest_share": 0.2062,
@@ -80,5 +81,6 @@
   "dlon": 0.00375,
   "west": -3.8,
   "north": 48.92
- }
+ },
+ "b_layout": "pub1-asp2-loss5"
 }

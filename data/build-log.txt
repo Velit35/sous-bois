@@ -1,5 +1,4 @@
-Calcul du 2026-11-11T22:52:50+00:00 zone {'name': "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan", 'west': -3.8, 'east': 0.0, 'south': 47.24, 'north': 48.92} grille 5067×3360
-Départements (ADMINEXPRESS-COG-CARTO.LATEST:departement) : Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan
+Calcul du 2026-11-12T12:55:34+00:00 zone {'name': "Côtes-d'Armor, Ille-et-Vilaine, Mayenne, Morbihan", 'west': -3.8, 'east': 0.0, 'south': 47.24, 'north': 48.92} grille 5067×3360
 Masque départemental : 54 % du cadre
 
 == Sondage des services
@@ -13,14 +12,11 @@ WFS utiles : ['AOC-VITICOLES:aire_parcellaire', 'BAN-PLUS:lien_adresse_parcelle'
   tuile témoin ORTHOIMAGERY.ORTHOPHOTOS (normal) : 10083 octets
   TRANSPORTNETWORKS.ROADS styles : ['normal'] zoom ['6'] → ['18']
   FORETS.PUBLIQUES styles : ['FORETS PUBLIQUES ONF'] zoom ['3'] → ['16']
-  (2 s)
+  (15 s)
 
 == Forêts (IGN BD Forêt V2)
 BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
   inversion lat/lon : False
-  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
-  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
-  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
   polygones : 153918 → {'Chênes': 3398, 'Hêtre': 275, 'Châtaignier': 1987, 'Autres feuillus': 43402, 'Mélange de feuillus': 34014, 'Pins': 6617, 'Douglas': 2100, 'Épicéa / sapin': 2434, 'Autres conifères': 3995, 'Mixte feuillus-conifères': 19221, 'Peupleraie': 9014, 'Forêt ouverte': 13450, 'Lande': 14011}
      Chênes                     ← Forêt fermée de chênes décidus purs | Chênes décidus
      Hêtre                      ← Forêt fermée de hêtre pur | Hêtre
@@ -55,68 +51,18 @@ BD Forêt : LANDCOVER.FORESTINVENTORY.V2:formation_vegetale
      Forêt ouverte              ← Forêt ouverte sans couvert arboré | NR
      Lande                      ← Formation herbacée | NC
      Lande                      ← Lande | NC
-  (193 s)
+  (184 s)
 terrain-base.bin.gz : 1.13 Mo
 
 == Haies et petits bois (IGN BD TOPO)
 BD TOPO végétation : BDTOPO_V3:zone_de_vegetation
   filtre serveur : True
   inversion lat/lon : False
-  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
   objets : 1414060 natures : {'Haie': 946333, 'Bois': 378382, 'Forêt fermée de feuillus': 63496, 'Forêt fermée mixte': 15766, 'Forêt fermée de conifères': 10083}
   ajoutés : petits bois 110481 px, haies denses 639633 px (pixels touchés par une haie : 2250403)
-  (704 s)
+  (775 s)
 
-== Zones bâties et parcs (BD TOPO + OpenStreetMap)
-  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
-  réponse illisible (essai 1) : '# HELP jvm_classes_currently_loaded The number of classes that are currently loa'
-  BD TOPO : 177463 zones retenues ; natures : {'Lieu-dit habité': 139601, 'Religieux Culte chrétien': 4062, 'Quartier': 3464, 'Science et enseignement Enseignement primaire': 2703, 'Culture et loisirs Espace public': 2283, 'Administratif ou militaire Mairie': 1879, 'Château': 1828, "Gestion des eaux Station d'épuration": 1753, 'Industriel et commercial Zone industrielle': 1541, 'Culture et loisirs Monument': 1239, 'Culture et loisirs Mégalithe': 1197, 'Culture et loisirs Centre de documentation': 1146, 'Culture et loisirs Salle de spectacle ou conférence': 1057, 'Industriel et commercial Aquaculture': 1019, 'Moulin': 850, 'Administratif ou militaire Poste': 845, 'Sport Autre équipement sportif': 837, 'Gestion des eaux Station de pompage': 824, 'Culture et loisirs Aire de détente': 818, 'Industriel et commercial Divers industriel': 746, 'Culture et loisirs Camping': 713, 'Ruines': 663, 'Santé Maison de retraite': 578, "Science et enseignement Autre établissement d'enseignement": 545, 'Sport Complexe sportif couvert': 540}
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 504
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : HTTP 504
-    Overpass maps.mail.ru : HTTP 504
-    Overpass overpass-api.de : HTTP 502
-    Overpass overpass.kumi.systems : ReadTimeout
-    Overpass maps.mail.ru : HTTP 504
-  OSM : 71/82 tuiles, polygones {'parking': 32045, 'residential': 20442, 'pitch': 8759, 'garden': 5026, 'school': 2234, 'park': 2080, 'industrial': 2013, 'playground': 1979, 'cemetery': 1696, 'sports_centre': 1256, 'construction': 915, 'retail': 591}
-  masque : 1222684 px
-  (6118 s)
-urban.bin.gz : 0.42 Mo
+== Zones bâties et parcs : masque récent réutilisé
   forêt retirée en zone bâtie ou parc : 236057 px (9.0 %)
 Pixels par classe : {'Hors forêt': 15117725, 'Chênes': 78338, 'Hêtre': 10907, 'Châtaignier': 17047, 'Autres feuillus': 92141, 'Mélange de feuillus': 637034, 'Pins': 111566, 'Douglas': 27504, 'Épicéa / sapin': 29322, 'Autres conifères': 25258, 'Mixte feuillus-conifères': 161222, 'Peupleraie': 29742, 'Forêt ouverte': 63989, 'Lande': 69216, 'Haie / talus boisé': 481891, 'Petit bois': 72218}
 
@@ -130,24 +76,29 @@ Forêts publiques WFS : ['BDTOPO_V3:foret_publique', 'ONF.FORETS_PUBLIQUES:ONF_F
 Tronçons : BDTOPO_V3:troncon_de_route
   filtre serveur : True
   réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
+  réponse illisible (essai 1) : "# HELP jmx_exporter_build_info A metric with a constant '1' value labeled with t"
   373479 tronçons dans 456 tuiles, 15.5 Mo ; natures vues : {'Chemin': 138420, 'Route empierrée': 132678, 'Sentier': 102381}
-  (305 s)
+  (212 s)
 
 == Relief
   MNT IGN : 41 tuiles, 96.8 % des départements couvert
   Copernicus : 3787649 px complétés, couverture 100.0 %
+  exposition : {'plat': '78 %', 'nord': '8 %', 'sud': '8 %', 'est/ouest': '6 %'}
   indice d'humidité : TWI (pysheds) + position dans le relief
   relief : altitude -73–450 m (IGN RGE ALTI, complété par Copernicus GLO-30)
-  (124 s)
+  (117 s)
 
 == Coupes récentes (Hansen / UMD)
   Hansen GFC 2025 : 235947 px touchés, dernière année 2025
-  (3 s)
+  (2 s)
 
 == pH du sol (SoilGrids)
-  (2 s)
+  (1 s)
 ph.bin.gz : 0.21 Mo
 terrain-a.bin.gz : 5.41 Mo
-terrain-b.bin.gz : 0.28 Mo
+terrain-b.bin.gz : 1.19 Mo
 
-Terminé : 2026-11-12T00:57:23+00:00 couches {'relief': True, 'loss': True, 'pub': True}
+Terminé : 2026-11-12T13:17:33+00:00 couches {'relief': True, 'loss': True, 'pub': True, 'aspect': True}
