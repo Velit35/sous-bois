@@ -50,19 +50,23 @@ const RATINGS=["Rien","Faible","Modérée","Forte","Exceptionnelle"];
 // 0 hors forêt, 1 chênes, 2 hêtre, 3 châtaignier, 4 autres feuillus, 5 mélange feuillus, 6 pins, 7 douglas, 8 épicéa/sapin,
 // 9 autres conifères, 10 mixte, 11 peupleraie, 12 forêt ouverte, 13 lande, 14 haie / talus boisé, 15 petit bois
 const AFF={
-  cepe:      [0,1.0,0.9,0.9,0.55,0.7,0.7,0.4,0.6,0.4,0.8,0.05,0.4,0.1,0.35,0.6],
-  girolle:   [0,0.9,0.9,1.0,0.55,0.7,0.8,0.4,0.5,0.4,0.8,0.05,0.4,0.1,0.35,0.6],
+  cepe:      [0,1.0,0.9,0.9,0.55,0.7,0.2,0.15,0.2,0.15,0.6,0.05,0.35,0.1,0.35,0.6],
+  girolle:   [0,0.9,0.9,1.0,0.55,0.7,0.6,0.3,0.4,0.3,0.7,0.05,0.4,0.1,0.35,0.6],
   craterelle:[0,0.5,0.6,0.5,0.3,0.5,0.8,0.7,1.0,0.7,0.8,0.05,0.3,0.1,0.1,0.35],
   trompette: [0,0.8,1.0,0.6,0.55,0.8,0.2,0.2,0.2,0.2,0.5,0.1,0.3,0,0.15,0.45],
   pdm:       [0,0.8,0.9,0.7,0.5,0.8,0.6,0.6,0.7,0.6,0.9,0.1,0.4,0.05,0.25,0.5],
 };
+// En Bretagne et Mayenne, les résineux sont surtout des plantations (Sitka, Douglas, pins) : on garde le réglage régional
+// plutôt que les préférences apprises en France, tirées en grande partie des forêts de montagne.
+const REGIONAL_CONIF={cepe:1,girolle:1,trompette:1};const CONIF=new Set([6,7,8,9]);
+const HEDGE=14;                                     // 14 haies, 15 bosquets : couche « bocage » à part
 const PHPREF={cepe:[4.5,6.5],girolle:[4,6],craterelle:[4,6],trompette:[5.5,7.5],pdm:[4.5,7.5]};
 
 /* ====================================================================== État */
 let finds=store.get("sb.finds",[]);
 let outings=store.get("sb.outings",[]);
 let active=store.get("sb.active",null);           // sortie en cours
-const DEFAULT_LAYERS={zones:true,paths:true,meteo:false,forest:false,geol:false,ph:false,finds:true,cadastre:false,pubOutline:false};
+const DEFAULT_LAYERS={zones:true,hedges:false,paths:true,meteo:false,forest:false,geol:false,ph:false,finds:true,cadastre:false,pubOutline:false};
 const prefs=Object.assign({species:"cepe",day:0,base:"sat",own:"all",collapsed:false,layers:{...DEFAULT_LAYERS},view:{lat:48.15,lon:-1.62,z:11}},store.get("sb.prefs",{}));
 if(prefs.v!==3){prefs.v=3;prefs.base="sat";prefs.own=prefs.own||"all";prefs.layers={...DEFAULT_LAYERS}}
 for(const k in DEFAULT_LAYERS)if(!(k in prefs.layers))prefs.layers[k]=DEFAULT_LAYERS[k];
@@ -283,7 +287,8 @@ function terrainAt(lat,lon){
 function phLocal(lat,lon){if(!TERRAIN.ph)return null;const i=idxAt(TERRAIN.meta.ph,lat,lon);if(i<0)return null;const v=TERRAIN.ph[i];return v?v/10:null}
 function className(c){return TERRAIN.meta&&TERRAIN.meta.classes[c]||"?"}
 function phFactor(ph,key){const r=PHPREF[key];if(ph==null||!r)return 1;const d=ph<r[0]?r[0]-ph:ph>r[1]?ph-r[1]:0;return Math.max(0.5,1-0.5*d)}
-function lossFactor(v){if(!v)return 1;const yrs=new Date().getFullYear()-(2000+v);return yrs<=4?0.25:yrs<=10?0.6:0.85}
+// Coupe rase puis jeune peuplement : les champignons mycorhiziens mettent des années à revenir
+function lossFactor(v){if(!v)return 1;const yrs=new Date().getFullYear()-(2000+v);return yrs<=5?0.15:yrs<=12?0.4:yrs<=20?0.7:0.85}
 function reliefWet(wet,rv){return rv?clamp(wet+(rv/255-0.5)*0.5):wet}
 
 // Affinités effectives : réglage de base, corrigé par les observations publiques puis par tes sorties
@@ -329,7 +334,7 @@ function affEff(key){
   const F=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].habitat_fr;
   const wf=F&&F.aff&&F.N>=30?F.N/(F.N+150):0;
   let out=base.map((a,k)=>{if(!a)return 0;let v=a;
-    if(wf&&F.aff[k]!=null)v=(1-wf)*v+wf*F.aff[k];return v});
+    if(wf&&F.aff[k]!=null&&!(REGIONAL_CONIF[key]&&CONIF.has(k)))v=(1-wf)*v+wf*F.aff[k];return v});
   // Observations des 4 départements : correction douce, seulement là où on en attendait assez
   const rm=regionalMult(H,out);
   out=out.map((v,k)=>{if(!v)return 0;if(rm)v*=rm[k];if(pers)v*=pers.mult[k];return clamp(v,0,1.2)});
@@ -338,7 +343,7 @@ function affEff(key){
 }
 
 /* ====================================================================== Niveaux */
-const LEVELS=[null,{name:"Possible",min:0.22,rgba:[244,211,94,170]},{name:"Favorable",min:0.38,rgba:[238,150,75,195]},{name:"Très favorable",min:0.55,rgba:[209,73,91,215]}];
+const LEVELS=[null,{name:"Possible",min:0.30,rgba:[244,211,94,170]},{name:"Favorable",min:0.48,rgba:[238,150,75,195]},{name:"Très favorable",min:0.65,rgba:[209,73,91,215]}];
 function levelOf(s){return s>=LEVELS[3].min?3:s>=LEVELS[2].min?2:s>=LEVELS[1].min?1:0}
 function ownOk(pub){return prefs.own==="all"||(prefs.own==="pub"?pub===1:pub!==1)}
 function pixelScore(key,AE,t,w){
@@ -376,14 +381,14 @@ function drawZones(cv,coords){
   const G=gridFor((latT+latB)/2,(lonL+lonR)/2);if(!nodeParts(G).size)return;
   const ctx=cv.getContext("2d"),img=ctx.createImageData(N,N),d=img.data;
   const lons=new Float64Array(N);for(let px=0;px<N;px++)lons[px]=(coords.x*256+(px+0.5)*step)/world*360-180;
-  const t={cls:0,rel:0,loss:0,pub:null,ph:null};let any=false;const pubOn=!!TERRAIN.has.pub;
+  const t={cls:0,rel:0,loss:0,pub:null,ph:null};let any=false;const pubOn=!!TERRAIN.has.pub,hedgesOn=!!prefs.layers.hedges;
   for(let py=0;py<N;py++){
     const lat=tileLat(coords.y*256+(py+0.5)*step,z);
     const r=Math.floor((g.north-lat)/g.dlat);if(r<0||r>=g.h)continue;
     let w=null,wLon=-999;
     for(let px=0;px<N;px++){
       const lon=lons[px];const c=Math.floor((lon-g.west)/g.dlon);if(c<0||c>=g.w)continue;
-      const i=r*g.w+c;const a=TERRAIN.A[i];t.cls=a>>4;if(!t.cls||!AE[t.cls])continue;
+      const i=r*g.w+c;const a=TERRAIN.A[i];t.cls=a>>4;if(!t.cls||!AE[t.cls]||(t.cls>=HEDGE&&!hedgesOn))continue;
       if(lon-wLon>0.01||lon<wLon){w=interp(G,lat,lon);wLon=lon}
       if(!w)continue;
       const b=TERRAIN.B[i];t.rel=(a&15)*17;t.loss=b&127;t.pub=pubOn?b>>7:null;t.ph=phLocal(lat,lon);
@@ -867,9 +872,9 @@ $("#importFile").onchange=async e=>{
 };
 
 /* ====================================================================== Couches */
-const SW={zones:"#lyZones",paths:"#lyPaths",meteo:"#lyMeteo",forest:"#lyForest",geol:"#lyGeol",ph:"#lyPh",finds:"#lyFinds",cadastre:"#lyCadastre",pubOutline:"#lyPub"};
+const SW={zones:"#lyZones",hedges:"#lyHedges",paths:"#lyPaths",meteo:"#lyMeteo",forest:"#lyForest",geol:"#lyGeol",ph:"#lyPh",finds:"#lyFinds",cadastre:"#lyCadastre",pubOutline:"#lyPub"};
 function syncLayerSwitches(){for(const[k,s]of Object.entries(SW))$(s).checked=!!prefs.layers[k]}
-for(const[k,s]of Object.entries(SW))$(s).onchange=e=>{prefs.layers[k]=e.target.checked;applyLayers();if(k==="meteo")renderGrid()};
+for(const[k,s]of Object.entries(SW))$(s).onchange=e=>{prefs.layers[k]=e.target.checked;applyLayers();if(k==="meteo")renderGrid();if(k==="hedges"){savePrefs();refreshAll()}};
 function renderBaseChoices(){$("#baseChoices").innerHTML=Object.entries(BASES).map(([k,b])=>`<button data-base="${k}" aria-pressed="${prefs.base===k}">${b.name}</button>`).join("")}
 $("#baseChoices").onclick=e=>{const b=e.target.closest("[data-base]");if(b)setBase(b.dataset.base)};
 const OWN=[["all","Toutes"],["pub","Forêts publiques"],["priv","Privé"]];
@@ -892,7 +897,7 @@ function renderInfo(){
   $("#infoBody").innerHTML=`
   <p>Zones détaillées : Côtes-d'Armor, Ille-et-Vilaine, Mayenne et Morbihan. Pour chaque carré de 55 m, la carte multiplie :</p>
   <ol class="info-list">
-    <li><b>Le peuplement</b> : essences de la BD Forêt de l'IGN, plus les haies et petits bois de la BD TOPO. Les quartiers, zones d'activités et parcs sont retirés. Les préférences de chaque espèce sont apprises sur les observations précises de toute la France, comparées aux forêts voisines.</li>
+    <li><b>Le peuplement</b> : essences de la BD Forêt de l'IGN, plus les haies et petits bois de la BD TOPO (couche « Bocage », masquée par défaut). Les résineux de plantation et les coupes de moins de 20 ans comptent peu pour le cèpe. Les quartiers, zones d'activités et parcs sont retirés. Les préférences de chaque espèce sont apprises sur les observations précises de toute la France, comparées aux forêts voisines.</li>
     <li><b>Le sol</b> : pH (ISRIC SoilGrids) comparé aux préférences de l'espèce.</li>
     <li><b>Le relief</b> : fonds de vallon et versants nord gardent l'humidité, les points hauts sèchent vite${M&&M.relief_source?` (${esc(M.relief_source)})`:""}.</li>
     <li><b>Les coupes</b> : trouées et coupes rases vues par satellite depuis 2001 (Université du Maryland), pénalisées pendant une dizaine d'années.</li>
