@@ -1,4 +1,4 @@
-Entraînement du 2026-11-12T13:18:02+00:00 — budget de 0 appels météo
+Entraînement du 2026-11-12T13:46:07+00:00 — budget de 330 appels météo
 Terrain : chargé
 Relevés perso anonymes : 0
   sources principales : {'iNaturalist Research-grade Observations': 404, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 86, "Programme d'observation naturaliste participative avec l'application mobile INPN Espèces - Application INPN Espèces: Observations naturalistes, participatives et opportunistes, fondées sur des photographies": 75, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 73, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 60, 'Observation.org, Nature data from around the World': 59, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 56, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 50} — FongiFrance, sociétés mycologiques, INPN : 477
@@ -12,48 +12,47 @@ Craterellus cornucopioides : 576 observations datées en France (dont 14 dans l'
   sources principales : {'iNaturalist Research-grade Observations': 146, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 121, 'Données issues du portail Sigogne - Bourgogne-Franche-Comté - TAXA - Flore et habitats naturels de Franche-Comté': 99, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 60, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 59, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 50, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 45, 'Swiss National Fungi Databank': 38} — FongiFrance, sociétés mycologiques, INPN : 424
 Hydnum repandum : 1042 observations datées en France (dont 53 dans l'Ouest), météo en cache 132, à compléter 389 — par mois [134, 12, 4, 4, 1, 13, 27, 92, 230, 301, 163, 61]
 
-Appels à l'archive météo : 0 ; reste à compléter : 1893
-  habitats Boletus edulis : 269 observations précises (≤ 100 m), en cache 263, à lire 6
+Appels à l'archive météo : 330 ; reste à compléter : 1563
+  habitats Boletus edulis : 269 observations précises (≤ 100 m), en cache 269, à lire 0
   habitats Cantharellus cibarius : 146 observations précises (≤ 100 m), en cache 146, à lire 0
-  habitats Craterellus tubaeformis : 102 observations précises (≤ 100 m), en cache 101, à lire 1
-  habitats Craterellus cornucopioides : 94 observations précises (≤ 100 m), en cache 91, à lire 3
-  habitats Hydnum repandum : 114 observations précises (≤ 100 m), en cache 113, à lire 1
-  erreur réseau (ReadTimeout: HTTPSConnectionPool(host='data.geopf.fr', port=443): Read timed out. (read timeout=60))
-Lectures BD Forêt : 33 ; reste à lire : 0 observations
+  habitats Craterellus tubaeformis : 102 observations précises (≤ 100 m), en cache 102, à lire 0
+  habitats Craterellus cornucopioides : 94 observations précises (≤ 100 m), en cache 94, à lire 0
+  habitats Hydnum repandum : 114 observations précises (≤ 100 m), en cache 114, à lire 0
+Lectures BD Forêt : 0 ; reste à lire : 0 observations
 
 == Boletus edulis
   habitats appris en France : {'N': 244, 'B': 221, 'outside': 25, 'n': [25, 43, 16, 4, 7, 92, 14, 0, 27, 6, 18, 0, 8, 9], 'b': [47.5, 31.5, 9.0, 4.0, 5.0, 89.5, 12.0, 1.0, 23.5, 2.5, 17.5, 1.0, 9.5, 15.5], 'aff': [None, 0.796, 1.0, None, None, 0.604, 0.679, None, 0.672, None, 0.604, None, 0.504, 0.357]}
   habitat : {'N': 32, 'outside': 18, 'n': [0, 2, 5, 1, 4, 11, 1, 0, 1, 1, 1, 1, 0, 0, 4, 0], 'relief_mean': 123.8}
-  échantillons : 132 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.564, 'auc_nw': 0.516, 'n': 132}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [23.5, 62.6, 105.5], 'r7': [1.4, 16.6, 48.6], 't7': [9.1, 13.2, 16.9], 'ts': [9.0, 13.1, 17.4], 'drop': [-1.9, 0.1, 2.5], 'fmin': [3.4, 7.2, 11.1]}
+  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.614, 'auc_nw': 0.559, 'n': 198}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [26.3, 66.8, 111.1], 'r7': [1.4, 16.5, 44.6], 't7': [8.5, 13.0, 17.0], 'ts': [8.4, 13.0, 17.6], 'drop': [-2.5, 0.0, 3.2], 'fmin': [2.6, 6.8, 11.2]}
 
 == Cantharellus cibarius
   habitats appris en France : {'N': 139, 'B': 128, 'outside': 7, 'n': [7, 19, 16, 7, 1, 40, 9, 0, 20, 3, 17, 0, 5, 2], 'b': [18.0, 11.0, 14.0, 4.0, 2.5, 39.0, 6.5, 2.5, 16.0, 2.5, 20.0, 0.0, 2.5, 7.5], 'aff': [None, 1.0, 0.68, None, None, 0.615, None, None, 0.741, None, 0.514, None, None, 0.212]}
   habitat : {'N': 9, 'outside': 9, 'n': [0, 2, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0], 'relief_mean': 130.3}
-  échantillons : 132 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.589, 'auc_nw': 0.605, 'n': 132}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [32.2, 81.2, 150.0], 'r7': [4.5, 23.0, 62.4], 't7': [8.0, 14.5, 18.4], 'ts': [7.6, 14.6, 18.9], 'drop': [-2.1, 0.2, 2.2], 'fmin': [2.5, 8.6, 13.0]}
+  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.574, 'auc_nw': 0.609, 'n': 198}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [31.6, 80.3, 149.7], 'r7': [3.4, 23.0, 62.3], 't7': [7.4, 14.5, 18.3], 'ts': [6.7, 14.6, 18.8], 'drop': [-2.1, 0.3, 2.3], 'fmin': [0.8, 8.6, 12.5]}
 
 == Craterellus tubaeformis
   habitats appris en France : {'N': 98, 'B': 86, 'outside': 4, 'n': [4, 18, 9, 3, 2, 36, 3, 0, 11, 3, 11, 0, 0, 2], 'b': [16.0, 13.5, 7.0, 1.5, 1.0, 39.5, 4.0, 0.5, 8.5, 1.5, 3.0, 0.0, 3.0, 3.0], 'aff': [None, 1.0, None, None, None, 0.697, None, None, 0.964, None, None, None, None, None]}
   habitat : {'N': 23, 'outside': 11, 'n': [0, 1, 6, 0, 1, 7, 3, 0, 1, 1, 2, 0, 0, 0, 1, 0], 'relief_mean': 88.0}
-  échantillons : 132 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.545, 'auc_nw': 0.571, 'n': 132}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.3, 70.5, 104.0], 'r7': [1.6, 19.5, 55.7], 't7': [5.7, 11.1, 14.6], 'ts': [5.9, 10.8, 15.3], 'drop': [-2.1, 0.2, 2.9], 'fmin': [-0.8, 5.3, 9.3]}
+  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.554, 'auc_nw': 0.603, 'n': 198}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [30.0, 72.7, 112.6], 'r7': [1.6, 21.5, 55.9], 't7': [5.2, 11.1, 15.1], 'ts': [5.6, 11.0, 15.5], 'drop': [-2.1, 0.2, 3.1], 'fmin': [-1.0, 5.2, 9.4]}
 
 == Craterellus cornucopioides
   habitats appris en France : {'N': 87, 'B': 74, 'outside': 7, 'n': [7, 16, 8, 2, 0, 45, 3, 0, 3, 1, 4, 0, 2, 3], 'b': [20.0, 12.5, 6.5, 1.5, 2.0, 37.5, 2.0, 0.5, 1.5, 0.5, 2.5, 0.0, 2.5, 4.5], 'aff': [None, 1.0, None, None, None, 0.949, None, None, None, None, None, None, None, None]}
   habitat : {'N': 2, 'outside': 5, 'n': [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'relief_mean': 170.0}
-  échantillons : 132 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.584, 'auc_nw': None, 'n': 132}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.5, 82.6, 143.1], 'r7': [2.4, 17.1, 55.8], 't7': [4.3, 11.9, 16.6], 'ts': [4.4, 11.9, 17.2], 'drop': [-2.1, 0.2, 2.6], 'fmin': [-1.8, 5.7, 11.2]}
+  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.552, 'auc_nw': None, 'n': 198}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.3, 80.0, 139.3], 'r7': [2.5, 17.5, 56.0], 't7': [4.9, 12.0, 17.0], 'ts': [5.6, 12.1, 17.6], 'drop': [-2.1, 0.2, 2.7], 'fmin': [-1.5, 5.9, 11.9]}
 
 == Hydnum repandum
   habitats appris en France : {'N': 110, 'B': 99, 'outside': 4, 'n': [4, 18, 13, 3, 1, 40, 6, 1, 11, 3, 8, 0, 1, 5], 'b': [14.5, 15.0, 7.0, 0.0, 3.5, 39.0, 3.0, 1.5, 8.0, 2.0, 6.0, 0.0, 3.5, 11.0], 'aff': [None, 0.891, None, None, None, 0.769, None, None, 1.0, None, None, None, None, 0.375]}
   habitat : {'N': 17, 'outside': 9, 'n': [0, 1, 7, 0, 0, 4, 0, 0, 0, 0, 3, 0, 1, 0, 1, 0], 'relief_mean': 120.0}
-  échantillons : 132 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.529, 'auc_nw': 0.558, 'n': 132}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [29.0, 72.1, 123.5], 'r7': [3.1, 18.9, 64.5], 't7': [5.6, 12.3, 17.0], 'ts': [5.8, 12.4, 17.3], 'drop': [-2.2, 0.3, 2.8], 'fmin': [-0.6, 5.8, 10.9]}
+  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.527, 'auc_nw': 0.565, 'n': 198}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.9, 71.4, 123.7], 'r7': [3.7, 19.4, 62.9], 't7': [5.5, 12.3, 17.2], 'ts': [5.8, 12.4, 17.9], 'drop': [-2.3, 0.3, 2.8], 'fmin': [-1.2, 6.0, 11.1]}
 
-Terminé 2026-11-12T13:19:56+00:00
+Terminé 2026-11-12T13:49:55+00:00
