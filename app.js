@@ -145,7 +145,8 @@ function parts(m,P){
   return {rain,soil,wet,temp,fm:frost?0.35:1,shock,frost};
 }
 function combine(wet,temp,fm,shock){
-  let s=0.65*wet+0.35*temp;
+  // Produit pondéré : un sol sec ne se rattrape pas par une bonne température (et inversement)
+  let s=Math.pow(wet,0.65)*Math.pow(temp,0.35);
   if(temp<0.15)s*=0.4; if(wet<0.15)s*=0.4;
   s*=fm; if(wet>=0.4)s*=1+0.15*shock;
   return clamp(s);
