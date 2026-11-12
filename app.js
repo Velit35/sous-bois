@@ -132,17 +132,21 @@ function profileFor(key){
   }
   profCache.clear();profCache.set(ck,P);return P;
 }
+const ASPECT_DT=1.5;
 function parts(m,P){
   if(!P||!m||m.t7==null)return null;
   const rain=clamp(((m.er??m.r15)-P.rain.min)/Math.max(1,P.rain.opt-P.rain.min));
   const T=P.temp,t=m.t7;
-  const temp=t<=T.lo||t>=T.hi?0:t<T.opt1?(t-T.lo)/(T.opt1-T.lo):t>T.opt2?(T.hi-t)/(T.hi-T.opt2):1;
+  const tf=t=>t<=T.lo||t>=T.hi?0:t<T.opt1?(t-T.lo)/(T.opt1-T.lo):t>T.opt2?(T.hi-t)/(T.hi-T.opt2):1;
+  const temp=tf(t);
+  // Versant sud plus tiède, versant nord plus frais (pentes de plus de 3°)
+  const tempS=tf(t+ASPECT_DT),tempN=tf(t-ASPECT_DT);
   const soil=m.sm!=null?clamp((m.sm-0.18)/0.15):null;
   // Humidité : la pluie récente, ou un sol resté humide (fréquent en automne, quand l'eau s'évapore peu)
   const wet=soil==null?rain:Math.max(rain,0.7*soil+0.3*rain);
   const frost=m.fmin!=null&&m.fmin<P.frost;
   const shock=m.drop!=null?clamp((m.drop-0.5)/3):0;     // baisse de la température du sol : déclencheur classique
-  return {rain,soil,wet,temp,fm:frost?0.35:1,shock,frost};
+  return {rain,soil,wet,temp,tempN,tempS,fm:frost?0.35:1,shock,frost};
 }
 function combine(wet,temp,fm,shock){
   // Produit pondéré : un sol sec ne se rattrape pas par une bonne température (et inversement)
@@ -227,10 +231,10 @@ function nodeParts(G){
   for(const kk of partsCache.keys())if(kk.startsWith(G.kind+"|"))partsCache.delete(kk);
   partsCache.set(k,m);return m;
 }
-const PK=["wet","temp","fm","shock","mf"];
+const PK=["wet","temp","tempN","tempS","fm","shock","mf"];
 function interp(G,lat,lon){
   const S=nodeParts(G);const x=lon/G.dlon,y=lat/G.dlat,i=Math.floor(x),j=Math.floor(y),fx=x-i,fy=y-j;
-  const acc={wet:0,temp:0,fm:0,shock:0,mf:0};let ws=0;
+  const acc={wet:0,temp:0,tempN:0,tempS:0,fm:0,shock:0,mf:0};let ws=0;
   const add=(ii,jj,w)=>{const v=S.get(ii+","+jj);if(v&&w>0){for(const k of PK)acc[k]+=v[k]*w;ws+=w}};
   add(i,j,(1-fx)*(1-fy));add(i+1,j,fx*(1-fy));add(i,j+1,(1-fx)*fy);add(i+1,j+1,fx*fy);
   if(ws<0.2)return null;for(const k of PK)acc[k]/=ws;return acc;
@@ -238,8 +242,10 @@ function interp(G,lat,lon){
 function nearestNode(lat,lon){const G=gridFor(lat,lon);return G.nodes.get(Math.round(lon/G.dlon)+","+Math.round(lat/G.dlat))||null}
 
 /* ====================================================================== Terrain préparé */
-const TERRAIN={ready:false,meta:null,A:null,B:null,has:{},ph:null,error:null};
-// A : peuplement (4 bits hauts) | relief 1→15 (4 bits bas) ; B : forêt publique (bit 7) | année de coupe − 2000 (7 bits)
+const TERRAIN={ready:false,meta:null,A:null,B:null,has:{},ph:null,error:null,lossMask:127};
+// A : peuplement (4 bits hauts) | relief 1→15 (4 bits bas)
+// B : forêt publique (bit 7) | exposition 0 plat, 1 nord, 2 sud, 3 est/ouest (bits 5-6) | année de coupe − 2000 (5 bits)
+//     (ancien format : forêt publique | année de coupe sur 7 bits)
 const STATUS={meteo:null};
 async function loadBin(url){
   const r=await fetch(url,{cache:"no-cache"});if(!r.ok)throw new Error(url+" : "+r.status);
@@ -272,18 +278,21 @@ async function loadTerrain(){
       has={relief:!!rel,loss:!!loss,pub:!!pub};
     }
     let ph=null;if(meta.ph){try{ph=await loadBin("data/"+meta.ph.file)}catch(e){}}
-    Object.assign(TERRAIN,{ready:true,meta,A,B,has,ph,error:null});
+    const packed=meta.b_layout==="pub1-asp2-loss5";if(!packed)has.aspect=false;
+    Object.assign(TERRAIN,{ready:true,meta,A,B,has,ph,error:null,lossMask:packed?31:127});
     calVersion++;updateZoneStatus();refreshAll();
   }catch(e){TERRAIN.error=e.message||"erreur";updateZoneStatus()}
 }
 const clsIdx=i=>TERRAIN.A[i]>>4;
 const relIdx=i=>(TERRAIN.A[i]&15)*17;
-const lossIdx=i=>TERRAIN.B[i]&127;
+const lossIdx=i=>TERRAIN.B[i]&TERRAIN.lossMask;
+const aspIdx=i=>TERRAIN.has.aspect?(TERRAIN.B[i]>>5)&3:0;
+const ASPECTS=["plat","versant nord","versant sud","versant est ou ouest"];
 const pubIdx=i=>TERRAIN.has.pub?TERRAIN.B[i]>>7:null;
 function idxAt(g,lat,lon){const c=Math.floor((lon-g.west)/g.dlon),r=Math.floor((g.north-lat)/g.dlat);return c<0||r<0||c>=g.w||r>=g.h?-1:r*g.w+c}
 function terrainAt(lat,lon){
   if(!TERRAIN.ready)return null;const i=idxAt(TERRAIN.meta.grid,lat,lon);if(i<0)return null;
-  return {i,cls:clsIdx(i),rel:relIdx(i),loss:lossIdx(i),pub:pubIdx(i),ph:phLocal(lat,lon)};
+  return {i,cls:clsIdx(i),rel:relIdx(i),loss:lossIdx(i),pub:pubIdx(i),asp:aspIdx(i),ph:phLocal(lat,lon)};
 }
 function phLocal(lat,lon){if(!TERRAIN.ph)return null;const i=idxAt(TERRAIN.meta.ph,lat,lon);if(i<0)return null;const v=TERRAIN.ph[i];return v?v/10:null}
 function className(c){return TERRAIN.meta&&TERRAIN.meta.classes[c]||"?"}
@@ -350,7 +359,8 @@ function ownOk(pub){return prefs.own==="all"||(prefs.own==="pub"?pub===1:pub!==1
 function pixelScore(key,AE,t,w){
   const a=AE[t.cls];if(!a)return 0;
   if(prefs.own!=="all"){if(t.pub==null&&prefs.own==="pub")return 0;if(prefs.own==="pub"&&t.pub!==1)return 0;if(prefs.own==="priv"&&t.pub===1)return 0}
-  return a*phFactor(t.ph,key)*lossFactor(t.loss)*combine(reliefWet(w.wet,t.rel),w.temp,w.fm,w.shock)*w.mf;
+  const tp=t.asp===1?w.tempN:t.asp===2?w.tempS:w.temp;
+  return a*phFactor(t.ph,key)*lossFactor(t.loss)*combine(reliefWet(w.wet,t.rel),tp,w.fm,w.shock)*w.mf;
 }
 
 /* ====================================================================== Carte */
@@ -382,7 +392,7 @@ function drawZones(cv,coords){
   const G=gridFor((latT+latB)/2,(lonL+lonR)/2);if(!nodeParts(G).size)return;
   const ctx=cv.getContext("2d"),img=ctx.createImageData(N,N),d=img.data;
   const lons=new Float64Array(N);for(let px=0;px<N;px++)lons[px]=(coords.x*256+(px+0.5)*step)/world*360-180;
-  const t={cls:0,rel:0,loss:0,pub:null,ph:null};let any=false;const pubOn=!!TERRAIN.has.pub,hedgesOn=!!prefs.layers.hedges;
+  const t={cls:0,rel:0,loss:0,pub:null,asp:0,ph:null};let any=false;const pubOn=!!TERRAIN.has.pub,hedgesOn=!!prefs.layers.hedges,aspOn=!!TERRAIN.has.aspect,LM=TERRAIN.lossMask;
   for(let py=0;py<N;py++){
     const lat=tileLat(coords.y*256+(py+0.5)*step,z);
     const r=Math.floor((g.north-lat)/g.dlat);if(r<0||r>=g.h)continue;
@@ -392,7 +402,7 @@ function drawZones(cv,coords){
       const i=r*g.w+c;const a=TERRAIN.A[i];t.cls=a>>4;if(!t.cls||!AE[t.cls]||(t.cls>=HEDGE&&!hedgesOn))continue;
       if(lon-wLon>0.01||lon<wLon){w=interp(G,lat,lon);wLon=lon}
       if(!w)continue;
-      const b=TERRAIN.B[i];t.rel=(a&15)*17;t.loss=b&127;t.pub=pubOn?b>>7:null;t.ph=phLocal(lat,lon);
+      const b=TERRAIN.B[i];t.rel=(a&15)*17;t.loss=b&LM;t.pub=pubOn?b>>7:null;t.asp=aspOn?(b>>5)&3:0;t.ph=phLocal(lat,lon);
       const lv=levelOf(pixelScore(key,AE,t,w));if(!lv)continue;
       const col=LEVELS[lv].rgba,o=(py*N+px)*4;d[o]=col[0];d[o+1]=col[1];d[o+2]=col[2];d[o+3]=col[3];any=true;
     }
@@ -540,7 +550,7 @@ map.on("click",async e=>{
     else{h+=`Peuplement : <b>${esc(className(t.cls))}</b><br>`;
       if(SPECIES[key]){const a=affEff(key)[t.cls];h+=`Affinité ${esc(ALL[key].name.toLowerCase())} : ${a>=0.8?"forte":a>=0.5?"moyenne":a>0.1?"faible":"nulle"}<br>`}}
     if(t.pub!=null)h+=t.pub?"Forêt publique (ONF)<br>":"Terrain privé (ou non soumis au régime forestier)<br>";
-    if(t.rel)h+=`Relief : ${t.rel>190?"fond ou versant humide":t.rel<70?"point haut ou pente sèche":"intermédiaire"}<br>`;
+    if(t.rel)h+=`Relief : ${t.rel>190?"fond ou versant humide":t.rel<70?"point haut ou pente sèche":"intermédiaire"}${t.asp?", "+ASPECTS[t.asp]:""}<br>`;
     if(t.loss)h+=`Coupe ou trouée détectée en 20${String(t.loss).padStart(2,"0")}<br>`;
   }
   else if(f===undefined)h+="Forêt : lecture impossible<br>";

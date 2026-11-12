@@ -547,7 +547,14 @@ def relief():
     zf = nd.gaussian_filter(zf, 0.7)
     gy, gx = np.gradient(zf, dy, dx)          # gy : vers le sud (lignes descendantes)
     slope = np.arctan(np.hypot(gx, gy))
-    northness = -gy / (np.hypot(gx, gy) + 1e-6) * np.clip(np.degrees(slope) / 8, 0, 1)   # versant nord = +1
+    # gy > 0 : le terrain monte vers le sud, donc il descend vers le nord → versant exposé au nord
+    facing_n = gy / (np.hypot(gx, gy) + 1e-6)
+    northness = facing_n * np.clip(np.degrees(slope) / 8, 0, 1)   # versant nord = +1
+    # Exposition en 4 classes : 0 plat (< 3°), 1 nord, 2 sud, 3 est ou ouest
+    asp = np.where(facing_n > 0.5, 1, np.where(facing_n < -0.5, 2, 3)).astype(np.uint8)
+    asp[np.degrees(slope) < 3] = 0
+    asp[~np.isfinite(z)] = 0
+    log("  exposition :", {k: f"{(asp == i).mean() * 100:.0f} %" for i, k in enumerate(("plat", "nord", "sud", "est/ouest"))})
     tpi_s = zf - nd.uniform_filter(zf, 9)     # ≈ 500 m
     tpi_l = zf - nd.uniform_filter(zf, 31)    # ≈ 1,7 km
     z_ = lambda a: (a - np.mean(a)) / (np.std(a) + 1e-6)
@@ -574,7 +581,7 @@ def relief():
     out = (1 + rank.astype(np.float64) / rank.size * 254).astype(np.uint8)
     out[~np.isfinite(z)] = 0
     log(f"  relief : altitude {np.nanmin(z):.0f}–{np.nanmax(z):.0f} m ({src})")
-    return out, src
+    return out, src, asp
 
 
 # ------------------------------------------------------------------ 6. coupes récentes (Hansen / UMD, Landsat 30 m)
@@ -644,15 +651,18 @@ def stage(name, fn):
     log(f"  ({time.time() - t:.0f} s)")
     return res
 
-def pack(cls, rel, loss, pub):
-    """Deux octets par pixel : A = peuplement (4 bits) | relief (4 bits) ; B = forêt publique (bit 7) | année de coupe (7 bits)."""
+def pack(cls, rel, loss, pub, asp=None):
+    """Deux octets par pixel : A = peuplement (4 bits) | relief (4 bits) ;
+    B = forêt publique (bit 7) | exposition (bits 5-6) | année de coupe depuis 2000 (5 bits)."""
     a = (cls.astype(np.uint8) & 15) << 4
     if rel is not None:
         r = rel.astype(np.int32)
         a |= np.where(r > 0, 1 + (r - 1) * 15 // 255, 0).astype(np.uint8)
     b = np.zeros((H, W), np.uint8)
     if loss is not None:
-        b |= np.minimum(loss, 127).astype(np.uint8)
+        b |= np.minimum(loss, 31).astype(np.uint8)
+    if asp is not None:
+        b |= (asp.astype(np.uint8) & 3) << 5
     if pub is not None:
         b |= (pub > 0).astype(np.uint8) << 7
     if MASK is not None:
@@ -711,6 +721,7 @@ def main():
         meta["paths"] = old["paths"]
     rel = stage("Relief", relief)
     rel_arr = rel[0] if rel else None
+    asp_arr = rel[2] if rel and len(rel) > 2 else None
     if rel and rel[1]: meta["relief_source"] = rel[1]
     loss = stage("Coupes récentes (Hansen / UMD)", forest_loss)
     loss_arr = loss[0] if loss else None
@@ -720,10 +731,11 @@ def main():
         write_gz("ph.bin.gz", ph[0], log)
         meta["ph"] = {"file": "ph.bin.gz", "w": ph[1], "h": ph[2], "dlat": PH_DLAT, "dlon": PH_DLON, "west": REGION["west"], "north": REGION["north"]}
 
-    a, b = pack(arr, rel_arr, loss_arr, pub)
+    a, b = pack(arr, rel_arr, loss_arr, pub, asp_arr)
+    meta["b_layout"] = "pub1-asp2-loss5"
     write_gz("terrain-a.bin.gz", a, log); write_gz("terrain-b.bin.gz", b, log)
     meta["files"] = {"a": "terrain-a.bin.gz", "b": "terrain-b.bin.gz"}
-    meta["has"] = {"relief": rel_arr is not None, "loss": loss_arr is not None, "pub": pub is not None}
+    meta["has"] = {"relief": rel_arr is not None, "loss": loss_arr is not None, "pub": pub is not None, "aspect": asp_arr is not None}
     # Anciens fichiers (format d'avant) : supprimés pour ne pas alourdir le site
     for f in ("terrain.bin.gz", "relief.bin.gz", "loss.bin.gz", "pub.bin.gz"):
         if (OUT / f).exists():
