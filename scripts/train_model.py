@@ -299,7 +299,9 @@ def main():
             srcs[o["src"]] = srcs.get(o["src"], 0) + 1
         named = {dataset_title(k): v for k, v in srcs.items()}
         fongi = sum(v for k, v in named.items() if any(w in str(k).lower() for w in ("fongi", "mycolog", "inpn", "champignon")))
+        ff = sum(v for k, v in named.items() if "fongifrance" in str(k).lower() or "fongibase" in str(k).lower())
         log(f"  sources principales : {dict(sorted(named.items(), key=lambda kv: -kv[1])[:8])} — FongiFrance, sociétés mycologiques, INPN : {fongi}")
+        log(f"  dont jeux FongiFrance / FongiBase : {ff} ({sum(1 for k in named if 'fongifrance' in str(k).lower() or 'fongibase' in str(k).lower())} jeux)")
         months = np.bincount([o["date"].month for o in occ], minlength=13)[1:]
         log(f"{name} : {len(occ)} observations datées en France (dont {sum(in_nw(o['lat'], o['lon']) for o in occ)} dans l'Ouest), "
             f"météo en cache {len(cache['items'])}, à compléter {len(todo)} — par mois {months.tolist()}")
