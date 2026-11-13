@@ -165,7 +165,17 @@ function modelFactor(key,m){
   let z=M.intercept;for(let i=0;i<x.length;i++)z+=M.coef[i]*(x[i]-M.mean[i])/M.std[i];
   return 0.6+0.8/(1+Math.exp(-z));
 }
-function score(m,key){const P=profileFor(key);const p=parts(m,P);if(!p)return null;const mf=modelFactor(key,m);return {...p,mf,s:clamp(combine(p.wet,p.temp,p.fm,p.shock)*mf)}}
+/* Saison : fréquence des observations par quinzaine (apprise sur la France et les voisins océaniques).
+   Hors saison, même une météo parfaite ne donne pas grand-chose (cèpes en avril…). */
+function seasonFactor(key,iso){
+  const S=MODEL&&MODEL.species&&MODEL.species[key]&&MODEL.species[key].season;if(!S||S.length!==24)return 1;
+  const d=new Date(iso+"T12:00:00"),dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  const x=d.getMonth()*2+(d.getDate()-1)/(dim/2)-0.5,i0=Math.floor(x),f=x-i0;
+  const v=S[(i0+24)%24]*(1-f)+S[(i0+25)%24]*f;
+  return clamp(0.25+0.75*Math.min(1,v/0.35));
+}
+const selDay=()=>addDays(isoOf(new Date()),prefs.day);
+function score(m,key){const P=profileFor(key);const p=parts(m,P);if(!p)return null;const sf=seasonFactor(key,selDay());const mf=modelFactor(key,m)*sf;return {...p,mf,sf,s:clamp(combine(p.wet,p.temp,p.fm,p.shock)*mf)}}
 function label(s){return s==null?"–":s<0.25?"Faible":s<0.5?"Moyen":s<0.75?"Bon":"Très bon"}
 function ramp(s){const st=[[0.25,[244,211,94]],[0.6,[238,150,75]],[1,[209,73,91]]];
   if(s<=st[0][0])return `rgb(${st[0][1]})`;
@@ -536,7 +546,8 @@ function wxDetails(m,r,elev){
   return `Météo : <b>${label(r.s)} (${Math.round(r.s*100)} %)</b><br>Pluie 7 j / 15 j / 30 j : ${fmt(m.r7)} / ${fmt(m.r15)} / ${fmt(m.r30)} mm<br>Air, moyenne 7 j : ${fmt(m.t7,1)} °C<br>`+
     (m.sm!=null?`Sol : ${fmt(m.sm*100)} % d'eau`+(m.ts!=null?`, ${fmt(m.ts,1)} °C`:"")+`<br>`:"")+
     (m.drop!=null&&m.drop>0.5?`Le sol s'est rafraîchi de ${fmt(m.drop,1)} °C en quelques jours<br>`:"")+
-    (r.frost?`<span style="color:var(--danger)">Gel récent (${fmt(m.fmin,1)} °C)</span><br>`:"")+(elev!=null?`Altitude ≈ ${fmt(elev)} m`:"");
+    (r.frost?`<span style="color:var(--danger)">Gel récent (${fmt(m.fmin,1)} °C)</span><br>`:"")+
+    (r.sf!=null&&r.sf<0.95?`<span style="color:var(--muted,#6b7a70)">${r.sf<0.4?"Hors saison":"Début ou fin de saison"} (×${fmt(r.sf,2)})</span><br>`:"")+(elev!=null?`Altitude ≈ ${fmt(elev)} m`:"");
 }
 let addMode=false,placing=false;
 map.on("click",async e=>{
@@ -919,14 +930,14 @@ function renderInfo(){
     <li><b>La météo</b> : pluie des 30 derniers jours, humidité et température du sol, baisse de température qui déclenche les poussées, gel.</li>
   </ol>
   <table class="info-table"><thead><tr><th>Espèce</th><th>Obs. en France</th><th>Fiabilité météo dans l'Ouest</th><th>Habitats appris (obs. précises)</th><th>Tes relevés</th></tr></thead><tbody>${sp}</tbody></table>
-  <p class="hint">Le modèle météo apprend sur les observations publiques de toute la France, et sur tes relevés anonymes. Sa fiabilité va de 0,5 (hasard) à 1 (parfait) : c'est sa capacité à distinguer un jour de poussée d'un jour ordinaire, mesurée sur des observations de l'Ouest qu'il n'a pas vues. Il n'est utilisé qu'au-dessus de 0,6.</p>
+  <p class="hint">Le modèle météo apprend sur les observations publiques de toute la France depuis 1990 (dont FongiFrance), sur celles des pays voisins au climat océanique (Royaume-Uni, Irlande, Belgique, Pays-Bas) et sur tes relevés anonymes. Les mêmes observations donnent la saison de chaque espèce : hors saison, la note est fortement réduite. Sa fiabilité va de 0,5 (hasard) à 1 (parfait) : c'est sa capacité à distinguer un jour de poussée d'un jour ordinaire, mesurée sur des observations de l'Ouest qu'il n'a pas vues. Il n'est utilisé qu'au-dessus de 0,6.</p>
   <div class="facts">
     <span class="chip">Terrain : ${M?when(M.generated):"–"}</span>
     <span class="chip">Météo fine : ${G?when(G.generated):STATUS.meteo==="ancienne"?"pas encore mise à jour aujourd'hui":"en direct"}</span>
     <span class="chip">Modèle : ${MODEL?when(MODEL.generated):"en préparation"}</span>
     <span class="chip">Tes sorties : ${outings.length}, dont ${outings.filter(o=>bestRating(o)===0).length} sans rien</span>
   </div>
-  <p class="hint">Sources : IGN (BD Forêt, BD TOPO, RGE ALTI, photos aériennes, cadastre), ONF (forêts publiques), OpenStreetMap, Hansen et al. / UMD (Global Forest Change), ISRIC SoilGrids, Open-Meteo, GBIF.</p>`;
+  <p class="hint">Sources : IGN (BD Forêt, BD TOPO, RGE ALTI, photos aériennes, cadastre), ONF (forêts publiques), OpenStreetMap, Hansen et al. / UMD (Global Forest Change), ISRIC SoilGrids, Open-Meteo, GBIF (FongiFrance, sociétés mycologiques, iNaturalist, Observation.org, INPN…).</p>`;
 }
 $("#btnInfo").onclick=()=>{renderInfo();show("#sheetInfo")};
 

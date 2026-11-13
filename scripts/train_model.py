@@ -1,8 +1,10 @@
 """Apprend, pour chaque espèce, la météo et les habitats des poussées.
 
-Données : observations publiques de toute la France métropolitaine (GBIF : sociétés
-mycologiques, iNaturalist, Observation.org…) + les fichiers anonymes envoyés depuis l'app
-(data/perso/*.json, sans aucune position).
+Données : observations publiques (GBIF : FongiFrance, sociétés mycologiques, iNaturalist,
+Observation.org…) de toute la France métropolitaine depuis 1990, plus celles des voisins au
+climat océanique (Royaume-Uni, Irlande, Belgique, Pays-Bas, Luxembourg) pour la météo ; les
+habitats ne viennent que de la France depuis 2010 (la carte forestière décrit les forêts
+actuelles). S'ajoutent les fichiers anonymes envoyés depuis l'app (data/perso/*.json).
 
 Météo : pour chaque observation, on compare la météo du jour de l'observation à celle de
 jours voisins de la même saison au même endroit (régression logistique). Cette météo vient
@@ -26,7 +28,11 @@ log = Log("train-log.txt")
 
 SPECIES = {"cepe": "Boletus edulis", "girolle": "Cantharellus cibarius", "craterelle": "Craterellus tubaeformis",
            "trompette": "Craterellus cornucopioides", "pdm": "Hydnum repandum"}
-TARGET = 500                                   # observations avec météo visées par espèce
+TARGET = 800                                   # observations avec météo visées par espèce
+YEARS = "1990,2026"                            # météo : archive disponible bien avant
+HAB_YEAR = 2010                                # habitats : forêts d'aujourd'hui
+NEIGHBOURS = ["GB", "IE", "BE", "NL", "LU"]    # climat océanique proche de l'Ouest
+NEIGH_CAP = 6000                               # observations lues par pays voisin et par espèce
 BUDGET = int(os.environ.get("BUDGET", "330"))  # appels à l'archive météo par calcul (≈ 2 300 « appels » Open-Meteo)
 NW = {"lat": (46.6, 49.3), "lon": (-5.3, -0.2)}  # Bretagne et alentours, pour mesurer la fiabilité localement
 FEATS = ["er", "r7", "t7", "t7sq", "ts", "drop", "fmin"]
@@ -42,12 +48,13 @@ def taxon_key(name):
     j = r.json()
     return j.get("acceptedUsageKey") or j.get("usageKey")
 
-def occurrences(key):
+def occurrences(key, country="FR", cap=30000):
     out, off = [], 0
-    while off < 30000:
+    lat = "41,51.2" if country == "FR" else "49,61"
+    while off < cap:
         r = get("https://api.gbif.org/v1/occurrence/search", {
-            "taxonKey": key, "country": "FR", "decimalLatitude": "41,51.2", "hasCoordinate": "true",
-            "hasGeospatialIssue": "false", "occurrenceStatus": "PRESENT", "year": "2010,2026",
+            "taxonKey": key, "country": country, "decimalLatitude": lat, "hasCoordinate": "true",
+            "hasGeospatialIssue": "false", "occurrenceStatus": "PRESENT", "year": YEARS,
             "limit": 300, "offset": off}, log=log, timeout=120)
         if not r:
             break
@@ -66,7 +73,7 @@ def occurrences(key):
             if unc is not None and unc > 10000:
                 continue
             out.append({"id": str(o.get("key")), "lat": o["decimalLatitude"], "lon": o["decimalLongitude"], "date": d, "unc": unc,
-                        "src": o.get("datasetKey") or "?"})
+                        "src": o.get("datasetKey") or "?", "cc": country})
         off += len(res)
         if j.get("endOfRecords") or not res:
             break
@@ -78,6 +85,28 @@ def dataset_title(k):
         r = get(f"https://api.gbif.org/v1/dataset/{k}", log=log, tries=2) if k and k != "?" else None
         _titles[k] = (r.json().get("title") if r is not None else None) or k
     return _titles[k]
+
+def drop_placeholder_dates(occ):
+    """Dates de remplissage : 1er janvier, ou jeux de données qui mettent presque tout au 1er du mois."""
+    by = {}
+    for o in occ:
+        by.setdefault(o["src"], []).append(o)
+    bad = {k for k, v in by.items() if len(v) >= 10 and sum(o["date"].day == 1 for o in v) / len(v) > 0.25}
+    keep = [o for o in occ if not (o["date"].month == 1 and o["date"].day == 1) and not (o["src"] in bad and o["date"].day == 1)]
+    return keep, len(occ) - len(keep)
+
+def in_atlantic(o):
+    """France de l'Ouest et du Nord, et voisins océaniques : climat proche de la Bretagne."""
+    return o["cc"] != "FR" or (o["lat"] >= 45.5 and o["lon"] <= 2.0)
+
+def season_curve(occ):
+    """Fréquence des observations par quinzaine (24 valeurs, lissées, max = 1). Les régions océaniques comptent triple."""
+    h = np.zeros(24)
+    for o in occ:
+        q = (o["date"].month - 1) * 2 + (1 if o["date"].day > 15 else 0)
+        h[q] += 3 if in_atlantic(o) else 1
+    sm = np.array([0.25 * h[i - 1] + 0.5 * h[i] + 0.25 * h[(i + 1) % 24] for i in range(24)])
+    return (sm / sm.max()).round(3).tolist() if sm.max() > 0 else None
 
 def dedupe(occ):
     seen, out = set(), []
@@ -277,7 +306,7 @@ def main():
     log("Terrain :", "chargé" if cls is not None else "indisponible (habitats non appris)")
     perso = perso_records()
     log(f"Relevés perso anonymes : {len(perso)}")
-    model = {"version": 3, "generated": now_iso(), "scope": "France métropolitaine", "species": {}}
+    model = {"version": 3, "generated": now_iso(), "scope": "France depuis 1990 + voisins océaniques (météo) ; France depuis 2010 (habitats)", "species": {}}
 
     # 1. Observations et file d'attente de la météo à télécharger
     data = {}
@@ -285,15 +314,18 @@ def main():
         tk = taxon_key(name)
         if not tk:
             log(f"{name} : taxon introuvable"); continue
-        occ = dedupe(occurrences(tk))
+        occ = occurrences(tk)
+        for cc in NEIGHBOURS:
+            occ += occurrences(tk, cc, NEIGH_CAP)
+        occ, n_ph = drop_placeholder_dates(dedupe(occ))
         cache = load_cache(key)
         rng = random.Random(key)
         order = sorted(occ, key=lambda o: o["id"]); rng.shuffle(order)
-        # Les observations bretonnes passent en premier : ce sont les plus utiles ici
-        order.sort(key=lambda o: 0 if in_nw(o["lat"], o["lon"]) else 1)
+        # D'abord l'Ouest, puis les régions au climat océanique, puis le reste de la France
+        order.sort(key=lambda o: 0 if o["cc"] == "FR" and in_nw(o["lat"], o["lon"]) else 1 if in_atlantic(o) else 2)
         target = order[:TARGET]
         todo = [o for o in target if o["id"] not in cache["items"]]
-        data[key] = {"tk": tk, "occ": occ, "cache": cache, "todo": todo, "rng": rng}
+        data[key] = {"tk": tk, "occ": occ, "cache": cache, "todo": todo, "rng": rng, "ids": {o["id"] for o in occ}}
         srcs = {}
         for o in occ:
             srcs[o["src"]] = srcs.get(o["src"], 0) + 1
@@ -303,8 +335,10 @@ def main():
         log(f"  sources principales : {dict(sorted(named.items(), key=lambda kv: -kv[1])[:8])} — FongiFrance, sociétés mycologiques, INPN : {fongi}")
         log(f"  dont jeux FongiFrance / FongiBase : {ff} ({sum(1 for k in named if 'fongifrance' in str(k).lower() or 'fongibase' in str(k).lower())} jeux)")
         months = np.bincount([o["date"].month for o in occ], minlength=13)[1:]
-        log(f"{name} : {len(occ)} observations datées en France (dont {sum(in_nw(o['lat'], o['lon']) for o in occ)} dans l'Ouest), "
-            f"météo en cache {len(cache['items'])}, à compléter {len(todo)} — par mois {months.tolist()}")
+        fr = [o for o in occ if o["cc"] == "FR"]
+        log(f"{name} : {len(occ)} observations datées depuis {YEARS[:4]} — France {len(fr)} (dont {sum(in_nw(o['lat'], o['lon']) for o in fr)} dans l'Ouest, "
+            f"{sum(o['date'].year < 2010 for o in fr)} avant 2010), voisins {len(occ) - len(fr)} {dict((c, sum(o['cc'] == c for o in occ)) for c in NEIGHBOURS)} ; "
+            f"dates de remplissage écartées {n_ph} ; météo en cache {len(cache['items'])}, à compléter {len(todo)} — par mois {months.tolist()}")
 
     # 2. Météo téléchargée par paliers, à tour de rôle entre espèces
     calls = 0
@@ -328,7 +362,7 @@ def main():
     hab, hq = {}, {}
     for key, d in data.items():
         hab[key] = load_hab(key)
-        precise = [o for o in d["occ"] if o["unc"] is not None and o["unc"] <= 100]
+        precise = [o for o in d["occ"] if o["cc"] == "FR" and o["date"].year >= HAB_YEAR and o["unc"] is not None and o["unc"] <= 100]
         r2 = random.Random("hab" + key)
         order = sorted(precise, key=lambda o: o["id"]); r2.shuffle(order)
         hq[key] = [o for o in order[:HAB_TARGET] if o["id"] not in hab[key]["items"]]
@@ -359,10 +393,12 @@ def main():
         occ = d["occ"]
         entry = {"name": name, "taxonKey": d["tk"], "n_obs": len(occ), "months": np.bincount([o["date"].month for o in occ], minlength=13)[1:].tolist()}
         mine = [r for r in perso if r.get("sp") == key]
+        entry["season"] = season_curve(occ)
+        log("  saison (quinzaines, max = 1) :", entry["season"])
         entry["habitat_fr"] = habitat_fr(hab[key]["items"])
         log("  habitats appris en France :", entry["habitat_fr"])
         if cls is not None:
-            h = habitat(occ, cls, rel)
+            h = habitat([o for o in occ if o["cc"] == "FR" and o["date"].year >= HAB_YEAR], cls, rel)
             add = [r["cls"] for r in mine if r.get("type") == "trouvaille" and r.get("cls")]
             if add:
                 n = np.array(h.get("n", [0] * NCLS), float)
@@ -373,6 +409,8 @@ def main():
             log("  habitat :", {k: v for k, v in h.items() if k != "aff"})
         X, y, g, nw = [], [], [], set()
         for gi, (oid, it) in enumerate(d["cache"]["items"].items()):
+            if oid not in d["ids"]:                 # date de remplissage ou observation retirée de GBIF
+                continue
             for row in it["rows"]:
                 X.append(row[1:]); y.append(int(row[0])); g.append(gi)
             if in_nw(it["lat"], it["lon"]):
