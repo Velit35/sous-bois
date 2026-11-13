@@ -1,63 +1,68 @@
-Entraînement du 2026-11-13T05:43:09+00:00 — budget de 0 appels météo
+Entraînement du 2026-11-13T06:39:06+00:00 — budget de 0 appels météo
 Terrain : chargé
 Relevés perso anonymes : 0
-  sources principales : {'iNaturalist Research-grade Observations': 404, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 86, "Programme d'observation naturaliste participative avec l'application mobile INPN Espèces - Application INPN Espèces: Observations naturalistes, participatives et opportunistes, fondées sur des photographies": 75, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 73, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 60, 'Observation.org, Nature data from around the World': 59, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 56, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 50} — FongiFrance, sociétés mycologiques, INPN : 477
-  dont jeux FongiFrance / FongiBase : 16 (3 jeux)
-Boletus edulis : 1347 observations datées en France (dont 105 dans l'Ouest), météo en cache 198, à compléter 314 — par mois [40, 3, 4, 1, 7, 24, 31, 137, 333, 576, 159, 32]
-  sources principales : {'iNaturalist Research-grade Observations': 212, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 81, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 45, 'Données issues du portail Sigogne - Bourgogne-Franche-Comté - TAXA - Flore et habitats naturels de Franche-Comté': 45, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 42, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 36, 'Swiss National Fungi Databank': 34, 'Observation.org, Nature data from around the World': 30} — FongiFrance, sociétés mycologiques, INPN : 255
-  dont jeux FongiFrance / FongiBase : 3 (3 jeux)
-Cantharellus cibarius : 869 observations datées en France (dont 48 dans l'Ouest), météo en cache 198, à compléter 313 — par mois [56, 6, 2, 1, 21, 105, 114, 154, 174, 153, 73, 10]
-  sources principales : {'iNaturalist Research-grade Observations': 221, 'Données issues du portail Sigogne - Bourgogne-Franche-Comté - TAXA - Flore et habitats naturels de Franche-Comté': 86, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 72, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 54, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 52, 'Données ONF faune-flore-fonge': 44, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 28, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 21} — FongiFrance, sociétés mycologiques, INPN : 257
-  dont jeux FongiFrance / FongiBase : 3 (2 jeux)
-Craterellus tubaeformis : 808 observations datées en France (dont 68 dans l'Ouest), météo en cache 198, à compléter 305 — par mois [114, 15, 2, 2, 1, 7, 5, 42, 141, 266, 140, 73]
-  sources principales : {'iNaturalist Research-grade Observations': 174, 'Données issues du portail Sigogne - Bourgogne-Franche-Comté - TAXA - Flore et habitats naturels de Franche-Comté': 61, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 54, 'Observation.org, Nature data from around the World': 29, 'Swiss National Fungi Databank': 24, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 23, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 17, "Programme d'observation naturaliste participative avec l'application mobile INPN Espèces - Application INPN Espèces: Observations naturalistes, participatives et opportunistes, fondées sur des photographies": 16} — FongiFrance, sociétés mycologiques, INPN : 166
-  dont jeux FongiFrance / FongiBase : 7 (3 jeux)
-Craterellus cornucopioides : 576 observations datées en France (dont 14 dans l'Ouest), météo en cache 198, à compléter 308 — par mois [75, 2, 0, 2, 1, 7, 19, 48, 99, 196, 100, 27]
-  sources principales : {'iNaturalist Research-grade Observations': 146, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 121, 'Données issues du portail Sigogne - Bourgogne-Franche-Comté - TAXA - Flore et habitats naturels de Franche-Comté': 99, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 60, 'Atlas mycologique des Hauts-de-France données SMNF associatives - SMNF (Lille), données associatives 2010-2019': 59, "25 - Programme d'inventaire MycoflAURA - MycoflAURA RT 2017": 50, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 45, 'Swiss National Fungi Databank': 38} — FongiFrance, sociétés mycologiques, INPN : 424
-  dont jeux FongiFrance / FongiBase : 11 (5 jeux)
-Hydnum repandum : 1042 observations datées en France (dont 53 dans l'Ouest), météo en cache 198, à compléter 323 — par mois [134, 12, 4, 4, 1, 13, 27, 92, 230, 301, 163, 61]
+  sources principales : {'Observation.org, Nature data from around the World': 4957, 'iNaturalist Research-grade Observations': 2171, 'Fungus Conservation Trust - CATE': 1884, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 1419, 'Fungal Records Database of Britain and Ireland': 1354, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 171, 'HBRG Fungus, Lichen & Lower Plants Dataset': 104, 'INBO collaborator Occurrences of fungi recorded in waarnemingen.be in Flanders, Belgium': 93} — FongiFrance, sociétés mycologiques, INPN : 2262
+  dont jeux FongiFrance / FongiBase : 106 (7 jeux)
+Boletus edulis : 13923 observations datées depuis 1990 — France 1895 (dont 111 dans l'Ouest, 582 avant 2010), voisins 12028 {'GB': 5138, 'IE': 49, 'BE': 1608, 'NL': 5122, 'LU': 111} ; dates de remplissage écartées 137 ; météo en cache 198, à compléter 700 — par mois [15, 7, 11, 7, 25, 103, 444, 1743, 4506, 5497, 1455, 110]
+  sources principales : {'Observation.org, Nature data from around the World': 4955, 'Fungal Records Database of Britain and Ireland': 1794, 'Fungus Conservation Trust - CATE': 1740, 'iNaturalist Research-grade Observations': 988, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 832, 'HBRG Fungus, Lichen & Lower Plants Dataset': 213, 'NE Scotland fungus and lichen records 1800-2010': 174, 'Swiss National Fungi Databank': 148} — FongiFrance, sociétés mycologiques, INPN : 1320
+  dont jeux FongiFrance / FongiBase : 65 (7 jeux)
+Cantharellus cibarius : 12275 observations datées depuis 1990 — France 1358 (dont 54 dans l'Ouest, 540 avant 2010), voisins 10917 {'GB': 4976, 'IE': 47, 'BE': 926, 'NL': 4897, 'LU': 71} ; dates de remplissage écartées 236 ; météo en cache 198, à compléter 753 — par mois [95, 15, 7, 6, 157, 697, 1621, 2670, 2989, 2769, 881, 368]
+  sources principales : {'Fungus Conservation Trust - CATE': 790, 'Fungal Records Database of Britain and Ireland': 766, 'iNaturalist Research-grade Observations': 444, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 167, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 138, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 59, 'Données mycologiques FongiFrance-Inventaire mycologique de Haute-Normandie - J.-C. Malaval': 58, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 52} — FongiFrance, sociétés mycologiques, INPN : 642
+  dont jeux FongiFrance / FongiBase : 86 (6 jeux)
+Craterellus tubaeformis : 3213 observations datées depuis 1990 — France 1068 (dont 74 dans l'Ouest, 354 avant 2010), voisins 2145 {'GB': 1899, 'IE': 24, 'BE': 185, 'NL': 12, 'LU': 25} ; dates de remplissage écartées 282 ; météo en cache 198, à compléter 728 — par mois [53, 31, 4, 4, 2, 17, 28, 173, 760, 1274, 630, 237]
+  sources principales : {'Fungus Conservation Trust - CATE': 372, 'iNaturalist Research-grade Observations': 265, 'Fungal Records Database of Britain and Ireland': 221, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 90, 'Swiss National Fungi Databank': 53, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 52, 'Observation.org, Nature data from around the World': 41, '31 - Import de données pour MycoflAURA - Import anciennes données 2013': 30} — FongiFrance, sociétés mycologiques, INPN : 357
+  dont jeux FongiFrance / FongiBase : 44 (8 jeux)
+Craterellus cornucopioides : 1583 observations datées depuis 1990 — France 764 (dont 17 dans l'Ouest, 254 avant 2010), voisins 819 {'GB': 710, 'IE': 5, 'BE': 75, 'NL': 6, 'LU': 23} ; dates de remplissage écartées 217 ; météo en cache 198, à compléter 774 — par mois [14, 2, 3, 5, 2, 14, 47, 140, 382, 641, 284, 49]
+  sources principales : {'Observation.org, Nature data from around the World': 1833, 'Fungus Conservation Trust - CATE': 1732, 'Fungal Records Database of Britain and Ireland': 1370, 'iNaturalist Research-grade Observations': 374, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 338, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 185, 'Swiss National Fungi Databank': 122, 'HBRG Fungus, Lichen & Lower Plants Dataset': 108} — FongiFrance, sociétés mycologiques, INPN : 1034
+  dont jeux FongiFrance / FongiBase : 55 (7 jeux)
+Hydnum repandum : 7423 observations datées depuis 1990 — France 1470 (dont 61 dans l'Ouest, 533 avant 2010), voisins 5953 {'GB': 3678, 'IE': 54, 'BE': 375, 'NL': 1801, 'LU': 45} ; dates de remplissage écartées 357 ; météo en cache 198, à compléter 745 — par mois [165, 20, 7, 8, 8, 39, 135, 602, 1980, 2746, 1264, 449]
 
-Appels à l'archive météo : 0 ; reste à compléter : 1563
-  habitats Boletus edulis : 269 observations précises (≤ 100 m), en cache 269, à lire 0
-  habitats Cantharellus cibarius : 146 observations précises (≤ 100 m), en cache 146, à lire 0
-  habitats Craterellus tubaeformis : 102 observations précises (≤ 100 m), en cache 102, à lire 0
+Appels à l'archive météo : 0 ; reste à compléter : 3700
+  habitats Boletus edulis : 264 observations précises (≤ 100 m), en cache 269, à lire 0
+  habitats Cantharellus cibarius : 145 observations précises (≤ 100 m), en cache 146, à lire 0
+  habitats Craterellus tubaeformis : 100 observations précises (≤ 100 m), en cache 102, à lire 0
   habitats Craterellus cornucopioides : 94 observations précises (≤ 100 m), en cache 94, à lire 0
-  habitats Hydnum repandum : 114 observations précises (≤ 100 m), en cache 114, à lire 0
+  habitats Hydnum repandum : 113 observations précises (≤ 100 m), en cache 114, à lire 0
 Lectures BD Forêt : 0 ; reste à lire : 0 observations
 
 == Boletus edulis
+  saison (quinzaines, max = 1) : [0.003, 0.002, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.002, 0.006, 0.013, 0.023, 0.054, 0.131, 0.247, 0.411, 0.66, 0.912, 1.0, 0.825, 0.462, 0.163, 0.041, 0.01]
   habitats appris en France : {'N': 244, 'B': 221, 'outside': 25, 'n': [25, 43, 16, 4, 7, 92, 14, 0, 27, 6, 18, 0, 8, 9], 'b': [47.5, 31.5, 9.0, 4.0, 5.0, 89.5, 12.0, 1.0, 23.5, 2.5, 17.5, 1.0, 9.5, 15.5], 'aff': [None, 0.796, 1.0, None, None, 0.604, 0.679, None, 0.672, None, 0.604, None, 0.504, 0.357]}
-  habitat : {'N': 32, 'outside': 18, 'n': [0, 2, 5, 1, 4, 11, 1, 0, 1, 1, 1, 1, 0, 0, 4, 0], 'relief_mean': 123.8}
-  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.614, 'auc_nw': 0.559, 'n': 198}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [26.3, 66.8, 111.1], 'r7': [1.4, 16.5, 44.6], 't7': [8.5, 13.0, 17.0], 'ts': [8.4, 13.0, 17.6], 'drop': [-2.5, 0.0, 3.2], 'fmin': [2.6, 6.8, 11.2]}
+  habitat : {'N': 30, 'outside': 15, 'n': [0, 2, 5, 1, 4, 10, 1, 0, 1, 1, 1, 1, 0, 0, 3, 0], 'relief_mean': 119.0}
+  échantillons : 192 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.575, 'auc_nw': 0.503, 'n': 192}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [25.7, 65.6, 109.1], 'r7': [1.4, 15.6, 44.3], 't7': [9.2, 13.1, 17.1], 'ts': [9.1, 13.1, 17.6], 'drop': [-2.5, 0.1, 3.2], 'fmin': [2.7, 7.0, 11.2]}
 
 == Cantharellus cibarius
+  saison (quinzaines, max = 1) : [0.054, 0.022, 0.008, 0.003, 0.002, 0.001, 0.001, 0.003, 0.026, 0.087, 0.166, 0.267, 0.423, 0.628, 0.808, 0.889, 0.939, 1.0, 0.969, 0.767, 0.453, 0.228, 0.145, 0.1]
   habitats appris en France : {'N': 139, 'B': 128, 'outside': 7, 'n': [7, 19, 16, 7, 1, 40, 9, 0, 20, 3, 17, 0, 5, 2], 'b': [18.0, 11.0, 14.0, 4.0, 2.5, 39.0, 6.5, 2.5, 16.0, 2.5, 20.0, 0.0, 2.5, 7.5], 'aff': [None, 1.0, 0.68, None, None, 0.615, None, None, 0.741, None, 0.514, None, None, 0.212]}
-  habitat : {'N': 9, 'outside': 9, 'n': [0, 2, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0], 'relief_mean': 130.3}
-  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.574, 'auc_nw': 0.609, 'n': 198}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [31.6, 80.3, 149.7], 'r7': [3.4, 23.0, 62.3], 't7': [7.4, 14.5, 18.3], 'ts': [6.7, 14.6, 18.8], 'drop': [-2.1, 0.3, 2.3], 'fmin': [0.8, 8.6, 12.5]}
+  habitat : {'N': 8, 'outside': 9, 'n': [0, 2, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], 'relief_mean': 129.6}
+  échantillons : 185 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.577, 'auc_nw': 0.578, 'n': 185}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [29.5, 75.8, 147.8], 'r7': [3.3, 22.8, 61.7], 't7': [9.1, 14.9, 18.5], 'ts': [9.3, 14.9, 18.8], 'drop': [-2.1, 0.3, 2.3], 'fmin': [2.6, 8.9, 12.7]}
 
 == Craterellus tubaeformis
+  saison (quinzaines, max = 1) : [0.073, 0.034, 0.025, 0.016, 0.005, 0.002, 0.002, 0.002, 0.001, 0.006, 0.012, 0.013, 0.017, 0.031, 0.087, 0.249, 0.5, 0.771, 1.0, 1.0, 0.726, 0.427, 0.253, 0.151]
   habitats appris en France : {'N': 98, 'B': 86, 'outside': 4, 'n': [4, 18, 9, 3, 2, 36, 3, 0, 11, 3, 11, 0, 0, 2], 'b': [16.0, 13.5, 7.0, 1.5, 1.0, 39.5, 4.0, 0.5, 8.5, 1.5, 3.0, 0.0, 3.0, 3.0], 'aff': [None, 1.0, None, None, None, 0.697, None, None, 0.964, None, None, None, None, None]}
-  habitat : {'N': 23, 'outside': 11, 'n': [0, 1, 6, 0, 1, 7, 3, 0, 1, 1, 2, 0, 0, 0, 1, 0], 'relief_mean': 88.0}
-  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.554, 'auc_nw': 0.603, 'n': 198}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [30.0, 72.7, 112.6], 'r7': [1.6, 21.5, 55.9], 't7': [5.2, 11.1, 15.1], 'ts': [5.6, 11.0, 15.5], 'drop': [-2.1, 0.2, 3.1], 'fmin': [-1.0, 5.2, 9.4]}
+  habitat : {'N': 22, 'outside': 11, 'n': [0, 1, 6, 0, 1, 7, 3, 0, 1, 1, 2, 0, 0, 0, 0, 0], 'relief_mean': 85.8}
+  échantillons : 188 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.552, 'auc_nw': 0.536, 'n': 188}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [29.8, 70.8, 109.6], 'r7': [1.6, 20.5, 54.7], 't7': [6.0, 11.4, 15.1], 'ts': [6.0, 11.2, 15.6], 'drop': [-2.1, 0.2, 3.1], 'fmin': [-0.2, 5.4, 9.4]}
 
 == Craterellus cornucopioides
+  saison (quinzaines, max = 1) : [0.024, 0.012, 0.006, 0.003, 0.004, 0.007, 0.01, 0.005, 0.002, 0.014, 0.028, 0.027, 0.044, 0.09, 0.17, 0.303, 0.511, 0.762, 0.981, 1.0, 0.691, 0.317, 0.122, 0.05]
   habitats appris en France : {'N': 87, 'B': 74, 'outside': 7, 'n': [7, 16, 8, 2, 0, 45, 3, 0, 3, 1, 4, 0, 2, 3], 'b': [20.0, 12.5, 6.5, 1.5, 2.0, 37.5, 2.0, 0.5, 1.5, 0.5, 2.5, 0.0, 2.5, 4.5], 'aff': [None, 1.0, None, None, None, 0.949, None, None, None, None, None, None, None, None]}
   habitat : {'N': 2, 'outside': 5, 'n': [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'relief_mean': 170.0}
-  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.552, 'auc_nw': None, 'n': 198}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.3, 80.0, 139.3], 'r7': [2.5, 17.5, 56.0], 't7': [4.9, 12.0, 17.0], 'ts': [5.6, 12.1, 17.6], 'drop': [-2.1, 0.2, 2.7], 'fmin': [-1.5, 5.9, 11.9]}
+  échantillons : 179 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.494, 'auc_nw': None, 'n': 179}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.3, 76.1, 135.8], 'r7': [2.4, 16.6, 49.4], 't7': [7.1, 12.7, 17.1], 'ts': [7.2, 12.6, 17.8], 'drop': [-2.1, 0.2, 2.7], 'fmin': [0.6, 6.5, 12.0]}
 
 == Hydnum repandum
+  saison (quinzaines, max = 1) : [0.085, 0.042, 0.015, 0.004, 0.002, 0.002, 0.002, 0.002, 0.002, 0.004, 0.009, 0.017, 0.031, 0.063, 0.148, 0.332, 0.596, 0.846, 1.0, 0.945, 0.66, 0.369, 0.215, 0.139]
   habitats appris en France : {'N': 110, 'B': 99, 'outside': 4, 'n': [4, 18, 13, 3, 1, 40, 6, 1, 11, 3, 8, 0, 1, 5], 'b': [14.5, 15.0, 7.0, 0.0, 3.5, 39.0, 3.0, 1.5, 8.0, 2.0, 6.0, 0.0, 3.5, 11.0], 'aff': [None, 0.891, None, None, None, 0.769, None, None, 1.0, None, None, None, None, 0.375]}
   habitat : {'N': 17, 'outside': 9, 'n': [0, 1, 7, 0, 0, 4, 0, 0, 0, 0, 3, 0, 1, 0, 1, 0], 'relief_mean': 120.0}
-  échantillons : 198 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.527, 'auc_nw': 0.565, 'n': 198}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.9, 71.4, 123.7], 'r7': [3.7, 19.4, 62.9], 't7': [5.5, 12.3, 17.2], 'ts': [5.8, 12.4, 17.9], 'drop': [-2.3, 0.3, 2.8], 'fmin': [-1.2, 6.0, 11.1]}
+  échantillons : 188 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.488, 'auc_nw': 0.483, 'n': 188}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.7, 69.8, 117.9], 'r7': [3.6, 18.6, 56.8], 't7': [6.0, 12.8, 17.3], 'ts': [6.1, 12.6, 18.0], 'drop': [-2.2, 0.2, 2.9], 'fmin': [-0.6, 6.2, 11.3]}
 
-Terminé 2026-11-13T05:43:50+00:00
+Terminé 2026-11-13T06:41:18+00:00
