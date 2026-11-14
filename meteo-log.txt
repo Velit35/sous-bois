@@ -1,0 +1,11 @@
+Météo du 2026-11-14T10:54:55+00:00 — 2351 nœuds
+  erreur réseau (ReadTimeout: HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=180))
+  erreur réseau (ReadTimeout: HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=180))
+  erreur réseau (ReadTimeout: HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=180))
+  erreur réseau (ReadTimeout: HTTPSConnectionPool(host='api.open-meteo.com', port=443): Read timed out. (read timeout=180))
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.7510%2C47.7840%2C47.8170%2C47.8500%2C47.8830%2C47.9160%2C47.9490%2C47.9820%2C48.0150%2C48.0480%2C48.0810%2C48.1140%2C48.1470%2C48 : '{"reason":"Minutely API request limit exceeded. Please try again in one minute.","error":true}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.5760%2C48.6090%2C48.6420%2C48.6750%2C48.7080%2C48.7410%2C47.6850%2C47.7180%2C47.7510%2C47.7840%2C47.8170%2C47.8500%2C47.8830%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.3120%2C48.3450%2C48.3780%2C48.4110%2C48.4440%2C48.4770%2C48.5100%2C48.5430%2C47.7180%2C47.7510%2C47.7840%2C47.8170%2C47.8500%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+Nœuds obtenus : 2351/2351, lots en échec : 0
+meteo.json : 426 ko
+Exemple (premier nœud, aujourd'hui) : {'er': 13.5, 'r7': 0.8, 'r15': 0.8, 'r30': 26.2, 't7': 8.8, 'fmin': -1.0, 'sm': 0.319, 'ts': 8.5, 'drop': -2.2}
