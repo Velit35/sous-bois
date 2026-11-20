@@ -1,91 +1,68 @@
-Entraînement du 2026-11-19T14:26:40+00:00 — budget de 330 appels météo
+Entraînement du 2026-11-20T14:00:55+00:00 — budget de 330 appels météo
 Terrain : chargé
 Relevés perso anonymes : 0
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=FR&decimalLatitude=41%2C51.2&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C202 : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16183199214" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=FR&decimalLatitude=41%2C51.2&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C202 : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16103084117" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=FR&decimalLatitude=41%2C51.2&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C202 : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16143910990" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=FR&decimalLatitude=41%2C51.2&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C202 : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=GB&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=GB&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16317677956" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=GB&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16424468568" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=GB&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=IE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16146991213" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=IE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=IE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=IE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16398450883" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=BE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16241525470" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=BE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16316661863" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=BE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16429350961" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=BE&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16250602045" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=NL&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=NL&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16315515540" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=NL&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16343040427" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=NL&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16368042140" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=LU&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16279896752" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=LU&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '"The system is too busy, please try again in a few minutes.  We can often provide data about occurrences, downloads, datasets, citations and so on in CSV or similar format, please contact helpdesk@gbif.org."'
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=LU&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16213213785" ] '
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5954958&country=LU&decimalLatitude=49%2C61&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C2026& : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16148662924" ] '
-  sources principales : {} — FongiFrance, sociétés mycologiques, INPN : 0
-  dont jeux FongiFrance / FongiBase : 0 (0 jeux)
-Boletus edulis : 0 observations datées depuis 1990 — France 0 (dont 0 dans l'Ouest, 0 avant 2010), voisins 0 {'GB': 0, 'IE': 0, 'BE': 0, 'NL': 0, 'LU': 0} ; dates de remplissage écartées 0 ; météo en cache 594, à compléter 0 — par mois [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-  HTTP 503 sur https://api.gbif.org/v1/occurrence/search?taxonKey=5249504&country=FR&decimalLatitude=41%2C51.2&hasCoordinate=true&hasGeospatialIssue=false&occurrenceStatus=PRESENT&year=1990%2C202 : '[   "HTTP 503 Backend fetch failed",   "Request XID: 16114551703" ] '
-  sources principales : {'Observation.org, Nature data from around the World': 4966, 'Fungal Records Database of Britain and Ireland': 1794, 'Fungus Conservation Trust - CATE': 1740, 'iNaturalist Research-grade Observations': 988, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 832, 'HBRG Fungus, Lichen & Lower Plants Dataset': 213, 'NE Scotland fungus and lichen records 1800-2010': 174, 'Swiss National Fungi Databank': 148} — FongiFrance, sociétés mycologiques, INPN : 1320
+  sources principales : {'Observation.org, Nature data from around the World': 4957, 'iNaturalist Research-grade Observations': 2231, 'Fungus Conservation Trust - CATE': 1858, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 1419, 'Fungal Records Database of Britain and Ireland': 1351, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 171, 'HBRG Fungus, Lichen & Lower Plants Dataset': 104, 'INBO collaborator Occurrences of fungi recorded in waarnemingen.be in Flanders, Belgium': 93} — FongiFrance, sociétés mycologiques, INPN : 2262
+  dont jeux FongiFrance / FongiBase : 106 (7 jeux)
+Boletus edulis : 13943 observations datées depuis 1990 — France 1919 (dont 115 dans l'Ouest, 582 avant 2010), voisins 12024 {'GB': 5127, 'IE': 49, 'BE': 1613, 'NL': 5122, 'LU': 113} ; dates de remplissage écartées 137 ; météo en cache 594, à compléter 672 — par mois [15, 7, 11, 7, 25, 102, 442, 1698, 4500, 5512, 1515, 109]
+  sources principales : {'Observation.org, Nature data from around the World': 4966, 'Fungal Records Database of Britain and Ireland': 1792, 'Fungus Conservation Trust - CATE': 1740, 'iNaturalist Research-grade Observations': 990, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 832, 'HBRG Fungus, Lichen & Lower Plants Dataset': 213, 'NE Scotland fungus and lichen records 1800-2010': 174, 'Swiss National Fungi Databank': 148} — FongiFrance, sociétés mycologiques, INPN : 1320
   dont jeux FongiFrance / FongiBase : 65 (7 jeux)
-Cantharellus cibarius : 12287 observations datées depuis 1990 — France 1358 (dont 54 dans l'Ouest, 540 avant 2010), voisins 10929 {'GB': 4976, 'IE': 47, 'BE': 926, 'NL': 4909, 'LU': 71} ; dates de remplissage écartées 236 ; météo en cache 594, à compléter 635 — par mois [95, 15, 7, 6, 157, 697, 1621, 2644, 2990, 2769, 918, 368]
-  sources principales : {'Fungus Conservation Trust - CATE': 790, 'Fungal Records Database of Britain and Ireland': 766, 'iNaturalist Research-grade Observations': 444, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 167, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 138, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 59, 'Données mycologiques FongiFrance-Inventaire mycologique de Haute-Normandie - J.-C. Malaval': 58, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 52} — FongiFrance, sociétés mycologiques, INPN : 642
+Cantharellus cibarius : 12287 observations datées depuis 1990 — France 1358 (dont 54 dans l'Ouest, 540 avant 2010), voisins 10929 {'GB': 4976, 'IE': 47, 'BE': 926, 'NL': 4909, 'LU': 71} ; dates de remplissage écartées 236 ; météo en cache 677, à compléter 561 — par mois [95, 15, 7, 6, 157, 697, 1619, 2644, 2990, 2769, 920, 368]
+  sources principales : {'Fungus Conservation Trust - CATE': 790, 'Fungal Records Database of Britain and Ireland': 766, 'iNaturalist Research-grade Observations': 445, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 167, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 138, 'ONF - Observations et inventaires MOA ONF-ONF - Observations opportunistes et inventaires': 59, 'Données mycologiques FongiFrance-Inventaire mycologique de Haute-Normandie - J.-C. Malaval': 58, "Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Fonge des bénévoles de l'Association mycologique de Bigorre": 52} — FongiFrance, sociétés mycologiques, INPN : 642
   dont jeux FongiFrance / FongiBase : 86 (6 jeux)
-Craterellus tubaeformis : 3213 observations datées depuis 1990 — France 1068 (dont 74 dans l'Ouest, 354 avant 2010), voisins 2145 {'GB': 1899, 'IE': 24, 'BE': 185, 'NL': 12, 'LU': 25} ; dates de remplissage écartées 282 ; météo en cache 594, à compléter 332 — par mois [53, 31, 4, 4, 2, 17, 28, 173, 760, 1274, 630, 237]
-  sources principales : {'Fungus Conservation Trust - CATE': 372, 'iNaturalist Research-grade Observations': 265, 'Fungal Records Database of Britain and Ireland': 221, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 90, 'Swiss National Fungi Databank': 53, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 52, 'Observation.org, Nature data from around the World': 41, '31 - Import de données pour MycoflAURA - Import anciennes données 2013': 30} — FongiFrance, sociétés mycologiques, INPN : 357
+Craterellus tubaeformis : 3214 observations datées depuis 1990 — France 1069 (dont 74 dans l'Ouest, 354 avant 2010), voisins 2145 {'GB': 1899, 'IE': 24, 'BE': 185, 'NL': 12, 'LU': 25} ; dates de remplissage écartées 282 ; météo en cache 677, à compléter 403 — par mois [53, 31, 4, 4, 2, 17, 28, 173, 760, 1275, 630, 237]
+  sources principales : {'Fungus Conservation Trust - CATE': 372, 'iNaturalist Research-grade Observations': 268, 'Fungal Records Database of Britain and Ireland': 221, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 90, 'Swiss National Fungi Databank': 53, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 52, 'Observation.org, Nature data from around the World': 41, '31 - Import de données pour MycoflAURA - Import anciennes données 2013': 30} — FongiFrance, sociétés mycologiques, INPN : 357
   dont jeux FongiFrance / FongiBase : 44 (8 jeux)
-Craterellus cornucopioides : 1583 observations datées depuis 1990 — France 764 (dont 17 dans l'Ouest, 254 avant 2010), voisins 819 {'GB': 710, 'IE': 5, 'BE': 75, 'NL': 6, 'LU': 23} ; dates de remplissage écartées 217 ; météo en cache 594, à compléter 378 — par mois [14, 2, 3, 5, 2, 14, 47, 140, 382, 641, 284, 49]
+Craterellus cornucopioides : 1586 observations datées depuis 1990 — France 765 (dont 17 dans l'Ouest, 254 avant 2010), voisins 821 {'GB': 712, 'IE': 5, 'BE': 75, 'NL': 6, 'LU': 23} ; dates de remplissage écartées 217 ; météo en cache 676, à compléter 306 — par mois [14, 2, 3, 5, 2, 14, 47, 140, 382, 641, 287, 49]
   sources principales : {'Observation.org, Nature data from around the World': 1834, 'Fungus Conservation Trust - CATE': 1732, 'Fungal Records Database of Britain and Ireland': 1370, 'iNaturalist Research-grade Observations': 374, 'Funbel - the chorological database ‘Fungi of Belgium’ of the Royal Flemish Mycological Society': 338, 'Observations opportunistes de flore vasculaire, bryophytes, champignons et lichens-Observations opportunistes Flore, Fonge et Bryophytes du CRPF en Midi-Pyrénées': 185, 'Swiss National Fungi Databank': 122, 'HBRG Fungus, Lichen & Lower Plants Dataset': 108} — FongiFrance, sociétés mycologiques, INPN : 1034
   dont jeux FongiFrance / FongiBase : 55 (7 jeux)
-Hydnum repandum : 7426 observations datées depuis 1990 — France 1470 (dont 61 dans l'Ouest, 533 avant 2010), voisins 5956 {'GB': 3680, 'IE': 54, 'BE': 375, 'NL': 1802, 'LU': 45} ; dates de remplissage écartées 357 ; météo en cache 594, à compléter 624 — par mois [165, 20, 7, 8, 8, 39, 135, 602, 1980, 2748, 1265, 449]
+Hydnum repandum : 7426 observations datées depuis 1990 — France 1470 (dont 61 dans l'Ouest, 533 avant 2010), voisins 5956 {'GB': 3680, 'IE': 54, 'BE': 375, 'NL': 1802, 'LU': 45} ; dates de remplissage écartées 357 ; météo en cache 676, à compléter 542 — par mois [165, 20, 7, 8, 8, 39, 135, 602, 1980, 2748, 1265, 449]
 
-Appels à l'archive météo : 330 ; reste à compléter : 1639
-  habitats Boletus edulis : 0 observations précises (≤ 100 m), en cache 274, à lire 0
+Appels à l'archive météo : 330 ; reste à compléter : 2154
+  habitats Boletus edulis : 275 observations précises (≤ 100 m), en cache 274, à lire 6
   habitats Cantharellus cibarius : 145 observations précises (≤ 100 m), en cache 146, à lire 0
-  habitats Craterellus tubaeformis : 100 observations précises (≤ 100 m), en cache 102, à lire 0
+  habitats Craterellus tubaeformis : 101 observations précises (≤ 100 m), en cache 102, à lire 1
   habitats Craterellus cornucopioides : 94 observations précises (≤ 100 m), en cache 94, à lire 0
   habitats Hydnum repandum : 113 observations précises (≤ 100 m), en cache 114, à lire 0
-Lectures BD Forêt : 0 ; reste à lire : 0 observations
+Lectures BD Forêt : 21 ; reste à lire : 0 observations
 
 == Boletus edulis
-  saison (quinzaines, max = 1) : None
-  habitats appris en France : {'N': 249, 'B': 224, 'outside': 25, 'n': [25, 43, 16, 4, 8, 94, 14, 0, 28, 6, 18, 0, 9, 9], 'b': [49.5, 31.5, 9.0, 4.0, 5.0, 90.5, 12.0, 1.0, 25.0, 2.5, 18.0, 1.0, 9.5, 15.5], 'aff': [None, 0.796, 1.0, None, None, 0.611, 0.679, None, 0.656, None, 0.588, None, 0.56, 0.357]}
-  habitat : {'N': 0, 'outside': 0}
-  échantillons : 0 poussées publiques ; perso : 0 réussites, 0 « rien »
+  saison (quinzaines, max = 1) : [0.003, 0.002, 0.001, 0.001, 0.001, 0.001, 0.001, 0.001, 0.002, 0.006, 0.013, 0.022, 0.054, 0.13, 0.242, 0.402, 0.653, 0.91, 1.0, 0.831, 0.473, 0.168, 0.041, 0.01]
+  habitats appris en France : {'N': 254, 'B': 230, 'outside': 26, 'n': [26, 44, 18, 4, 8, 95, 14, 0, 28, 6, 18, 0, 9, 10], 'b': [50.0, 32.5, 11.0, 4.0, 5.0, 91.5, 13.0, 1.0, 25.0, 2.5, 18.0, 1.0, 9.5, 16.0], 'aff': [None, 0.848, 1.0, None, None, 0.655, 0.677, None, 0.704, None, 0.632, None, 0.602, 0.409]}
+  habitat : {'N': 33, 'outside': 16, 'n': [0, 2, 5, 1, 5, 11, 1, 0, 1, 1, 1, 1, 0, 0, 3, 1], 'relief_mean': 123.1}
+  échantillons : 650 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.606, 'auc_nw': 0.546, 'n': 650}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [29.9, 63.8, 109.4], 'r7': [1.3, 16.2, 44.3], 't7': [9.1, 13.1, 16.9], 'ts': [9.0, 13.2, 17.5], 'drop': [-2.2, 0.1, 2.9], 'fmin': [3.0, 7.6, 11.2]}
 
 == Cantharellus cibarius
-  saison (quinzaines, max = 1) : [0.054, 0.022, 0.008, 0.003, 0.002, 0.001, 0.001, 0.003, 0.026, 0.087, 0.166, 0.267, 0.423, 0.626, 0.801, 0.882, 0.936, 1.0, 0.969, 0.773, 0.466, 0.235, 0.145, 0.1]
+  saison (quinzaines, max = 1) : [0.054, 0.022, 0.008, 0.003, 0.002, 0.001, 0.001, 0.003, 0.026, 0.087, 0.166, 0.267, 0.423, 0.625, 0.801, 0.882, 0.936, 1.0, 0.969, 0.773, 0.466, 0.235, 0.145, 0.1]
   habitats appris en France : {'N': 139, 'B': 128, 'outside': 7, 'n': [7, 19, 16, 7, 1, 40, 9, 0, 20, 3, 17, 0, 5, 2], 'b': [18.0, 11.0, 14.0, 4.0, 2.5, 39.0, 6.5, 2.5, 16.0, 2.5, 20.0, 0.0, 2.5, 7.5], 'aff': [None, 1.0, 0.68, None, None, 0.615, None, None, 0.741, None, 0.514, None, None, 0.212]}
   habitat : {'N': 8, 'outside': 9, 'n': [0, 2, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], 'relief_mean': 129.6}
-  échantillons : 663 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.565, 'auc_nw': 0.64, 'n': 663}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [33.8, 72.1, 136.2], 'r7': [3.1, 21.7, 56.0], 't7': [8.8, 14.3, 18.2], 'ts': [8.5, 14.4, 18.7], 'drop': [-1.9, 0.4, 2.8], 'fmin': [2.8, 8.7, 12.5]}
+  échantillons : 729 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.561, 'auc_nw': 0.646, 'n': 729}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [34.5, 72.2, 134.3], 'r7': [3.1, 21.3, 56.0], 't7': [8.6, 14.1, 18.1], 'ts': [8.3, 14.3, 18.6], 'drop': [-2.0, 0.4, 2.7], 'fmin': [2.8, 8.5, 12.5]}
 
 == Craterellus tubaeformis
-  saison (quinzaines, max = 1) : [0.073, 0.034, 0.025, 0.016, 0.005, 0.002, 0.002, 0.002, 0.001, 0.006, 0.012, 0.013, 0.017, 0.031, 0.087, 0.249, 0.5, 0.771, 1.0, 1.0, 0.726, 0.427, 0.253, 0.151]
-  habitats appris en France : {'N': 98, 'B': 86, 'outside': 4, 'n': [4, 18, 9, 3, 2, 36, 3, 0, 11, 3, 11, 0, 0, 2], 'b': [16.0, 13.5, 7.0, 1.5, 1.0, 39.5, 4.0, 0.5, 8.5, 1.5, 3.0, 0.0, 3.0, 3.0], 'aff': [None, 1.0, None, None, None, 0.697, None, None, 0.964, None, None, None, None, None]}
+  saison (quinzaines, max = 1) : [0.073, 0.034, 0.025, 0.016, 0.005, 0.002, 0.002, 0.002, 0.001, 0.006, 0.012, 0.013, 0.017, 0.031, 0.087, 0.249, 0.5, 0.77, 1.0, 1.0, 0.726, 0.427, 0.253, 0.151]
+  habitats appris en France : {'N': 99, 'B': 87, 'outside': 4, 'n': [4, 19, 9, 3, 2, 36, 3, 0, 11, 3, 11, 0, 0, 2], 'b': [16.0, 14.0, 7.0, 1.5, 1.0, 39.5, 4.0, 0.5, 8.5, 1.5, 3.5, 0.0, 3.0, 3.0], 'aff': [None, 1.0, None, None, None, 0.685, None, None, 0.947, None, None, None, None, None]}
   habitat : {'N': 22, 'outside': 11, 'n': [0, 1, 6, 0, 1, 7, 3, 0, 1, 1, 2, 0, 0, 0, 0, 0], 'relief_mean': 85.8}
-  échantillons : 667 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.555, 'auc_nw': 0.619, 'n': 667}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [30.8, 69.0, 125.3], 'r7': [2.1, 21.3, 55.9], 't7': [6.4, 10.8, 14.5], 'ts': [6.2, 10.9, 14.9], 'drop': [-1.9, 0.3, 3.0], 'fmin': [0.4, 5.3, 9.4]}
+  échantillons : 733 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.555, 'auc_nw': 0.62, 'n': 733}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [30.9, 69.7, 125.4], 'r7': [2.0, 21.2, 55.9], 't7': [6.3, 10.8, 14.5], 'ts': [6.2, 10.9, 14.8], 'drop': [-1.9, 0.3, 2.9], 'fmin': [0.4, 5.3, 9.4]}
 
 == Craterellus cornucopioides
-  saison (quinzaines, max = 1) : [0.024, 0.012, 0.006, 0.003, 0.004, 0.007, 0.01, 0.005, 0.002, 0.014, 0.028, 0.027, 0.044, 0.09, 0.17, 0.303, 0.511, 0.762, 0.981, 1.0, 0.691, 0.317, 0.122, 0.05]
+  saison (quinzaines, max = 1) : [0.024, 0.012, 0.006, 0.003, 0.004, 0.007, 0.01, 0.005, 0.002, 0.014, 0.027, 0.027, 0.043, 0.089, 0.169, 0.302, 0.509, 0.76, 0.978, 1.0, 0.695, 0.319, 0.121, 0.05]
   habitats appris en France : {'N': 87, 'B': 74, 'outside': 7, 'n': [7, 16, 8, 2, 0, 45, 3, 0, 3, 1, 4, 0, 2, 3], 'b': [20.0, 12.5, 6.5, 1.5, 2.0, 37.5, 2.0, 0.5, 1.5, 0.5, 2.5, 0.0, 2.5, 4.5], 'aff': [None, 1.0, None, None, None, 0.949, None, None, None, None, None, None, None, None]}
   habitat : {'N': 2, 'outside': 5, 'n': [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 'relief_mean': 170.0}
-  échantillons : 657 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.566, 'auc_nw': 0.647, 'n': 657}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.7, 60.7, 109.0], 'r7': [1.4, 14.9, 43.3], 't7': [7.5, 12.1, 16.3], 'ts': [7.3, 12.2, 16.6], 'drop': [-1.8, 0.6, 2.7], 'fmin': [1.3, 6.5, 11.2]}
+  échantillons : 723 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.568, 'auc_nw': 0.645, 'n': 723}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [28.2, 60.4, 108.5], 'r7': [1.4, 14.4, 42.8], 't7': [7.4, 12.2, 16.2], 'ts': [7.2, 12.2, 16.5], 'drop': [-1.7, 0.6, 2.7], 'fmin': [1.1, 6.6, 11.2]}
 
 == Hydnum repandum
   saison (quinzaines, max = 1) : [0.085, 0.042, 0.015, 0.004, 0.002, 0.002, 0.002, 0.002, 0.002, 0.004, 0.009, 0.017, 0.031, 0.063, 0.148, 0.332, 0.596, 0.846, 1.0, 0.945, 0.66, 0.369, 0.215, 0.139]
   habitats appris en France : {'N': 110, 'B': 99, 'outside': 4, 'n': [4, 18, 13, 3, 1, 40, 6, 1, 11, 3, 8, 0, 1, 5], 'b': [14.5, 15.0, 7.0, 0.0, 3.5, 39.0, 3.0, 1.5, 8.0, 2.0, 6.0, 0.0, 3.5, 11.0], 'aff': [None, 0.891, None, None, None, 0.769, None, None, 1.0, None, None, None, None, 0.375]}
   habitat : {'N': 17, 'outside': 9, 'n': [0, 1, 7, 0, 0, 4, 0, 0, 0, 0, 3, 0, 1, 0, 1, 0], 'relief_mean': 120.0}
-  échantillons : 666 poussées publiques ; perso : 0 réussites, 0 « rien »
-  modèle météo : {'auc': 0.535, 'auc_nw': 0.483, 'n': 666}
-  conditions aux poussées (10e / médiane / 90e centile) : {'er': [27.2, 64.6, 120.2], 'r7': [1.8, 17.1, 44.4], 't7': [6.7, 11.7, 16.1], 'ts': [6.5, 11.8, 16.5], 'drop': [-2.0, 0.3, 2.8], 'fmin': [0.6, 6.3, 10.7]}
+  échantillons : 732 poussées publiques ; perso : 0 réussites, 0 « rien »
+  modèle météo : {'auc': 0.538, 'auc_nw': 0.471, 'n': 732}
+  conditions aux poussées (10e / médiane / 90e centile) : {'er': [27.0, 64.4, 119.9], 'r7': [1.6, 16.8, 46.0], 't7': [6.7, 11.7, 16.0], 'ts': [6.6, 11.9, 16.5], 'drop': [-1.9, 0.3, 2.7], 'fmin': [0.5, 6.3, 10.7]}
 
-Terminé 2026-11-19T14:37:48+00:00
+Terminé 2026-11-20T14:06:13+00:00
