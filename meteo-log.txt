@@ -1,0 +1,7 @@
+Météo du 2026-11-21T11:44:51+00:00 — 2351 nœuds
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.7510%2C47.7840%2C47.8170%2C47.8500%2C47.8830%2C47.9160%2C47.9490%2C47.9820%2C48.0150%2C48.0480%2C48.0810%2C48.1140%2C48.1470%2C48 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.5760%2C48.6090%2C48.6420%2C48.6750%2C48.7080%2C48.7410%2C47.6850%2C47.7180%2C47.7510%2C47.7840%2C47.8170%2C47.8500%2C47.8830%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.3120%2C48.3450%2C48.3780%2C48.4110%2C48.4440%2C48.4770%2C48.5100%2C48.5430%2C47.7180%2C47.7510%2C47.7840%2C47.8170%2C47.8500%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+Nœuds obtenus : 2351/2351, lots en échec : 0
+meteo.json : 451 ko
+Exemple (premier nœud, aujourd'hui) : {'er': 32.4, 'r7': 21.6, 'r15': 22.4, 'r30': 42.3, 't7': 11.1, 'fmin': 4.9, 'sm': 0.351, 'ts': 9.9, 'drop': -1.4}
