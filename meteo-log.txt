@@ -1,0 +1,8 @@
+Météo du 2026-11-28T12:19:35+00:00 — 2351 nœuds
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.3220%2C47.3550%2C47.3880%2C47.4210%2C47.4540%2C47.4870%2C47.5200%2C47.5530%2C47.5860%2C47.6190%2C47.6520%2C47.6850%2C47.7180%2C47 : '{"reason":"Minutely API request limit exceeded. Please try again in one minute.","error":true}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.4770%2C48.5100%2C48.5430%2C48.5760%2C48.6090%2C48.6420%2C48.6750%2C48.7080%2C47.4210%2C47.4540%2C47.4870%2C47.5200%2C47.5530%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=47.8170%2C47.8500%2C47.8830%2C47.9160%2C47.9490%2C47.9820%2C48.0150%2C48.0480%2C48.0810%2C48.1140%2C48.1470%2C48.1800%2C48.2130%2C48 : '{"reason":"Minutely API request limit exceeded. Please try again in one minute.","error":true}'
+  HTTP 429 sur https://api.open-meteo.com/v1/forecast?latitude=48.2460%2C48.2790%2C48.3120%2C48.3450%2C48.3780%2C48.4110%2C48.4440%2C48.4770%2C48.5100%2C47.7180%2C47.7510%2C47.7840%2C47.8170%2C47 : '{"error":true,"reason":"Minutely API request limit exceeded. Please try again in one minute."}'
+Nœuds obtenus : 2351/2351, lots en échec : 0
+meteo.json : 435 ko
+Exemple (premier nœud, aujourd'hui) : {'er': 49.8, 'r7': 27.8, 'r15': 49.4, 'r30': 50.2, 't7': 8.5, 'fmin': 3.5, 'sm': 0.379, 'ts': 8.6, 'drop': 1.5}
